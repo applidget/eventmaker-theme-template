@@ -1,0 +1,291 @@
+<style>
+  .navbar-default .navbar-nav>li>a:hover {
+    color:{{ section.settings.color_text_nav_bar_hover }};
+  }
+  .navbar-default .navbar-nav>li>a {
+    color:{{ section.settings.color_text_nav_bar }};
+  }
+</style>
+
+<div class="header-navbar {% if section.settings.fixed %}header-fixed{% endif %}" data-section-id="{{ section.id }}" data-section-type="header">
+  {% if section.settings.message %}
+    {% if section.settings.home_page_only == false or page.filename == 'index' %}
+      {% if section.settings.message_link == blank %}
+        <div class="announcement-bar" style="background-color: {{ section.settings.color_bg }}">
+      {% else %}
+        <a href="{{ section.settings.message_link }}" class="announcement-bar announcement-bar--link" style="background-color: {{ section.settings.color_bg }}">
+      {% endif %}
+
+        <p class="announcement-bar__message text-center" style="color: {{ section.settings.color_text }};">{{ section.settings.message_text | escape }}</p>
+
+      {% if section.settings.message_link == blank %}
+        </div>
+      {% else %}
+        </a>
+      {% endif %}
+    {% endif %}
+  {% endif %}
+
+  {% assign menu_items = menus[section.settings.navigation] %}
+
+  <nav class="navbar navbar-default {% if section.settings.fixed %}navbar-fixed-top{% endif %}" style="background-color: {{section.settings.color_bg_nav_bar}}">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        {% if menu_items != blank %}
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-nav">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+        {% endif %}
+        {% if section.settings.logo != blank %}
+          {% assign logo_path = "" %}
+          {% if section.settings.logo_clickable %}
+            {% assign logo_path = "/" %}
+            <a class="navbar-brand" href="{{ logo_path }}">
+          {% else %}
+            <span class="navbar-brand">
+          {% endif %}
+          <img src="{{ section.settings.logo }}" class="img-responsive" style="width: {{ section.settings.logo_max_width }}px; max-height: {{ section.settings.logo_max_height }}px;" />
+          {% if section.settings.logo_clickable %}
+            </a>
+          {% else %}
+            </span>
+          {% endif %}
+        {% endif %}
+      </div>
+      <div id="main-nav" class="navbar-collapse collapse" aria-expanded="true">
+        <ul class="nav navbar-nav navbar-right">
+          {% for item in menu_items %}
+            {% if item.displayable? %}
+              {% if item.type == "add_to_my_calendar" %}
+                {% include 'add-to-calendar', list_item: true, enable_icon: item.options.enable_icon, label: item.localized_name %}
+              {% elsif item.type == "menu" %}
+                {% include 'submenu-dropdown', navbar: true %}
+              {% else %}
+                <li><a href="{{ item.url }}" {% if item.open_in_new_tab? %}target="_blank"{% endif %} {% if item.disabled? %}style="pointer-events: none; opacity: 0.4;"{% endif %} class="{% if guest and item.guest_messaging_page? and guest.unread_messages? %}dotted{% endif %}" {% if item.guest_messaging_page? %}data-guest-messaging-link="dotted"{% endif %}>{{ item.localized_name }}</a></li>
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+          {% if event.frontend_locales_to_switch.size > 1 and request_method == "GET" %}
+            {% for available_locale in event.frontend_locales_to_switch %}
+              {% if available_locale.code == locale %}
+                {% capture current_locale_label %}{{ available_locale.code }}{% endcapture %}
+              {% else %}
+                {% capture switch_options %}{{ switch_options }}
+                  <li><a href="#" class="locale_switch" data-locale="{{available_locale.code}}">{{ available_locale.original_label }}</a></li>
+                {% endcapture %}
+              {% endif %}
+            {% endfor %}
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true">{{ current_locale_label }} <span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                {{ switch_options }}
+              </ul>
+            </li>
+          {% endif %}
+
+          {% if website.sso_enabled? %}
+            {% if guest and guest.signed_in_with_sso? %}
+              <li>
+                <a href="/signout"><i class="fa fa-sign-out"></i> {{ t.sign_out }}</a>
+              </li>
+            {% else %}
+              {% assign sign_in_link = "/auth/oauth?locale=" | append: locale %}
+              {% if section.settings.sso_force_external_provider %}
+                {% assign sign_in_link = sign_in_link | append: "&provider=" | append: section.settings.sso_force_external_provider %}
+              {% endif %}
+              <li>
+                <a href="{{sign_in_link}}"><i class="fa fa-sign-in"></i> {{ t.sign_in }}</a>
+              </li>
+            {% endif %}
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+  </nav>
+</div>
+
+{% schema %}
+  {
+    "name": "Header",
+    "name_translations": { "fr": "Entête" },
+    "icon": "fa fa-arrow-up",
+    "hidden_from_user": false,
+    "group_key": "basic",
+    "group_rank": 8000,
+    "settings": [
+      {
+        "type": "header",
+        "content": "Navigation",
+        "content_translations": { "fr": "Navigation" }
+      },
+      {
+        "type": "menu",
+        "id": "navigation",
+        "label": "Menu",
+        "label_translations": { "fr": "Choix du menu" }
+      },
+      {
+        "type": "color",
+        "id": "color_bg_nav_bar",
+        "label": "Menu color",
+        "label_translations": { "fr": "Couleur du menu" },
+        "default": "#f2f5f7"
+      },
+      {
+        "type": "color",
+        "id": "color_text_nav_bar",
+        "label": "Menu text color",
+        "label_translations": { "fr": "Couleur du texte du menu" },
+        "default": "#45568e"
+      },
+      {
+        "type": "color",
+        "id": "color_text_nav_bar_hover",
+        "label": "Menu text color on hover",
+        "label_translations": { "fr": "Couleur du texte du menu au survol" },
+        "default": "#e4b100"
+      },
+      {
+        "type": "image_picker",
+        "id": "logo",
+        "label": "Logo"
+      },
+      {
+        "type": "checkbox",
+        "id": "logo_clickable",
+        "label": "Logo lead to home page",
+        "label_translations": { "fr": "Le logo amène à la page d'accueil" },
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "logo_max_width",
+        "label": "Logo width (in pixels)",
+        "label_translations": { "fr": "Largeur du logo (en pixels)" },
+        "default": "100"
+      },
+      {
+        "type": "text",
+        "id": "logo_max_height",
+        "label": "Logo height (in pixels)",
+        "label_translations": { "fr": "Hauteur du logo (en pixels)" },
+        "default": "75"
+      },
+      {
+        "type": "checkbox",
+        "id": "fixed",
+        "label": "Fixed navigation bar",
+        "label_translations": { "fr": "Barre fixe" },
+        "default": true
+      },
+      {
+        "type": "header",
+        "content": "Connect button",
+        "content_translations": { "fr": "Bouton de connexion" }
+      },
+      {
+        "type": "select",
+        "id": "sso_force_external_provider",
+        "label": "Force external provider",
+        "label_translations": { "fr": "Forcer un fournisseur externe" },
+        "info": "If your configured an external SSO provider you can force the user to use it",
+        "info_translations": { "fr" : "Si vous avez configuré un fournisseur externe vous pouvez forcer son utilisation" },
+        "default": null,
+        "options": [
+          {
+            "value": "google_auth2",
+            "label": "Google",
+            "label_translations": { "fr": "Google" }
+          },
+          {
+            "value": "facebook",
+            "label": "Facebook",
+            "label_translations": { "fr": "Facebook" }
+          },
+          {
+            "value": "linkedin",
+            "label": "LinkedIn",
+            "label_translations": { "fr": "LinkedIn" }
+          }
+        ]
+      },
+      {
+        "type": "header",
+        "content": "Announcement bar",
+        "content_translations": { "fr": "Barre d'annonce" }
+      },
+      {
+        "type": "checkbox",
+        "id": "message",
+        "label": "Display an announcement",
+        "label_translations": { "fr": "Afficher une annonce" },
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "home_page_only",
+        "label": "Home page only",
+        "label_translations": { "fr": "Page d'accueil uniquement" },
+        "show_if": {
+          "source_id": "message",
+          "operator": "==",
+          "value": true
+        },
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "message_text",
+        "label": "Announcement message",
+        "label_translations": { "fr": "Texte de l'annonce" },
+        "show_if": {
+          "source_id": "message",
+          "operator": "==",
+          "value": true
+        },
+        "default": "Your message",
+        "default_translations": { "fr": "Annoncez quelque chose" }
+      },
+      {
+        "type": "text",
+        "id": "message_link",
+        "label": "Announcement link",
+        "label_translations": { "fr": "Lien de l'annonce" },
+        "show_if": {
+          "source_id": "message",
+          "operator": "==",
+          "value": true
+        },
+        "info": "Optional",
+        "info_translations": { "fr": "Optionnel" }
+      },
+      {
+        "type": "color",
+        "id": "color_bg",
+        "label": "Navigation bar color",
+        "label_translations": { "fr": "Couleur de la barre" },
+        "show_if": {
+          "source_id": "message",
+          "operator": "==",
+          "value": true
+        },
+        "default": "#7796a8"
+      },
+      {
+        "type": "color",
+        "id": "color_text",
+        "label": "Text color",
+        "label_translations": { "fr": "Couleur du texte" },
+        "show_if": {
+          "source_id": "message",
+          "operator": "==",
+          "value": true
+        },
+        "default": "#fff"
+      }
+    ]
+  }
+{% endschema %}

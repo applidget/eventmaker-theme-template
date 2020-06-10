@@ -1,0 +1,33 @@
+{% if potential_guests %}
+  <div class="modal" id="sso-guest-picker" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard=false>
+    <div class="modal-dialog modal-md" role="document">
+      <div class="modal-content">
+        <div class="modal-header text-center">
+          <h4 class="modal-title">{{ t.sso_guest_picker_modal_title }}</h4>
+        </div>
+        <div class="modal-body">
+          <p>{{ t.sso_guest_picker_modal_text }}</p>
+          <ul>
+            {% for guest in potential_guests %}
+              <div class="radio" style="margin-bottom: 20px;">
+                <label style="display: flex; align-items: center;">
+                  <input type="radio" name="guest-pick" data-guest-id="{{ guest.id }}" data-guest-secret="{{ guest.secret }}" style="margin-top: 0px;" class="guest-picker-choice">
+                  <div>
+                    <strong>{{ guest.identity }}</strong><br />
+                    {{ guest.guest_category.name }}<small class="text-muted"><i> {{ t.sso_guest_picker_modal_registered_at }} {{ guest.pretty_registered_at }}</i></small>
+                  </div>
+                </label>
+                <hr />
+              </div>
+            {% endfor %}
+          </ul>
+        </div>
+        <div class="modal-footer">
+          <div class="text-center">
+            <button id="sso-guest-picker-submit" class="btn btn-primary" disabled>{{ t.sso_guest_picker_modal_submit }}</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endif %}

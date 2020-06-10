@@ -1,0 +1,200 @@
+{% assign square_class = "" %}
+{% assign grid_class = "" %}
+{% assign grid_item_class = "" %}
+{% assign files = nil %}
+
+{% assign per_line = section.settings.picture_per_line | plus: 0 %}
+{% case per_line %}
+  {% when 1 %}
+    {% assign grid_item_width = 'col-xs-12' %}
+  {% when 2 %}
+    {% assign grid_item_width = 'col-xs-6 col-sm-6' %}
+  {% when 3 %}
+    {% assign grid_item_width = 'col-xs-6 col-sm-4' %}
+  {% when 4 %}
+    {% assign grid_item_width = 'col-xs-6 col-sm-3' %}
+  {% when 6 %}
+    {% assign grid_item_width = 'col-xs-6 col-sm-4 col-md-2' %}
+{% endcase %}
+
+{% if section.settings.shape == "square" %}
+  {% assign square_class = "square" %}
+{% endif %}
+
+{% if section.settings.type_presentation == "destructure" %}
+  {% assign grid_class = "grid" %}
+  {% assign grid_item_class = "grid-item" %}
+  {% assign square_class = "" %}
+{% endif %}
+
+{% for folder in website.assets_folders %}
+  {% if section.settings.folder_id == folder.id %}
+    {% assign files = folder.assets %}
+    {% break %}
+  {% endif %}
+{% endfor %}
+
+<div class="container {{ settings.spacing }}" data-section-id="{{ section.id }}" data-section-type="photo-gallery">
+  {% if section.settings.title != blank %}
+    <div class="section-header text-center down-s">
+      <h2 class="title">{{ section.settings.title | escape }}</h2>
+    </div>
+  {% endif %}
+  {% if files != nil %}
+    <div class="{{ grid_class }} row text-center row-flex">
+      {% for file in files %}
+        {% if square_class == blank %}
+          {% capture image_html %}<img {% if grid_class == blank and is_preview == false %}data-{% endif %}src="{{ file.file_url }}" alt="{{ file.name }}" class="img-responsive"/>{% endcapture %}
+        {% else %}
+          {% capture image_html %}<div class="{{ square_class }}" style="background-image:url({{ file.file_url }})"></div>{% endcapture %}
+        {% endif %}
+        <div class="{{ grid_item_width }} {{ grid_item_class }} up-s image-block">
+          {% if section.settings.slideshow == true %}
+            {% if section.settings.enable_label == true %}
+              {% assign image_label = file.name %}
+            {% else %}
+              {% assign image_label = "" %}
+            {% endif %}
+            <a data-fancybox="gallery" data-src="{{ file.file_url }}" data-type="image" data-caption="{{ image_label }}" style="width:100%">
+              {{image_html}}
+            </a>
+          {% else %}
+            {{image_html}}
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+</div>
+
+{% schema %}
+  {
+    "name": "Photo gallery",
+    "name_translations": { "fr": "Galerie photo" },
+    "class": "index-section",
+    "icon": "fa fa-file-picture-o",
+    "hidden_from_user": false,
+    "group_key": "media",
+    "group_rank": 2000,
+    "settings": [
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title",
+        "label_translations": { "fr": "Titre" }
+      },
+      {
+        "type": "header",
+        "content": "Customization",
+        "content_translations": { "fr": "Personnalisation" }
+      },
+      {
+        "type": "select",
+        "id": "type_presentation",
+        "label": "Presentation",
+        "label_translations": { "fr": "Présentation" },
+        "default": "default",
+        "options": [
+          {
+            "value": "default",
+            "label": "By default",
+            "label_translations": { "fr": "Par défaut" }
+          },
+          {
+            "value": "destructure",
+            "label": "Deconstructed",
+            "label_translations": { "fr": "Déstructuré" }
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "shape",
+        "label": "Picture shape",
+        "label_translations": { "fr": "Forme des images" },
+        "default": "default",
+        "options": [
+          {
+            "value": "default",
+            "label": "By default",
+            "label_translations": { "fr": "Par défaut" }
+          },
+          {
+            "value": "square",
+            "label": "Square",
+            "label_translations": { "fr": "Carré" }
+          }
+        ],
+        "show_if": {
+          "source_id": "type_presentation",
+          "operator": "!=",
+          "value": "destructure"
+        }
+      },
+      {
+        "type": "select",
+        "id": "picture_per_line",
+        "label": "Max pictures per line",
+        "label_translations": { "fr": "Nombre d'images maximum par ligne" },
+        "default": "4",
+        "options": [
+          {
+            "value": "6",
+            "label": "6"
+          },
+          {
+            "value": "4",
+            "label": "4"
+          },
+          {
+            "value": "3",
+            "label": "3"
+          },
+          {
+            "value": "2",
+            "label": "2"
+          },
+          {
+            "value": "1",
+            "label": "1"
+          }
+        ]
+      },
+      {
+        "type": "checkbox",
+        "id": "slideshow",
+        "label": "Enable slideshow",
+        "label_translations": { "fr": "Activer le diaporama" },
+        "default": false,
+        "info": "A slideshow will be displayed on a picture click",
+        "info_translations": { "fr": "Affiche le diaporama au clic sur une photo" }
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_label",
+        "label": "Show image label",
+        "label_translations": { "fr": "Afficher le titre des images" },
+        "default": false,
+        "info": "Displays the title under the picture during the slideshow",
+        "info_translations": { "fr": "Affiche le titre sous la photo pendant le diaporama" },
+        "show_if": {
+          "source_id": "slideshow",
+          "operator": "==",
+          "value": true
+        }
+      },
+      {
+        "type": "folder_picker",
+        "id": "folder_id",
+        "label": "Picture folder",
+        "label_translations": { "fr": "Dossier photo" }
+      }
+    ],
+    "presets": [
+      {
+        "name": "Photo gallery",
+        "name_translations": { "fr": "Galerie photo" }
+      }
+    ]
+  }
+{% endschema %}

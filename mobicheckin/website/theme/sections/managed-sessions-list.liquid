@@ -1,0 +1,116 @@
+<div class="container {{ settings.spacing }}" data-section-id="{{ section.id }}" data-section-type="managed-sessions-list">
+  {% if section.settings.title != blank %}
+    <div class="section-header text-center down-s">
+      <h2 class="title">{{ section.settings.title | escape }}</h2>
+    </div>
+  {% endif %}
+
+  <div class="up-s row">
+    <div class="col-xs-12">
+      <h4>{% if guest %}{{ guest.managed_sessions.size }}{% else %}0{% endif %} {{ section.settings.sessions_entity_name }}</h4>
+    </div>
+  </div>
+
+  {% if is_preview or guest.managed_sessions.size > 0 %}
+    <div class="row down-s up-s">
+      <div class="col-xs-12 guest-sessions">
+        {% for session in guest.managed_sessions %}
+          <div class="panel panel-default">
+            <div class="panel-body">
+              <h4 class="title">
+                {% if section.settings.session_info_page_path != blank %}
+                  <a href="/{{ section.settings.session_info_page_path | replace: "__id__", session.id }}">{{ session.localized_name }}</a>
+                {% else %}
+                  {{ session.localized_name }}
+                {% endif %}
+              </h4>
+              <div class="session-details">
+                {% if section.settings.download_leads_conference_button_enabled == true %}
+                  {% download_leads_button section.settings.download_leads_conference_button_label, class: "btn btn-primary btn-sm pull-right", accesspoint_id: session.id %}
+                {% endif %}
+
+                <span><i class="fa fa-calendar-o"></i> {{ session.formatted_start_day }}</span>
+                <span class="vertical-separator">|</span>
+                <span><i class="fa fa-clock-o"></i> {{ session.start_time }} - {{ session.end_time }}</span>
+
+                <div class="text text-success download-success-message up-s text-right" style="display: none;"></div>
+                <div class="text text-danger download-error-message up-s text-right" style="display: none;"></div>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+</div>
+
+{% schema %}
+  {
+    "name": "Managed sessions",
+    "name_translations": { "fr": "Sessions administrées" },
+    "class": "index-section",
+    "icon": "fa fa-list-ul",
+    "hidden_from_user": false,
+    "group_key": "exhibitors",
+    "group_rank": 2000,
+    "settings": [
+      {
+        "type": "header",
+        "content": "General settings",
+        "content_translations": { "fr": "Paramètres généraux" }
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title",
+        "label_translations": { "fr": "Titre" },
+        "default": "Title of the section",
+        "default_translations": { "fr": "Titre de la section" }
+      },
+      {
+        "type": "select_info_page_picker",
+        "id": "session_info_page_path",
+        "resource_name": "session",
+        "resource_form": true,
+        "label": "Page for edition form of sessions",
+        "label_translations": { "fr": "Page pour le formulaire d'édition des sessions" },
+        "default": ""
+      },
+      {
+        "type": "text",
+        "id": "sessions_entity_name",
+        "label": "Name to display after number of sessions",
+        "label_translations": { "fr": "Nom à afficher après le nombre de sessions" },
+        "default": "sessions",
+        "default_translations": { "fr": "sessions" }
+      },
+      {
+        "type": "header",
+        "content": "Leads conference download",
+        "content_translations": { "fr": "Téléchargement des leads conference" }
+      },
+      {
+        "type": "checkbox",
+        "id": "download_leads_conference_button_enabled",
+        "label": "Enable download button",
+        "label_translations": { "fr": "Activer le bouton de téléchargement" },
+        "default": false,
+        "info": "Button will be displayed as long as Leads feature is enabled and if you made the guests list available in exhibitors space",
+        "info_translations": { "fr": "Le bouton sera affiché tant que la fonctionnalité Leads est activée et dès que vous rendrez disponible la liste des participants dans l'espace exposant" }
+      },
+      {
+        "type": "text",
+        "id": "download_leads_conference_button_label",
+        "label": "Button label",
+        "label_translations": { "fr": "Libellé du bouton" },
+        "default": "Download your leads",
+        "default_translations": { "fr": "Téléchargez vos leads" },
+        "show_if": {
+          "source_id": "download_leads_conference_button_enabled",
+          "operator": "==",
+          "value": true
+        }
+      }
+    ]
+  }
+{% endschema %}

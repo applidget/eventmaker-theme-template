@@ -1,0 +1,132 @@
+{% if section.settings.display_mode == "table" %}
+  <div class="row up-s">
+    <div class="col-xs-12">
+      <table class="table {% if section.settings.table_style != "basic" %}{{ section.settings.table_style }}{% endif %}">
+        <thead>
+          <tr>
+            {% for block in section.blocks %}
+              <th {% if block.settings.column_display != "text" %}class="text-center"{% endif %}>{{ block.settings.column_label }}</th>
+            {% endfor %}
+            {% if section.settings.guest_info_page_path != blank %}
+              <th></th>
+            {% endif %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for resource in resources %}
+            <tr>
+              {% for block in section.blocks %}
+                {% assign field_value = resource[block.settings.column_field] %}
+
+                <td style="vertical-align: middle;" {% if block.settings.column_display != "text" %}class="text-center"{% endif %}>
+                  {% if field_value != blank %}
+                    {% if block.settings.column_display == "text" %}
+                      {% if block.settings.highlight == true %}<strong>{% endif %}{{ field_value }}{% if block.settings.highlight %}</strong>{% endif %}
+                    {% elsif block.settings.column_display == "link" %}
+                      <a href="{{ field_value }}" target="_blank" class="btn btn-primary btn-sm">{{ block.settings.link_label }}</a>
+                    {% elsif block.settings.column_display == "image" %}
+                      <img data-src="{{ field_value }}" alt="{{ field_value }}" style="max-height: 100px;" />
+                    {% endif %}
+                  {% endif %}
+                </td>
+              {% endfor %}
+              {% if section.settings.guest_info_page_path != blank %}
+                <td style="vertical-align: middle;" class="{% if section.settings.table_style contains 'table-bordered' %}text-center{% else %}text-right{% endif %}"><a href="/{{ section.settings.guest_info_page_path | replace: "__id__", resource.id }}" class="btn btn-primary btn-sm"><i class="fa fa-angle-right"></i></a></td>
+              {% endif %}
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% elsif section.settings.display_mode == "grid" %}
+
+  {% assign per_line = section.settings.per_line | times: 1 | at_least: 2 %}
+  {% assign grid_item_width = 'col-md-3 col-sm-6' %}
+  {% case per_line %}
+    {% when 2 %}
+      {% assign grid_item_width = 'col-sm-6' %}
+    {% when 3 %}
+      {% assign grid_item_width = 'col-md-4 col-sm-6' %}
+    {% when 6 %}
+      {% assign grid_item_width = 'col-lg-2 col-sm-4' %}
+  {% endcase %}
+
+  {% for resource in resources %}
+    {% assign remainer = forloop.index | modulo: per_line %}
+    {% if forloop.first == true or remainer == 1 %}
+      <div class="row {% if forloop.first == true %}up-s{% endif %}">
+    {% endif %}
+
+    {% assign image_url = resource[section.settings.illustration_field] %}
+
+    <div class="{{ grid_item_width }} guest-item guest-item-per-line-{{ per_line }}">
+      {% case section.settings.guest_item_link %}
+        {% when "guest_info_page" %}
+          {% if section.settings.guest_info_page_path != blank %}
+            <a href="/{{ section.settings.guest_info_page_path | replace: "__id__", resource.id }}" class="thumbnail">
+          {% else %}
+            <div class="thumbnail">
+          {% endif %}
+        {% when "from_guest_field" %}
+          {% assign field_value = resource[section.settings.link_from_guest_field] %}
+          {% if section.settings.link_from_guest_field != blank and field_value != blank and field_value != nil %}
+            {% if field_value contains "http" %}
+              <a href="{{ field_value }}" target="_blank" class="thumbnail">
+            {% else %}
+              <a href="{{ "http://" | append: field_value }}" target="_blank" class="thumbnail">
+            {% endif %}
+          {% else %}
+            <div class="thumbnail">
+          {% endif %}
+        {% else %}
+          <div class="thumbnail">
+      {% endcase %}
+        <div class="image-container">
+          {% unless image_url == blank %}
+            <img data-src="{{ image_url }}" alt="{{ resource.identity }}" />
+          {% endunless %}
+        </div>
+        <div class="caption">
+          {% for block in section.blocks %}
+            {% assign field_value = resource[block.settings.column_field] %}
+
+            {% if field_value == blank or block.settings.column_display == "image" or section.settings.guest_item_link != blank and block.settings.column_display == "link" %}
+              {% continue %}
+            {% endif %}
+
+            {% if forloop.first %}
+              <h3>{% if block.settings.highlight == true %}<strong>{% endif %}{{ field_value }}{% if block.settings.highlight == true %}</strong>{% endif %}</h3>
+            {% else %}
+              {% if block.settings.column_display == "text" %}
+                <p>{% if block.settings.highlight == true %}<strong>{% endif %}{{ field_value }}{% if block.settings.highlight == true %}</strong>{% endif %}</p>
+              {% elsif block.settings.column_display == "link" %}
+                <p class="caption-link"><a href="{{ field_value }}" target="_blank" class="btn btn-default btn-sm">{{ block.settings.link_label }}</a></p>
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+        </div>
+      {% case section.settings.guest_item_link %}
+        {% when "guest_info_page" %}
+          {% if section.settings.guest_info_page_path != blank %}
+            </a>
+          {% else %}
+            </div>
+          {% endif %}
+        {% when "from_guest_field" %}
+          {% assign field_value = resource[section.settings.link_from_guest_field] %}
+          {% if section.settings.link_from_guest_field != blank and field_value != blank and field_value != nil %}
+            </a>
+          {% else %}
+            </div>
+          {% endif %}
+        {% else %}
+          </div>
+      {% endcase %}
+    </div>
+
+    {% if remainer == 0 or forloop.last == true %}
+      </div>
+    {% endif %}
+  {% endfor %}
+{% endif %}

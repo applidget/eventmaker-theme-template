@@ -1,0 +1,63 @@
+<div class="container {{ settings.spacing }}" data-section-id="{{ section.id }}" data-section-type="sponsorship">
+  <div class="sponsorship-widget" style="max-width: {{ section.settings.widget_width }}px;">
+    <h3>{{ section.settings.widget_title }}</h3>
+    
+    {% if url_params['error'] %}
+      <p class="text-danger">{{ url_params['error'] }}</p>
+    {% endif %}
+
+    {% if url_params['emails_sent'] == "true" %}
+      <p>{{ t.sponsorship_invitations_sent }}</p>
+    {% else %}
+      {% sponsorship_form %}
+        <div class="form-group">
+          <input type="text" name="emails" class="sponsorship-field form-control" placeholder="{{ t.sponsorship_emails }}" />
+        </div>
+        <div class="form-group">
+          <textarea name="message" class="sponsorship-field form-control" rows="4" placeholder="{{ t.sponsorship_message }}"></textarea>
+        </div>
+        <input type="submit" value="{{ t.sponsorship_send }}" class="btn btn-primary btn-block" data-loading-text="{{ t.submit_disable_with }}" />
+      {% endsponsorship_form %}
+    {% endif %}
+  </div>
+</div>
+
+{% schema %}
+  {
+    "name": "Sponsorship",
+    "name_translations": { "fr": "Parrainage" },
+    "icon": "fa fa-group",
+    "hidden_from_user": false,
+    "group_key": "registration",
+    "group_rank": 3000,
+    "settings": [
+      {
+        "type": "text",
+        "id": "widget_title",
+        "label": "Widget title",
+        "label_translations": { "fr": "Titre du widget" },
+        "default": "Sponsor a friend",
+        "default_translations": { "fr": "Parrainez un ami" },
+        "info": "The sponsorship widget is available as soon as the sponsorship email feature is enabled in the guest category",
+        "info_translations": { "fr": "Le widget de parrainage est disponible dès que la fonctionnalité d'email de parrainage est activée dans la catégorie de participants" }
+      },
+      {
+        "type": "range",
+        "id": "widget_width",
+        "label": "Widget width",
+        "label_translations": { "fr": "Largeur du widget" },
+        "min": 380,
+        "max": 800,
+        "step": 5,
+        "unit": "px",
+        "default": 400
+      }
+    ],
+    "presets": [
+      {
+        "name": "Sponsorship",
+        "name_translations": { "fr": "Parrainage" }
+      }
+    ]
+  }
+{% endschema %}

@@ -1,0 +1,30 @@
+{% assign count_displayable = 0 %}
+{% for subitem in item.menu_items %}
+  {% if subitem.displayable? %}
+    {% assign count_displayable = count_displayable | plus: 1  %}
+  {% endif %}
+{% endfor %}
+{% if count_displayable > 0 %}
+  {% if navbar == true %}
+  <li class="dropdown">
+    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true">{{ item.localized_name }} <span class="caret"></span></a>
+    <ul class="dropdown-menu">
+  {% else %}
+  <li class="dropdown-submenu">
+    <a href="#">{{ item.localized_name }} <span class="fa fa-caret-right" style="position: absolute; right: 20px; top: 6px"></span></a>
+    <ul class="dropdown-menu">
+  {% endif %}
+    {% for subitem in item.menu_items %}
+      {% if subitem.displayable? %}
+        {% if subitem.type == "add_to_my_calendar" %}
+          {% include 'add-to-calendar', list_item: true, enable_icon: false, label: subitem.localized_name %}
+        {% elsif subitem.type == "menu" %}
+          {% include 'submenu-dropdown', item: subitem, navbar: false %}
+        {% else %}
+          <li><a href="{{ subitem.url }}" {% if subitem.open_in_new_tab? %}target="_blank"{% endif %} {% if subitem.disabled? %}style="pointer-events: none; opacity: 0.4;"{% endif %} class="{% if guest and subitem.guest_messaging_page? and guest.unread_messages? %}dotted dotted-sm{% endif %}" {% if subitem.guest_messaging_page? %}data-guest-messaging-link="dotted dotted-sm"{% endif %}>{{ subitem.localized_name }}</a></li>
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+    </ul>
+  </li>
+{% endif %}

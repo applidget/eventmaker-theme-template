@@ -1,0 +1,238 @@
+<div class="container {{ settings.spacing }}" data-section-id="{{ section.id }}" data-section-type="feature-columns">
+  {% if section.settings.title != blank %}
+    <div class="section-header text-center down-s">
+      <h2 class="title">{{ section.settings.title | escape }}</h2>
+    </div>
+  {% endif %}
+
+  {% assign grid_item_width = 'col-sm-4' %}
+  {% assign per_line = 3 %}
+  {% case section.blocks.size %}
+    {% when 1 %}
+      {% assign grid_item_width = 'col-sm-12' %}
+      {% assign per_line = 1 %}
+    {% when 2 %}
+      {% assign grid_item_width = 'col-sm-6' %}
+      {% assign per_line = 2 %}
+    {% when 4 %}
+      {% assign grid_item_width = 'col-sm-6' %}
+      {% assign per_line = 2 %}
+  {% endcase %}
+
+  {% for block in section.blocks %}
+    {% assign remainder = forloop.index | modulo: per_line %}
+    {% if forloop.first == true or remainder == 1 %}
+      <div class="row-flex {% if forloop.first == true %}up-s{% endif %}">
+    {% endif %}
+      <div class="{{ grid_item_width }} text-{{ section.settings.align_text }} feature-column" data-block-id="{{ block.id }}">
+        <div class="thumbnail">
+          {% if block.settings.enable_image %}
+            {% if block.settings.image != blank %}
+              <img class="feature-row__image" data-src="{{ block.settings.image }}">
+            {% else %}
+              <img data-src="https://via.placeholder.com/400x300/F0F0F0/888888/?text=Eventmaker.io" alt="Image placeholder" />
+            {% endif %}
+          {% endif %}
+          <div class="caption">
+            {% if block.settings.title != blank %}
+              <h3 class="down-s">
+                {% if block.settings.enable_icon and block.settings.icon != blank %}
+                  <span aria-hidden="false"><i class="{{ block.settings.icon }}"></i></span>
+                {% endif %}
+                {{ block.settings.title | escape }}
+              </h3>
+            {% else %}
+              {% if block.settings.enable_icon and block.settings.icon != blank %}
+                <span aria-hidden="false"><i class="{{ block.settings.icon }}"></i></span>
+              {% endif %}
+            {% endif %}
+
+            {% if block.settings.text.html.size > 6 %}
+              <div class="down-s">{{ block.settings.text.html | parse_liquid }}</div>
+            {% endif %}
+
+            {% include "button", params: block.settings, params_section: section.settings %}
+          </div>
+        </div>
+      </div>
+    {% if remainder == 0 or forloop.last == true %}
+      </div>
+    {% endif %}
+  {% endfor %}
+
+</div>
+
+{% schema %}
+  {
+    "name": "Columns of text and image",
+    "name_translations": { "fr": "Colonnes de texte et image" },
+    "class": "index-section",
+    "icon": "fa fa-columns",
+    "hidden_from_user": false,
+    "group_key": "basic",
+    "group_rank": 3000,
+    "settings": [
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title",
+        "label_translations": { "fr": "Titre" },
+        "default": "Title of the section",
+        "default_translations": { "fr": "Titre de la section" }
+      },
+      {
+        "type": "select",
+        "id": "align_text",
+        "label": "Text alignment",
+        "label_translations": { "fr": "Alignement du texte" },
+        "default": "left",
+        "options": [
+          {
+            "value": "left",
+            "label": "Left",
+            "label_translations": { "fr": "Gauche" }
+          },
+          {
+            "value": "center",
+            "label": "Center",
+            "label_translations": { "fr": "Centre" }
+          }
+        ]
+      },
+      {
+        "type": "checkbox",
+        "id": "clickable_area",
+        "label": "Hide buttons and make blocks clickable",
+        "label_translations": { "fr": "Cacher les boutons et rendre les blocs clicquables" },
+        "default": false
+      }
+    ],
+    "blocks": [
+      {
+        "type": "text_block",
+        "name": "Columns",
+        "name_translations": { "fr": "Colonnes" },
+        "add_block": "New column",
+        "add_block_translations": { "fr": "Nouvelle colonne" },
+        "remove_block": "Remove this column",
+        "remove_block_translations": { "fr": "Retirer cette colonne" },
+        "settings": [
+          {
+            "type": "checkbox",
+            "id": "enable_image",
+            "label": "Show the illustration",
+            "label_translations": { "fr": "Montrer l'illustration" },
+            "default": true
+          },
+          {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Illustration",
+            "label_translations": { "fr": "Illustration" },
+            "show_if": {
+              "source_id": "enable_image",
+              "operator": "==",
+              "value": true
+            }
+          },
+          {
+            "type": "checkbox",
+            "id": "enable_icon",
+            "label": "Show the icon",
+            "label_translations": { "fr": "Montrer l'icône" },
+            "default": true
+          },
+          {
+            "type": "text",
+            "id": "icon",
+            "label": "Icon",
+            "label_translations": { "fr": "Icône" },
+            "show_if": {
+              "source_id": "enable_icon",
+              "operator": "==",
+              "value": true
+            },
+            "default": "fa fa-user"
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title",
+            "label_translations": { "fr": "Titre" },
+            "default": "Title of the column",
+            "default_translations": { "fr": "Titre de la colonne" }
+          },
+          {
+            "type": "rte",
+            "id": "text",
+            "label": "Text",
+            "label_translations": { "fr": "Texte" },
+            "default": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
+          },
+          {
+            "type": "header",
+            "content": "Button",
+            "content_translations": { "fr": "Bouton" }
+          },
+          {
+            "type": "product_defined",
+            "value": "button_settings"
+          },
+          {
+            "type": "header",
+            "content": "Style",
+            "content_translations": { "fr": "Style" }
+          },
+          {
+            "type": "checkbox",
+            "id": "enable_custom_css",
+            "label": "Apply a custom style",
+            "label_translations": { "fr": "Appliquer un style personnalisé" },
+            "default": false
+          },
+          {
+            "type": "color",
+            "id": "button_color",
+            "label": "Button color",
+            "label_translations": { "fr": "Couleur du bouton" },
+            "show_if": {
+              "source_id": "enable_custom_css",
+              "operator": "==",
+              "value": true
+            },
+            "default": "#000"
+          },
+          {
+            "type": "color",
+            "id": "button_text_color",
+            "label": "Button text color",
+            "label_translations": { "fr": "Couleur du texte du bouton" },
+            "show_if": {
+              "source_id": "enable_custom_css",
+              "operator": "==",
+              "value": true
+            },
+            "default": "#000"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Columns of text and image",
+        "name_translations": { "fr": "Colonnes de texte et image" },
+        "blocks": [
+          {
+            "type": "text_block"
+          },
+          {
+            "type": "text_block"
+          },
+          {
+            "type": "text_block"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

@@ -1,0 +1,141 @@
+{% if section.settings.link_type == "internal_link" %}
+  {% capture share_link %}{% website_url section.settings.website_page_url %}{% endcapture %}
+{% elsif section.settings.link_type == "external_link" %}
+  {% assign share_link = section.settings.custom_share_link | parse_liquid %}
+{% endif %}
+<div class="container {{ settings.spacing }}" data-section-id="{{ section.id }}" data-section-type="social-networks-sharing">
+  {% if section.settings.title != blank %}
+    <h2 class="title text-center down-s">{{ section.settings.title }}</h1>
+  {% endif %}
+  <div class="text-center up-s">
+    {% if section.settings.share_on_facebook == true %}
+      <a href="#" data-social="facebook" data-url="{{ share_link }}" class="btn btn-primary btn-sm"><i class="fa fa-facebook fa-lg"></i>&nbsp;&nbsp;{{ t.share_facebook }}</a>
+    {% endif %}
+    {% if section.settings.share_on_twitter == true %}
+      <a href="#" data-social="twitter" data-url="{{ share_link }}" data-title="{{ section.settings.tweet_content }}" class="btn btn-primary btn-sm"><i class="fa fa-twitter fa-lg"></i>&nbsp;&nbsp;{{ t.share_twitter }}</a>
+    {% endif %}
+    {% if section.settings.share_on_linkedin == true %}
+      <a href="#" data-social="linkedin" data-url="{{ share_link }}" class="btn btn-primary btn-sm"><i class="fa fa-linkedin fa-lg"></i>&nbsp;&nbsp;{{ t.share_linkedin }}</a>
+    {% endif %}
+    {% if section.settings.share_on_whatsapp == true %}
+      <a href="#" data-social="whatsapp" data-url="{{ share_link }}" class="btn btn-primary btn-sm"><i class="fa fa-whatsapp fa-lg"></i>&nbsp;&nbsp;{{ t.share_whatsapp }}</a>
+    {% endif %}
+    {% if section.settings.share_by_sms == true %}
+      <a href="#" data-social="sms" data-url="{{ share_link }}" class="btn btn-primary btn-sm"><i class="fa fa-envelope-o fa-lg"></i>&nbsp;&nbsp;{{ t.share_sms }}</a>
+    {% endif %}
+  </div>
+</div>
+
+{% schema %}
+  {
+    "name": "Share on social networks",
+    "name_translations": { "fr": "Partage réseaux sociaux" },
+    "icon": "fa fa-facebook-square",
+    "hidden_from_user": false,
+    "group_key": "registration",
+    "group_rank": 4000,
+    "settings": [
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title",
+        "label_translations": { "fr": "Titre" },
+        "default": "Share your registration on your social networks",
+        "default_translations": { "fr": "Partagez votre inscription sur vos réseaux" }
+      },
+      {
+        "type": "checkbox",
+        "id": "share_on_facebook",
+        "label": "Share on Facebook",
+        "label_translations": { "fr": "Activer partage sur Facebook" },
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "share_on_twitter",
+        "label": "Share on Twitter",
+        "label_translations": { "fr": "Activer partage sur Twitter" },
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "share_on_linkedin",
+        "label": "Share on LinkedIn",
+        "label_translations": { "fr": "Activer partage sur LinkedIn" },
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "share_on_whatsapp",
+        "label": "Share on WhatsApp",
+        "label_translations": { "fr": "Activer partage sur WhatsApp" },
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "share_by_sms",
+        "label": "Share by SMS",
+        "label_translations": { "fr": "Activer partage par SMS" },
+        "default": false
+      },
+      {
+        "type": "select",
+        "id": "link_type",
+        "label": "Type of link to share",
+        "label_translations": { "fr": "Type de lien à partager" },
+        "default": "internal_link",
+        "options": [
+          {
+            "value": "internal_link",
+            "label": "Website page",
+            "label_translations": { "fr": "Page de votre site" }
+          },
+          {
+            "value": "external_link",
+            "label": "External link",
+            "label_translations": { "fr": "Lien externe" }
+          }
+        ]
+      },
+      {
+        "type": "text",
+        "id": "custom_share_link",
+        "label": "Custom share link",
+        "label_translations": { "fr": "Lien de partage personnalisé" },
+        "show_if": {
+          "source_id": "link_type",
+          "operator": "==",
+          "value": "external_link"
+        }
+      },
+      {
+        "type": "website_page_picker",
+        "id": "website_page_url",
+        "label": "Website page to share",
+        "label_translations": { "fr": "Page de votre site à partager" },
+        "show_if": {
+          "source_id": "link_type",
+          "operator": "==",
+          "value": "internal_link"
+        }
+      },
+      {
+        "type": "paragraph",
+        "id": "tweet_content",
+        "label": "Tweet content",
+        "label_translations": { "fr": "Contenu du tweet" },
+        "show_if": {
+          "source_id": "share_on_twitter",
+          "operator": "==",
+          "value": true
+        }
+      }
+    ],
+    "presets": [
+      {
+        "name": "Share on social networks",
+        "name_translations": { "fr": "Partage réseaux sociaux" }
+      }
+    ]
+  }
+{% endschema %}

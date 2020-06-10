@@ -1,0 +1,1234 @@
+<div class="container {{ settings.spacing }}" data-section-id="{{ section.id }}" data-section-type="guests-list">
+  <!-- ACCREDITATIONS -->
+  {% if section.settings.enable_accreditations_table == true %}
+    {% if section.settings.sort_traits_key != blank %}
+      {% assign sort_by = section.settings.sort_traits_key | prepend: "trait_" %}
+      {% assign sorted_access_privileges = guest.access_privileges | sort: sort_by %}
+    {% else %}
+      {% assign sorted_access_privileges = guest.access_privileges %}
+    {% endif %}
+
+    {% for privilege in sorted_access_privileges %}
+      {% if privilege.type == "checkin_point" %}
+        {% if section.settings.filter_trait_key != blank and section.settings.filter_trait_value != blank %}
+          {% if privilege.accesspoint_traits[section.settings.filter_trait_key] == section.settings.filter_trait_value %}
+            {% assign has_access_privileges = true %}
+            {% break %}
+          {% endif %}
+        {% else %}
+          {% assign has_access_privileges = true %}
+          {% break %}
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+
+    {% if has_access_privileges == true %}
+      {% if section.settings.accreditations_table_title != blank %}
+        <h3 class="text-left padding-xs">{{ section.settings.accreditations_table_title | escape }}</h3>
+      {% endif %}
+
+      <table class="table table-bordered">
+        {% for privilege in sorted_access_privileges %}
+          {% if privilege.type == "checkin_point" %}
+
+            {% assign access_name_key = "localized_name" %}
+            {% if section.settings.label_trait_key != blank and privilege.accesspoint_traits[section.settings.label_trait_key] != blank %}
+              {% assign access_name_key = "localized_traits__" | append: section.settings.label_trait_key %}
+            {% endif %}
+            {% assign access_name = privilege.accesspoint[access_name_key] %}
+            {% if section.settings.filter_trait_key != blank and section.settings.filter_trait_value != blank %}
+              {% if privilege.accesspoint_traits[section.settings.filter_trait_key] == section.settings.filter_trait_value %}
+                <tr>
+                  <td>
+                    <strong>{{ access_name }}</strong>
+                    {% if privilege.accesspoint.description != blank %}
+                      <br /><small>{{ privilege.accesspoint.description }}</small>
+                    {% endif %}
+                  </td>
+                </tr>
+              {% endif %}
+            {% else %}
+              <tr>
+                <td>
+                  <strong>{{ access_name }}</strong>
+                  {% if privilege.accesspoint.description != blank %}
+                    <br /><small>{{ privilege.accesspoint.description }}</small>
+                  {% endif %}
+                </td>
+              </tr>
+            {% endif %}
+          {% endif %}
+        {% endfor %}
+      </table>
+    {% endif %}
+  {% endif %}
+
+  <!-- SESSIONS -->
+  {% if section.settings.enable_sessions_table == true %}
+    <div class="order-summary-session">
+      {% assign sorted_access_privileges = guest.access_privileges | sort: 'accesspoint_start_date' %}
+      {% assign sessions_dates = '' %}
+      {% for privilege in sorted_access_privileges %}
+        {% if privilege.type == "session" %}
+          {% assign has_sessions = true %}
+          {% unless sessions_dates contains privilege.accesspoint.formatted_start_day %}
+            {% if sessions_dates == blank %}
+              {% assign sessions_dates = sessions_dates | append: privilege.accesspoint.formatted_start_day %}
+            {% else %}
+              {% assign sessions_dates = sessions_dates | append: "," | append: privilege.accesspoint.formatted_start_day %}
+            {% endif %}
+          {% endunless %}
+        {% endif %}
+      {% endfor %}
+      {% assign sessions_dates = sessions_dates | split: "," %}
+
+      {% if has_sessions == true %}
+        {% if section.settings.sessions_table_title != blank %}
+          <h3 class="text-left padding-xs">{{ section.settings.sessions_table_title | escape }}</h3>
+        {% endif %}
+
+        <ul class="nav nav-tabs" role="tablist">
+          {% for session_date in sessions_dates %}
+            <li role="{{session_date | replace: "/", "_"}}" class="{% if forloop.first == true %}active{% endif %}"><a href="#{{session_date | replace: "/", "_"}}" aria-controls="{{session_date | replace: "/", "_"}}" role="tab" data-toggle="tab"><i class="fa fa-calendar-o"></i> {{ session_date }}</a></li>
+          {% endfor %}
+        </ul>
+
+        <div class="tab-content">
+          {% for session_date in sessions_dates %}
+            <div role="tabpanel" class="tab-pane {% if forloop.first == true %}active{% endif %}" id="{{session_date | replace: "/", "_"}}">
+              <table class="table table-bordered">
+                {% for privilege in sorted_access_privileges %}
+                  {% if privilege.type == "session" and privilege.accesspoint.formatted_start_day == session_date %}
+                    <tr>
+                      <td>
+                        <h4 class="title">
+                          {% if privilege.accesspoint.description.size > 6 or privilege.accesspoint.registered_speakers.size > 0 or privilege.accesspoint.exhibitors.size > 0 %}
+                            <a data-toggle="collapse" href="#collapse-{{ privilege.accesspoint.uid }}" aria-expanded="false" aria-controls="collapse">{{ privilege.accesspoint_name }} <i class="fa fa-caret-down"></i></a>
+                          {% else %}
+                            {{ privilege.accesspoint_name }}
+                          {% endif %}
+                        </h4>
+
+                        <p class="session-type-and-thematics">
+                          {% if section.settings.enable_sessions_type == true %}
+                            <span class="label label-default session-type">{{ privilege.accesspoint.localized_session_type_label }}</span>
+                          {% endif %}
+
+                          {% if section.settings.enable_sessions_thematics == true and privilege.accesspoint.thematics.size > 0 %}
+                            <span class="session-thematics">
+                              {% for thematic in privilege.accesspoint.thematics %}
+                                <span class="label label-default" style="{% if section.settings.colored_thematics %}background-color: {{ thematic.color }};{% endif %}">{{ thematic.localized_name }}</span>
+                              {% endfor %}
+                            </span>
+                          {% endif %}
+                        </p>
+
+                        <div class="session-details">
+                          {% if section.settings.enable_sessions_time == true %}
+                            <i class="fa fa-clock-o"></i> {{ privilege.accesspoint.start_time }} - {{ privilege.accesspoint.end_time }}
+                          {% endif %}
+                          {% if section.settings.enable_sessions_time == true and section.settings.enable_sessions_location == true and privilege.accesspoint.localized_location != blank %}
+                            <span class="vertical-separator"> | </span>
+                          {% endif %}
+                          {% if section.settings.enable_sessions_location == true and privilege.accesspoint.localized_location != blank %}
+                            <i class="fa fa-map-marker"></i> {{ privilege.accesspoint.localized_location }}
+                          {% endif %}
+                        </div>
+
+                        <div class="collapse" id="collapse-{{ privilege.accesspoint.uid }}">
+                          {% if privilege.accesspoint.description.size > 6 %}
+                            <div class="session-description">{{ privilege.accesspoint.description | newline_to_br }}</div>
+                          {% endif %}
+
+                          {% if privilege.accesspoint.registered_speakers.size > 0 %}
+                            <p class="session-speakers">
+                              <i class="fa fa-microphone"></i>
+                              {% for speaker in privilege.accesspoint.registered_speakers %}
+                                <span class="session-speaker">{{ speaker.identity }}</span>
+                              {% endfor %}
+                            </p>
+                          {% endif %}
+
+                          {% if privilege.accesspoint.exhibitors.size > 0 %}
+                            <p class="session-exhibitors">
+                              {% for exhibitor in privilege.accesspoint.exhibitors %}
+                                {% assign illustration_url = exhibitor[section.settings.exhibitor_illustration_field] %}
+                                {% if illustration_url != blank and illustration_url != nil %}
+                                  <img data-src="{{ illustration_url }}" alt="{{ exhibitor.company_name }}" height="50" title="{{ exhibitor.company_name }}" />
+                                {% else %}
+                                  <span>{{ exhibitor.company_name }}</span>
+                                {% endif %}
+                              {% endfor %}
+                            </p>
+                          {% endif %}
+                        </div>
+                        <div class="session-buttons">
+                          {% if section.settings.enable_unregistration == true %}
+                            <div class="pull-right mt-10">
+                              {% checkin_point_register_button section.settings.register_button_label, accesspoint_id: privilege.accesspoint.id, class: "btn btn-primary btn-sm", unregister_label: section.settings.unregister_button_label, unregisterable: section.settings.enable_unregistration %}
+                              <div class="text text-danger accesspoint-error-message up-s" style="display: none;"></div>
+                            </div>
+                          {% endif %}
+                          {% if guest and section.settings.session_live_page_path != blank %}
+                            {% assign session = privilege.accesspoint %}
+                            {% capture live_page_path %}/{{ section.settings.session_live_page_path | replace: "__id__", session.id }}{% endcapture %}
+                            {% assign live_button_wording = nil %}
+                            {% assign live_button_class = "btn-danger" %}
+                            {% if session.live? %}
+                              {% assign live_button_wording = t.accesspoint_live_streaming %}
+                            {% elsif session.live_over? and session.streaming_archives != blank %}
+                              {% assign live_button_wording = t.accesspoint_live_replay %}
+                              {% assign live_button_class = "btn-primary" %}
+                            {% endif %}
+                            {% if live_button_wording != nil %}
+                              <div class="pull-left mt-10 {% unless guest.may_access_live_session_ids[session.id] %}hidden{% endunless %}" data-live-access-session-id={{ session.id }}>
+                                <a href="{{ live_page_path }}" class="btn {{ live_button_class }} btn-sm"><i class="fa fa-youtube-play" aria-hidden="true"></i>&nbsp;&nbsp;{{ live_button_wording }}</a>
+                              </div>
+                            {% endif %}
+                          {% endif %}
+                        </div>
+                      </td>
+                    </tr>
+                  {% endif %}
+                {% endfor %}
+              </table>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+  {% endif %}
+
+  <!-- PRODUITS -->
+  {% if section.settings.enable_products_table == true %}
+    {% if section.settings.products_sort_traits_key != blank %}
+      {% assign sort_by = section.settings.products_sort_traits_key | prepend: "trait_" %}
+      {% assign sorted_access_privileges = guest.access_privileges | sort: sort_by %}
+    {% else %}
+      {% assign sorted_access_privileges = guest.access_privileges %}
+    {% endif %}
+
+    {% for privilege in sorted_access_privileges %}
+      {% if privilege.type == "product" %}
+        {% if section.settings.products_filter_trait_key != blank and section.settings.products_filter_trait_value != blank %}
+          {% if privilege.accesspoint_traits[section.settings.products_filter_trait_key] == section.settings.products_filter_trait_value %}
+            {% assign has_products = true %}
+            {% break %}
+          {% endif %}
+        {% else %}
+          {% assign has_products = true %}
+          {% break %}
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+
+    {% if has_products == true %}
+      {% if section.settings.products_table_title != blank %}
+        <h3 class="text-left padding-xs">{{ section.settings.products_table_title | escape }}</h3>
+      {% endif %}
+
+      <table class="table table-bordered">
+        <thead>
+          <td>{{ t.products }}</td>
+          <td width="100" class="text-right">{{ t.qty }}</td>
+          <td width="100" class="text-right">{{ t.unit_price }}</td>
+          <td width="100" class="text-right">{{ t.total }}</td>
+        </thead>
+        {% for privilege in sorted_access_privileges %}
+          {% if privilege.type == "product" %}
+
+            {% assign access_name_key = "localized_name" %}
+            {% if section.settings.products_label_trait_key != blank and privilege.accesspoint_traits[section.settings.products_label_trait_key] != blank %}
+              {% assign access_name_key = "localized_traits__" | append: section.settings.products_label_trait_key %}
+            {% endif %}
+            {% assign access_name = privilege.accesspoint[access_name_key] %}
+
+            <tr>
+              <td>
+                {% if section.settings.products_filter_trait_key != blank and section.settings.products_filter_trait_value != blank %}
+                  {% if privilege.accesspoint_traits[section.settings.products_filter_trait_key] == section.settings.products_filter_trait_value %}
+                    <strong>{{ access_name }}</strong>
+                  {% endif %}
+                {% else %}
+                  <strong>{{ access_name }}</strong>
+                {% endif %}
+
+                {% if privilege.accesspoint.description.size > 6 %}
+                  <div class="session-description">{{ privilege.accesspoint.description | newline_to_br }}</div>
+                {% endif %}
+              </td>
+              <td width="100" class="text-right">
+                <strong>{{ privilege.quantity }}</strong>
+              </td>
+
+              {% if guest.guest_category.currency == "EUR" %}
+                {% assign currency_symbol = "€" %}
+              {% elsif guest.guest_category.currency == "USD" %}
+                {% assign currency_symbol = "$" %}
+              {% endif %}
+              <td width="100" class="text-right">
+                <strong>{{ privilege.accesspoint.price }} {{ currency_symbol }}</strong>
+              </td>
+              <td width="100" class="text-right">
+                {% assign quantity = privilege.quantity | plus: 0 %}
+                {% assign united_price = privilege.accesspoint.price | plus: 0 %}
+                <strong>{{ quantity | times: united_price }} {{ currency_symbol }}</strong>
+              </td>
+            </tr>
+          {% endif %}
+        {% endfor %}
+      </table>
+    {% endif %}
+  {% endif %}
+
+  <!-- ACCOMMODATIONS -->
+  {% if section.settings.enable_accommodations_table == true %}
+
+    {% if section.settings.accommodation_sort_traits_key != blank %}
+      {% assign sort_by = section.settings.accommodation_sort_traits_key | prepend: "trait_" %}
+      {% assign sorted_accommodations = guest.access_privileges | sort: sort_by %}
+    {% else %}
+      {% assign sorted_accommodations = guest.access_privileges %}
+    {% endif %}
+
+    {% for privilege in sorted_accommodations %}
+      {% if privilege.type == "accommodation" %}
+        {% if section.settings.accommodation_filter_trait_key != blank and section.settings.accommodation_filter_trait_value != blank %}
+          {% if privilege.accesspoint_traits[section.settings.accommodation_filter_trait_key] == section.settings.accommodation_filter_trait_value %}
+            {% assign has_accommodations = true %}
+            {% break %}
+          {% endif %}
+        {% else %}
+          {% assign has_accommodations = true %}
+          {% break %}
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+
+    {% if has_accommodations == true %}
+      {% if section.settings.accommodations_table_title != blank %}
+        <h3 class="text-left padding-xs">{{ section.settings.accommodations_table_title | escape }}</h3>
+      {% endif %}
+
+      <table class="table table-bordered">
+        {% for privilege in sorted_accommodations %}
+          {% if privilege.type == "accommodation" %}
+            {% assign accommodations_display = false %}
+
+            {% if section.settings.accommodation_filter_trait_key != blank and section.settings.accommodation_filter_trait_value != blank %}
+              {% if privilege.accesspoint_traits[section.settings.accommodation_filter_trait_key] == section.settings.accommodation_filter_trait_value %}
+                {% assign accommodations_display = true %}
+              {% endif %}
+            {% else %}
+              {% assign accommodations_display = true %}
+            {% endif %}
+
+            {% if accommodations_display %}
+              {% assign access_name_key = "localized_name" %}
+
+              {% if section.settings.accommodation_label_trait_key != blank and privilege.accesspoint_traits[section.settings.accommodation_label_trait_key] != blank %}
+                {% assign access_name_key = "localized_traits__" | append: section.settings.accommodation_label_trait_key %}
+                {% assign access_name = privilege.accesspoint[access_name_key] %}
+              {% else %}
+                {% assign access_name = privilege.accesspoint.localized_location | append: " - " | append: privilege.accesspoint.localized_room_type | append: " - " | append: privilege.accesspoint.formatted_start_day %}
+              {% endif %}
+
+              <tr>
+                <td>
+                  <strong>{{ access_name }}</strong>
+
+                  {% if privilege.accesspoint.description != blank %}
+                    <br /><small>{{ privilege.accesspoint.description }}</small>
+                  {% endif %}
+                </td>
+              </tr>
+            {% endif %}
+          {% endif %}
+        {% endfor %}
+      </table>
+    {% endif %}
+  {% endif %}
+
+  <!-- LINKED GUESTS -->
+  {% if section.settings.enable_linked_guests_table == true and linked_guests.size > 0 %}
+    {% if section.settings.display_edit_button == true and section.settings.display_badge_button == true ans section.settings.display_confirmation_page_button == true %}
+      {% assign first_td_class = "col-md-3" %}
+    {% elsif section.settings.display_edit_button == true and section.settings.display_badge_button == true %}
+      {% assign first_td_class = "col-md-6" %}
+    {% elsif section.settings.display_edit_button == true or section.settings.display_badge_button == true %}
+      {% assign first_td_class = "col-md-9" %}
+    {% else %}
+      {% assign first_td_class = "col-xs-12" %}
+    {% endif %}
+
+    {% if section.settings.linked_guests_table_title != blank %}
+      <h3 class="text-left padding-xs">{{ section.settings.linked_guests_table_title | escape }}</h3>
+    {% endif %}
+
+    <table class="table table-bordered">
+      <tbody>
+      {% for lg in linked_guests %}
+        {% assign category = lg.guest_category %}
+        <tr>
+          <td class="{{ first_td_class }}">
+            <strong>{{ lg[section.settings.identity_field] }}</strong>
+
+            {% if section.settings.display_category_name == true %}
+              <!-- Configure guest category trait 'label' for custom label -->
+              {% if category.traits.label != "" and category.traits.label != nil %}
+                <small>- {{ category.localized_traits__label }}</small>
+              {% else %}
+                <small>- {{ category.localized_name }}</small>
+              {% endif %}
+            {% endif %}
+
+            <br />
+
+            {% if section.settings.display_category_description == true and category.traits.description != blank and category.traits.description != nil %}
+              <!-- Configure guest category trait 'description' for custom description -->
+              <div style="margin-top: 10px">{{ category.localized_traits__description }}</div>
+            {% endif %}
+
+            <!-- Display linked guest access privileges -->
+            {% if section.settings.display_access_privileges == true and lg.access_privileges.size > 0 %}
+              <ul style="margin: 10px 0 0; font-size: 95%;">
+                {% for access_privilege in lg.access_privileges %}
+                  {% if access_privilege.type != "product" %}
+                    <li>
+                      <!-- Configure accesspoint trait 'label' for custom label -->
+                      {% if access_privilege.accesspoint_traits.label != nil and access_privilege.accesspoint_traits.label != blank %}
+                        {{ access_privilege.accesspoint.localized_traits__label }}
+                      {% else %}
+                        {{ access_privilege.accesspoint.localized_name }}
+                      {% endif %}
+
+                      {% if access_privilege.accesspoint.description != blank %}
+                        <br /><small>{{ access_privilege.accesspoint.description }}</small>
+                      {% endif %}
+                    </li>
+                  {% endif %}
+                {% endfor %}
+              </ul>
+            {% endif %}
+
+            <!-- Display linked guest products -->
+            {% for access_privilege in lg.access_privileges %}
+              {% if access_privilege.type == "product" %}
+                {% assign lg_has_products = true %}
+                {% break %}
+              {% endif %}
+            {% endfor %}
+
+            {% if section.settings.display_products == true and lg_has_products == true %}
+              <ul style="margin: 10px 0 0; font-size: 95%;">
+                {% for access_privilege in lg.access_privileges %}
+                  {% if access_privilege.type == "product" %}
+                    <li>
+                      <!-- Configure accesspoint trait 'label' for custom label -->
+                      {% if access_privilege.accesspoint_traits.label != nil and access_privilege.accesspoint_traits.label != blank %}
+                        {% assign product_label = access_privilege.accesspoint.localized_traits__label %}
+                      {% else %}
+                        {% assign product_label = access_privilege.accesspoint.localized_name %}
+                      {% endif %}
+                      {{ product_label }} ({{ t.qty }}: {{access_privilege.quantity }})
+
+                      {% if access_privilege.accesspoint.description != blank %}
+                        <br /><small>{{ access_privilege.accesspoint.description }}</small>
+                      {% endif %}
+                    </li>
+                  {% endif %}
+                {% endfor %}
+              </ul>
+            {% endif %}
+          </td>
+
+          {% if section.settings.display_badge_button == true %}
+            <td class="text-center col-md-3" style="vertical-align: middle;">
+              {% if category.badge_enabled == true and lg.status == "registered" %}
+                <a href="{{ lg.badge_url }}" class="btn btn-sm btn-primary" target="_blank">{{ section.settings.badge_button_label }}</a>
+              {% else %}
+                <a class="btn btn-sm btn-link btn-disabled" disabled>-</a>
+              {% endif %}
+            </td>
+          {% endif %}
+
+          {% if section.settings.display_edit_button == true %}
+            <td class="text-center col-md-3" style="vertical-align: middle;">
+              {% if category.custom_registration_form_enabled == true %}
+                <a href="{{ lg.registration_form_url }}&step_number={{ section.settings.edit_step_number }}" class="btn btn-sm btn-primary" target="_blank">{{ section.settings.edit_button_label }}</a>
+              {% else %}
+                <a class="btn btn-sm btn-link btn-disabled" disabled>-</a>
+              {% endif %}
+            </td>
+          {% endif %}
+
+          {% if section.settings.display_confirmation_page_button == true %}
+            <td class="text-center col-md-3" style="vertical-align: middle;">
+              {% assign link_button = lg.confirmation_page_url %}
+              <a href="{{ link_button }}" class="btn btn-sm btn-primary" target="_blank">{{ section.settings.confirmation_page_button_label }}</a>
+            </td>
+          {% endif %}
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
+
+  <!-- CARTS HISTORY -->
+  {% for cart in guest.carts %}
+    {% if cart.payment_status != "FREE" %}
+      <!-- {% increment payable_carts_size %} -->
+    {% endif %}
+  {% endfor %}
+
+  {% if section.settings.enable_carts_table == true and payable_carts_size > 0 %}
+    {% if section.settings.carts_table_title != blank %}
+      <h3 class="text-left padding-xs">{{ section.settings.carts_table_title | escape }}</h3>
+    {% endif %}
+
+    <!-- Tax name -->
+    {% assign incl_taxes_text = t.incl %}
+    {% assign excl_taxes_text = t.excl %}
+
+    <div class="table-responsive">
+      <table class="table table-bordered">
+        {% for cart in guest.carts %}
+          {% if cart.total_excl_vat > 0 %}
+            {% assign tax_name = guest.guest_category.localized_taxes_name %}
+            {% if cart.other_tax? %}
+              {% assign tax_name = t.taxes | capitalize %}
+            {% endif %}
+
+            <!-- commande {% increment no_commande %}-->
+            {% assign currency_symbol = cart.payment_currency %}
+            {% if cart.payment_currency == "EUR" %}
+              {% assign currency_symbol = "€" %}
+            {% elsif cart.payment_currency == "USD" %}
+              {% assign currency_symbol = "$" %}
+            {% endif %}
+
+            <tr class="active">
+              <td colspan="4" class="text-primary">
+                {% if locale == "fr" %}
+                  Commande n° {{ no_commande }} {% if cart.payment_date and cart.payment_status == "PAID" %} payée le {{ cart.payment_date | date: "%d/%m/%Y" }}{% else %}(non payée){% endif %}
+                {% elsif locale == "en" %}
+                  Order n° {{ no_commande }} {% if cart.payment_date and cart.payment_status == "PAID" %} paid on {{ cart.payment_date | date: "%m/%d/%Y" }}{% else %}(unpaid){% endif %}
+                {% elsif locale == "es" %}
+                  Orden n° {{ no_commande }} {% if cart.payment_date and cart.payment_status == "PAID" %} pagada el {{ cart.payment_date | date: "%d/%m/%Y" }}{% else %}(non pagada){% endif %}
+                {% elsif locale == "it" %}
+                  Commissione n° {{ no_commande }} {% if cart.payment_date and cart.payment_status == "PAID" %} pagata entro il {{ cart.payment_date | date: "%d/%m/%Y" }}{% else %}(non pagata){% endif %}
+                {% elsif locale == "de" %}
+                  Order n° {{ no_commande }} {% if cart.payment_date and cart.payment_status == "PAID" %} betaald der {{ cart.payment_date | date: "%d/%m/%Y" }}{% else %}(onbetaald){% endif %}
+                {% elsif locale == "pt" %}
+                  Ordem n° {{ no_commande }} {% if cart.payment_date and cart.payment_status == "PAID" %} pago em {{ cart.payment_date | date: "%d/%m/%Y" }}{% else %}(não remunerado){% endif %}
+                {% elsif locale == "pl" %}
+                  Zamówienie n° {{ no_commande }} {% if cart.payment_date and cart.payment_status == "PAID" %} zapłacone {{ cart.payment_date | date: "%d/%m/%Y" }}{% else %}(nie zapłacony){% endif %}
+                {% elsif locale == "cs" %}
+                  Objednávka n° {{ no_commande }} {% if cart.payment_date and cart.payment_status == "PAID" %} zaplaceno {{ cart.payment_date | date: "%d/%m/%Y" }}{% else %}(neplacené){% endif %}
+                {% elsif locale == "zh" %}
+                  订单号 {{ no_commande }} {% if cart.payment_date and cart.payment_status == "PAID" %} 已付 {{ cart.payment_date | date: "%m/%d/%Y" }}{% else %}(未付){% endif %}
+                {% endif %}
+
+                {% if section.settings.display_online_payment_button == true and cart.payment_status != "PAID" and cart.payment_status != "FREE" and guest.guest_category.online_payment_enabled == true %}
+                  <a href="{{ cart.online_payment_url }}" class="btn btn-primary btn-sm pull-right">{{ section.settings.online_payment_button_label }}</a>
+                {% endif %}
+              </td>
+            </tr>
+            <tr>
+              <th>{{ section.settings.carts_first_column_header }}</th>
+              <th class="text-right">{{ t.qty }}</th>
+              <th class="text-right">{{ t.price }} {{ excl_taxes_text }}</th>
+              <th class="text-right">{{ tax_name }}</th>
+              <th class="text-right">{{ t.price }} {{ incl_taxes_text }}</th>
+            </tr>
+            <!-- Display carts historical information -->
+            {% for cart_item in cart.cart_items %}
+              {% if cart_item.price_excl_vat != 0 %}
+                <tr>
+                  <td><strong>{{ cart_item.label }}</strong><br /><small>{{ cart_item.description }}</small></td>
+                  <td class="text-right">{{ cart_item.quantity }}</td>
+                  <td class="text-right">{{ cart_item.price_excl_vat | number_with_precision precision: 2 }} {{ currency_symbol }}</td>
+                  <td class="text-right">
+                    {{ cart_item.price_incl_vat | minus: cart_item.price_excl_vat | number_with_precision precision: 2 }} {{ currency_symbol }} <br />
+                    <small class="text-muted">
+                      {{cart_item.vat  | number_with_precision precision: 2, remove_zeros: true }}%
+                      {% if cart_item.other_tax > 0 %}
+                        ({{ guest.guest_category.localized_tax_name }} {{ cart_item.tax }}% + {{ guest.guest_category.localized_other_tax_name }} {{ cart_item.other_tax }}%)
+                      {% endif %}
+                    </small>
+                  </td>
+                  <td class="text-right">{{ cart_item.price_incl_vat | number_with_precision precision: 2 }} {{ currency_symbol }}</td>
+                </tr>
+              {% endif %}
+            {% endfor %}
+            <tr>
+              <td colspan="2"><strong>{{ t.total }}</strong></td>
+              <td class="text-right"><strong>{{ cart.total_excl_vat | number_with_precision precision: 2 }} {{ currency_symbol }}</strong></td>
+              <td class="text-right"><strong>{{ cart.total_incl_vat | minus: cart.total_excl_vat | number_with_precision precision: 2 }} {{ currency_symbol }}</strong></td>
+              <td class="text-right"><strong>{{ cart.total_incl_vat | number_with_precision precision: 2 }} {{ currency_symbol }}</strong></td>
+            </tr>
+          {% endif %}
+        {% endfor %}
+      </table>
+    </div>
+  {% endif %}
+</div>
+
+{% schema %}
+  {
+    "name": "Order summary",
+    "name_translations": { "fr": "Récapitulatif de commande" },
+    "class": "index-section",
+    "icon": "fa fa-shopping-cart",
+    "hidden_from_user": false,
+    "group_key": "registration",
+    "group_rank": 2000,
+    "settings": [
+      {
+        "type": "header",
+        "content": "Summary of accreditations",
+        "content_translations": { "fr": "Récapitulatif des accréditations" }
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_accreditations_table",
+        "label": "Enable this summary",
+        "label_translations": { "fr": "Activer ce récapitulatif" },
+        "default": false
+      },
+      {
+        "type": "text",
+        "id": "accreditations_table_title",
+        "label": "Table title",
+        "label_translations": { "fr": "Titre du tableau" },
+        "default": "Your accreditations",
+        "default_translations": { "fr": "Vos accréditations" },
+        "show_if": {
+          "source_id": "enable_accreditations_table",
+          "operator": "==",
+          "value": true
+        }
+      },
+      {
+        "type": "accesspoint_trait_picker",
+        "id": "label_trait_key",
+        "label": "Field used as label",
+        "label_translations": { "fr": "Champ utilisé comme libellé" },
+        "default": "",
+        "info": "By default, the checkin point label will be displayed",
+        "info_translations": { "fr": "Par défaut, le libellé du point de check-in sera affiché." },
+        "show_if": {
+          "source_id": "enable_accreditations_table",
+          "operator": "==",
+          "value": true
+        }
+      },
+      {
+        "type": "accesspoint_trait_picker",
+        "id": "filter_trait_key",
+        "label": "Filter by",
+        "label_translations": { "fr": "Filtrer par" },
+        "default": "",
+        "info": "If no filter, every accreditation will be displayed",
+        "info_translations": { "fr": "Si aucun filtre, toutes les accréditations du participant seront affichées." },
+        "show_if": {
+          "source_id": "enable_accreditations_table",
+          "operator": "==",
+          "value": true
+        }
+      },
+      {
+        "type": "text",
+        "id": "filter_trait_value",
+        "label": "Filter value",
+        "label_translations": { "fr": "Valeur du filtre" },
+        "default": "",
+        "show_if": {
+          "source_id": "filter_trait_key",
+          "operator": "!=",
+          "value": ""
+        }
+      },
+      {
+        "type": "accesspoint_trait_picker",
+        "id": "sort_traits_key",
+        "label": "Sort by",
+        "label_translations": { "fr": "Trier par" },
+        "default": "",
+        "info": "By default, accreditations are ordered by checkin point name",
+        "info_translations": { "fr": "Par défaut, les accréditations sont ordonnées selon le nom du point de check-in." },
+        "show_if": {
+          "source_id": "enable_accreditations_table",
+          "operator": "==",
+          "value": true
+        }
+      },
+      {
+        "type": "header",
+        "content": "Summary of products",
+        "content_translations": { "fr": "Récapitulatif des produits" }
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_products_table",
+        "label": "Enable this summary",
+        "label_translations": { "fr": "Activer ce récapitulatif" },
+        "default": false
+      },
+      {
+        "type": "text",
+        "id": "products_table_title",
+        "label": "Table title",
+        "label_translations": { "fr": "Titre du tableau" },
+        "default": "Your products",
+        "default_translations": { "fr": "Vos produits" },
+        "show_if": {
+          "source_id": "enable_products_table",
+          "operator": "==",
+          "value": true
+        }
+      },
+      {
+        "type": "accesspoint_trait_picker",
+        "id": "products_label_trait_key",
+        "label": "Field used as label",
+        "label_translations": { "fr": "Champ utilisé comme libellé" },
+        "default": "",
+        "info": "By default, the product label will be displayed",
+        "info_translations": { "fr": "Par défaut, le libellé du produit sera affiché." },
+        "show_if": {
+          "source_id": "enable_products_table",
+          "operator": "==",
+          "value": true
+        }
+      },
+      {
+        "type": "accesspoint_trait_picker",
+        "id": "products_filter_trait_key",
+        "label": "Filter by",
+        "label_translations": { "fr": "Filtrer par" },
+        "default": "",
+        "info": "If no filter, every product will be displayed",
+        "info_translations": { "fr": "Si aucun filtre, tous les produits du participant seront affichés." },
+        "show_if": {
+          "source_id": "enable_products_table",
+          "operator": "==",
+          "value": true
+        }
+      },
+      {
+        "type": "text",
+        "id": "products_filter_trait_value",
+        "label": "Filter value",
+        "label_translations": { "fr": "Valeur du filtre" },
+        "default": "",
+        "show_if": {
+          "source_id": "products_filter_trait_key",
+          "operator": "!=",
+          "value": ""
+        }
+      },
+      {
+        "type": "accesspoint_trait_picker",
+        "id": "products_sort_traits_key",
+        "label": "Sort by",
+        "label_translations": { "fr": "Trier par" },
+        "default": "",
+        "info": "By default, products are ordered by name",
+        "info_translations": { "fr": "Par défaut, les produits sont ordonnés par nom." },
+        "show_if": {
+          "source_id": "enable_products_table",
+          "operator": "==",
+          "value": true
+        }
+      },
+      {
+        "type": "header",
+        "content": "Summary of sessions",
+        "content_translations": { "fr": "Récapitulatif du programme" }
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_sessions_table",
+        "label": "Enable this summary",
+        "label_translations": { "fr": "Activer ce récapitulatif" },
+        "default": false
+      },
+      {
+        "type": "text",
+        "id": "sessions_table_title",
+        "label": "Table title",
+        "label_translations": { "fr": "Titre du tableau" },
+        "default": "Your schedule",
+        "default_translations": { "fr": "Votre programme" },
+        "show_if": {
+          "source_id": "enable_sessions_table",
+          "operator": "==",
+          "value": true
+        }
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_sessions_type",
+        "label": "Display session type",
+        "label_translations": { "fr": "Afficher le type de session" },
+        "default": false,
+        "show_if": {
+          "source_id": "enable_sessions_table",
+          "operator": "==",
+          "value": true
+        }
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_sessions_thematics",
+        "label": "Display session tracks",
+        "label_translations": { "fr": "Afficher les thématiques de la session" },
+        "default": false,
+        "show_if": {
+          "source_id": "enable_sessions_table",
+          "operator": "==",
+          "value": true
+        }
+      },
+      {
+        "type": "checkbox",
+        "id": "colored_thematics",
+        "label": "Colored thematics",
+        "label_translations": { "fr": "Thématiques en couleur" },
+        "default": true,
+        "show_if": {
+          "source_id": "enable_sessions_thematics",
+          "operator": "==",
+          "value": true
+        }
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_sessions_time",
+        "label": "Display session time",
+        "label_translations": { "fr": "Afficher l'horaire de la session" },
+        "default": false,
+        "show_if": {
+          "source_id": "enable_sessions_table",
+          "operator": "==",
+          "value": true
+        }
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_sessions_location",
+        "label": "Display session location",
+        "label_translations": { "fr": "Afficher le lieu de la session" },
+        "default": false,
+        "show_if": {
+          "source_id": "enable_sessions_table",
+          "operator": "==",
+          "value": true
+        }
+      },
+      {
+        "type": "guest_field_picker",
+        "id": "exhibitor_illustration_field",
+        "label": "Exhibitors illustration",
+        "label_translations": { "fr": "Illustration des exposants" },
+        "default": "avatar",
+        "show_if": {
+          "source_id": "enable_sessions_table",
+          "operator": "==",
+          "value": true
+        }
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_unregistration",
+        "label": "Enable unregistration from sessions",
+        "label_translations": { "fr": "Activer la désincription des sessions" },
+        "default": true,
+        "show_if": {
+          "source_id": "enable_sessions_table",
+          "operator": "==",
+          "value": true
+        }
+      },
+      {
+        "type": "text",
+        "id": "unregister_button_label",
+        "label": "Unregistration button label",
+        "label_translations": { "fr": "Libellé du bouton de désinscription" },
+        "default": "Unregister",
+        "default_translations": { "fr": "Se désinscrire" },
+        "show_if": {
+          "source_id": "enable_unregistration",
+          "operator": "==",
+          "value": true
+        }
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_registration",
+        "label": "Enable registration to sessions",
+        "label_translations": { "fr": "Activer la réinscription aux sessions" },
+        "default": true,
+        "show_if": {
+          "source_id": "enable_unregistration",
+          "operator": "==",
+          "value": true
+        }
+      },
+      {
+        "type": "text",
+        "id": "register_button_label",
+        "label": "Registration button label",
+        "label_translations": { "fr": "Libellé du bouton d'inscription" },
+        "default": "Register",
+        "default_translations": { "fr": "S'inscrire" },
+        "show_if": {
+          "source_id": "enable_registration",
+          "operator": "==",
+          "value": true
+        }
+      },
+      {
+        "type": "select_info_page_picker",
+        "id": "session_live_page_path",
+        "resource_name": "session",
+        "resource_live": true,
+        "label": "Page for live sessions",
+        "label_translations": { "fr": "Page pour le live des sessions" },
+        "default": ""
+      },
+      {
+        "type": "header",
+        "content": "Summary of accommodations",
+        "content_translations": { "fr": "Récapitulatif des hébergements" }
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_accommodations_table",
+        "label": "Enable this summary",
+        "label_translations": { "fr": "Activer ce récapitulatif" },
+        "default": false
+      },
+      {
+        "type": "text",
+        "id": "accommodations_table_title",
+        "label": "Table title",
+        "label_translations": { "fr": "Titre du tableau" },
+        "default": "Your accommodations",
+        "default_translations": { "fr": "Vos hébergements" },
+        "show_if": {
+          "source_id": "enable_accommodations_table",
+          "operator": "==",
+          "value": true
+        }
+      },
+      {
+        "type": "accesspoint_trait_picker",
+        "id": "accommodation_label_trait_key",
+        "label": "Field used as label",
+        "label_translations": { "fr": "Champ utilisé comme libellé" },
+        "info": "By default, the accommodation label will be displayed",
+        "info_translations": { "fr": "Par défaut, le libellé de l'hébergement sera affiché." },
+        "default": "",
+        "show_if": {
+          "source_id": "enable_accommodations_table",
+          "operator": "==",
+          "value": true
+        }
+      },
+      {
+        "type": "accesspoint_trait_picker",
+        "id": "accommodation_filter_trait_key",
+        "label": "Filter by",
+        "label_translations": { "fr": "Filtrer par" },
+        "default": "",
+        "info": "If no filter, every accommodation will be displayed",
+        "info_translations": { "fr": "Si aucun filtre, tous les hébergements du participant seront affichés." },
+        "show_if": {
+          "source_id": "enable_accommodations_table",
+          "operator": "==",
+          "value": true
+        }
+      },
+      {
+        "type": "text",
+        "id": "accommodation_filter_trait_value",
+        "label": "Filter value",
+        "label_translations": { "fr": "Valeur du filtre" },
+        "default": "",
+        "show_if": {
+          "source_id": "accommodation_filter_trait_key",
+          "operator": "!=",
+          "value": ""
+        }
+      },
+      {
+        "type": "accesspoint_trait_picker",
+        "id": "accommodation_sort_traits_key",
+        "label": "Sort by",
+        "label_translations": { "fr": "Trier par" },
+        "info": "By default, accreditations are ordered by accommodation name",
+        "info_translations": { "fr": "Par défaut, les hébergements sont ordonnés par nom." },
+        "default": "",
+        "show_if": {
+          "source_id": "enable_accommodations_table",
+          "operator": "==",
+          "value": true
+        }
+      },
+      {
+        "type": "header",
+        "content": "Summary of accompanying people / tickets",
+        "content_translations": { "fr": "Récapitulatif des accompagnants / tickets" }
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_linked_guests_table",
+        "label": "Enable this summary",
+        "label_translations": { "fr": "Activer ce récapitulatif" },
+        "default": false
+      },
+      {
+        "type": "text",
+        "id": "linked_guests_table_title",
+        "label": "Table title",
+        "label_translations": { "fr": "Titre du tableau" },
+        "default": "Your tickets",
+        "default_translations": { "fr": "Vos tickets" },
+        "show_if": {
+          "source_id": "enable_linked_guests_table",
+          "operator": "==",
+          "value": true
+        }
+      },
+      {
+        "type": "guest_field_picker",
+        "id": "identity_field",
+        "label": "Field for name",
+        "label_translations": { "fr": "Champ pour le nom" },
+        "default": "identity",
+        "show_if": {
+          "source_id": "enable_linked_guests_table",
+          "operator": "==",
+          "value": true
+        }
+      },
+      {
+        "type": "checkbox",
+        "id": "display_category_name",
+        "label": "Display the name of registration category",
+        "label_translations": { "fr": "Afficher le nom de la catégorie d'inscription" },
+        "default": true,
+        "info": "You can customize this information by adding metadata 'label' to category.",
+        "info_translations": { "fr": "Il est possible de personnaliser cette information en ajoutant la metadata 'label' à la catégorie." },
+        "show_if": {
+          "source_id": "enable_linked_guests_table",
+          "operator": "==",
+          "value": true
+        }
+      },
+      {
+        "type": "checkbox",
+        "id": "display_category_description",
+        "label": "Display the description of registration category",
+        "label_translations": { "fr": "Afficher la description de la catégorie d'inscription" },
+        "default": true,
+        "info": "You can customize this information by adding metadata 'description' to category.",
+        "info_translations": { "fr": "Il est possible de personnaliser cette information en ajoutant la metadata 'description' à la catégorie." },
+        "show_if": {
+          "source_id": "enable_linked_guests_table",
+          "operator": "==",
+          "value": true
+        }
+      },
+      {
+        "type": "checkbox",
+        "id": "display_access_privileges",
+        "label": "Display extra accreditations",
+        "label_translations": { "fr": "Afficher les accréditations supplémentaires" },
+        "default": true,
+        "info": "You can customize this information by adding metadata 'label' to check-in points.",
+        "info_translations": { "fr": "Il est possible de personnaliser ces informations en ajoutant la metadata 'label' aux points de check-in." },
+        "show_if": {
+          "source_id": "enable_linked_guests_table",
+          "operator": "==",
+          "value": true
+        }
+      },
+      {
+        "type": "checkbox",
+        "id": "display_products",
+        "label": "Display products",
+        "label_translations": { "fr": "Afficher les produits" },
+        "default": true,
+        "info": "You can customize this information by adding metadata 'label' to products.",
+        "info_translations": { "fr": "Il est possible de personnaliser ces informations en ajoutant la metadata 'label' aux produits." },
+        "show_if": {
+          "source_id": "enable_linked_guests_table",
+          "operator": "==",
+          "value": true
+        }
+      },
+      {
+        "type": "checkbox",
+        "id": "display_badge_button",
+        "label": "Display badge download button",
+        "label_translations": { "fr": "Afficher le bouton de téléchargement du badge" },
+        "default": true,
+        "show_if": {
+          "source_id": "enable_linked_guests_table",
+          "operator": "==",
+          "value": true
+        }
+      },
+      {
+        "type": "text",
+        "id": "badge_button_label",
+        "label": "Badge button label",
+        "label_translations": { "fr": "Libellé du bouton de badge" },
+        "default": "TICKET",
+        "default_translations": { "fr": "BILLET" },
+        "show_if": {
+          "source_id": "display_badge_button",
+          "operator": "==",
+          "value": true
+        }
+      },
+      {
+        "type": "checkbox",
+        "id": "display_edit_button",
+        "label": "Display edit button",
+        "label_translations": { "fr": "Afficher le bouton d'édition" },
+        "default": true,
+        "show_if": {
+          "source_id": "enable_linked_guests_table",
+          "operator": "==",
+          "value": true
+        }
+      },
+      {
+        "type": "text",
+        "id": "edit_button_label",
+        "label": "Edit button label",
+        "label_translations": { "fr": "Libellé du bouton d'édition" },
+        "default": "Edit this registration",
+        "default_translations": { "fr": "Éditer cette inscription" },
+        "show_if": {
+          "source_id": "display_edit_button",
+          "operator": "==",
+          "value": true
+        }
+      },
+      {
+        "type": "text",
+        "id": "edit_step_number",
+        "label": "Edit step number",
+        "label_translations": { "fr": "Numéro d'étape" },
+        "default": "1",
+        "default_translations": { "fr": "1" },
+        "show_if": {
+          "source_id": "display_edit_button",
+          "operator": "==",
+          "value": true
+        }
+      },
+      {
+        "type": "checkbox",
+        "id": "display_confirmation_page_button",
+        "label": "Display confirmation page button",
+        "label_translations": { "fr": "Afficher le bouton vers la page de confirmation" },
+        "default": true,
+        "show_if": {
+          "source_id": "enable_linked_guests_table",
+          "operator": "==",
+          "value": true
+        }
+      },
+      {
+        "type": "text",
+        "id": "confirmation_page_button_label",
+        "label": "Confirmation page button label",
+        "label_translations": { "fr": "Libellé du bouton vers la page de confirmation" },
+        "default": "Confirmation page",
+        "default_translations": { "fr": "Page de confirmation" },
+        "show_if": {
+          "source_id": "display_confirmation_page_button",
+          "operator": "==",
+          "value": true
+        }
+      },
+      {
+        "type": "header",
+        "content": "Summary of carts",
+        "content_translations": { "fr": "Récapitulatif des paniers de la commande" }
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_carts_table",
+        "label": "Enable this summary",
+        "label_translations": { "fr": "Activer ce récapitulatif" },
+        "default": false
+      },
+      {
+        "type": "text",
+        "id": "carts_table_title",
+        "label": "Table title",
+        "label_translations": { "fr": "Titre du tableau" },
+        "default": "Your orders",
+        "default_translations": { "fr": "Vos commandes" },
+        "show_if": {
+          "source_id": "enable_carts_table",
+          "operator": "==",
+          "value": true
+        }
+      },
+      {
+        "type": "text",
+        "id": "carts_first_column_header",
+        "label": "First column label",
+        "label_translations": { "fr": "Entête de la 1è colonne" },
+        "default": "Services",
+        "default_translations": { "fr": "Prestations" },
+        "show_if": {
+          "source_id": "enable_carts_table",
+          "operator": "==",
+          "value": true
+        }
+      },
+      {
+        "type": "checkbox",
+        "id": "display_online_payment_button",
+        "label": "Display online payment button",
+        "label_translations": { "fr": "Afficher le bouton de paiement en ligne" },
+        "default": false,
+        "info": "It will displayed for unpaid orders and if online payment is enabled.",
+        "info_translations": { "fr": "Il sera affiché en cas de paiment non produit et si le paiment en ligne est activé." },
+        "show_if": {
+          "source_id": "enable_carts_table",
+          "operator": "==",
+          "value": true
+        }
+      },
+      {
+        "type": "text",
+        "id": "online_payment_button_label",
+        "label": "Payment button link",
+        "label_translations": { "fr": "Libellé du bouton de paiement" },
+        "default": "Pay online",
+        "default_translations": { "fr": "Payer en ligne" },
+        "show_if": {
+          "source_id": "display_online_payment_button",
+          "operator": "==",
+          "value": true
+        }
+      }
+    ],
+    "presets": [
+      {
+        "name": "Order summary",
+        "name_translations": { "fr": "Récapitulatif de commande" }
+      }
+    ]
+  }
+{% endschema %}

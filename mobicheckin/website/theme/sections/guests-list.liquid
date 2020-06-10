@@ -1,0 +1,878 @@
+{% assign custom_filters = nil %}
+{% assign filter_setting_keys = "custom_filter_1,custom_filter_2,custom_filter_3" | split: "," %}
+
+{% for filter_setting_key in filter_setting_keys %}
+  {% assign enable_filter_setting_key = "enable_" | append: filter_setting_key %}
+  {% assign enable_filter_setting = section.settings[enable_filter_setting_key] %}
+  
+  {% if enable_filter_setting %}
+    {% assign filter_key = section.settings[filter_setting_key] %}
+    {% assign filter = event.guest_fields_by_key[filter_key] %}
+
+    {% if filter != blank %}
+      {% if custom_filters != nil %}
+        {% assign custom_filters = custom_filters | append: "," | append: filter_key %}
+      {% else %}
+        {% assign custom_filters = filter_key %}
+      {% endif %}
+    {% else %}
+      {% break %}
+    {% endif %}
+  {% else %}
+    {% break %}
+  {% endif %}
+{% endfor %}
+
+{% if custom_filters %}
+  {% assign custom_filters = custom_filters | split: "," %}
+{% endif %}
+
+<div class="container {{ settings.spacing }}" data-section-id="{{ section.id }}" data-section-type="guests-list" id="{{ section.id }}">
+  {% if section.settings.title != blank %}
+    <div class="section-header text-center down-s">
+      <h2 class="title">{{ section.settings.title | escape }}</h2>
+    </div>
+  {% endif %}
+
+  {% guests_paginate segment_id: section.settings.segment_id.first.segment_id, per_page: section.settings.per_page, recommendations: url_params.recommendations %}
+
+    {% assign recommendations_enabled = false %}
+    {% if guest and section.settings.enable_recommendations %}
+      {% assign recommendations_enabled = true %}
+    {% endif %}
+
+    <div class="pagination-container up-s row">
+      {% if section.settings.display_nb_entries %}
+        <div class="col-sm-6">
+          <h4 class="guests-nb-results">{{ paginate.total_entries }} {{ section.settings.entries_entity_name }}</h4>
+        </div>
+      {% endif %}
+
+      {% unless section.settings.enable_pagination == false or section.settings.pagination_position == "below" %}
+        <div class="{% if section.settings.display_nb_entries %}col-sm-6{% else %}col-sm-12{% endif %} text-right">
+          {% include 'pagination' pagination_type: section.settings.pagination_type, id_scrollto: section.id %}
+        </div>
+      {% endunless %}
+    </div>
+
+    <div class="row">
+      <div class="col-sm-12">
+        {% if section.settings.search_bar or recommendations_enabled or custom_filters.size > 0 or section.settings.enable_thematics_search and event.thematics.size > 1 %}
+          {% search_form class: 'search-form guests-search-form br-5' %}
+            <div class="row-flex">
+              {% if section.settings.search_bar %}
+                <div class="col-xs-12 search-filter">
+                  <div class="input-group">
+                    <input type="text" name="q" placeholder="{{ section.settings.search_bar_placeholder }}" class="form-control" value="{{ q }}" />
+                    <span class="input-group-btn">
+                      <button class="btn btn-primary btn-search" type="submit"><i class="fa fa-search"></i></button>
+                    </span>
+                  </div>
+                </div>
+              {% endif %}
+
+              {% if recommendations_enabled %}
+                <div class="col-xs-12 search-filter">
+                  <div class="form-group">
+                    <div class="checkbox" style="margin-top: 6px;">
+                      <label><input type="checkbox" name="recommendations" value="true" onchange="$(this).closest('.search-form').submit();" {% if url_params.recommendations == "true" %}checked{% endif %} /> <span>{{ section.settings.recommendations_label }}</span></label>
+                    </div>
+                  </div>
+                </div>
+              {% endif %}
+
+              {% if section.settings.enable_thematics_search and event.thematics.size > 1 %}
+                <div class="col-xs-12 search-filter">
+                  <label>{{ section.settings.thematics_filter_title }}</label>
+                  <div class="search-thematics">
+                    {% for thematic in event.thematics %}
+                      <label class="checkbox">
+                        <input type="checkbox" value="{{ thematic.id }}" name="search_options[thematic_ids][]" {% if url_params.search_options.thematic_ids contains thematic.id %}checked{% endif %} />
+                        <span class="label label-default" style="background-color: {{ thematic.color }}; border-radius: 50%; font-size: 50%; vertical-align: 40%;">&nbsp;&nbsp;</span> {{ thematic.localized_name }}
+                      </label>
+                    {% endfor %}
+                  </div>
+                </div>
+              {% endif %}
+
+              {% if custom_filters.size > 0 %}
+                {% for custom_filter in custom_filters %}
+                  {% assign filter = event.guest_fields_by_key[custom_filter] %}
+                  {% if filter != blank %}
+                    <div class="col-xs-12 col-md-{{ 12 | divided_by: custom_filters.size }} search-filter">
+                      <label>{{ filter.localized_label }}</label>
+                      <select class="form-control custom-filter-{{ forloop.index }}" name="search_options[{{ filter.key }}]">
+                        {% assign selected_value = filter.options['default_value'] %}
+                        {% if url_params.search_options[filter.key] != blank %}
+                          {% assign selected_value = url_params.search_options[filter.key] %}
+                        {% endif %}
+                        {% assign options_groups = filter.options['options_groups'] %}
+                        {% guest_select_options filter.key "", selected: selected_value, groups: options_groups, options_order: filter.options.options_order %}
+                      </select>
+                    </div>
+                  {% endif %}
+                {% endfor %}
+              {% endif %}
+
+              {% if custom_filters.size > 0 or section.settings.enable_thematics_search and event.thematics.size > 1 %}
+                <div class="col-md-12 mt-20">
+                  <button class="btn btn-primary btn-search" type="submit"><i class="fa fa-search"></i> {{ t.search_placeholder }}</button>
+                </div>
+              {% endif %}
+            </div>
+          {% endsearch_form %}
+        {% endif %}
+      </div>
+
+      {% if paginate.total_entries > 0 %}
+        <div class="guests-list col-md-12">
+          {% if section.settings.display_mode == "table" %}
+            <div class="row up-s">
+              <div class="col-xs-12">
+                <table class="table {% if section.settings.table_style != "basic" %}{{ section.settings.table_style }}{% endif %}">
+                  <thead>
+                    <tr>
+                      {% for block in section.blocks %}
+                        <th {% if block.settings.column_display != "text" %}class="text-center"{% endif %}>{{ block.settings.column_label }}</th>
+                      {% endfor %}
+                      {% if section.settings.guest_info_page_path != blank %}
+                        <th></th>
+                      {% endif %}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for guest in guests %}
+                      <tr class="guest-item">
+                        {% for block in section.blocks %}
+                          {% assign field_value = guest[block.settings.column_field] %}
+
+                          <td style="vertical-align: middle;" {% if block.settings.column_display != "text" %}class="text-center"{% endif %}>
+                            {% if field_value != blank %}
+                              {% if block.settings.column_display == "text" %}
+                                {% if block.settings.highlight == true %}<strong>{% endif %}{{ field_value }}{% if block.settings.highlight %}</strong>{% endif %}
+                              {% elsif block.settings.column_display == "link" %}
+                                <a href="{{ field_value }}" target="_blank" class="btn btn-primary btn-sm">{{ block.settings.link_label }}</a>
+                              {% elsif block.settings.column_display == "image" %}
+                                <img data-src="{{ field_value }}" alt="{{ field_value }}" style="max-height: 100px;" />
+                              {% endif %}
+                            {% endif %}
+                          </td>
+                        {% endfor %}
+                        {% if section.settings.guest_info_page_path != blank %}
+                          <td style="vertical-align: middle;" class="{% if section.settings.table_style contains 'table-bordered' %}text-center{% else %}text-right{% endif %}"><a href="/{{ section.settings.guest_info_page_path | replace: "__id__", guest.id }}" class="btn btn-primary btn-sm"><i class="fa fa-angle-right"></i></a></td>
+                        {% endif %}
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          {% elsif section.settings.display_mode == "grid" %}
+
+            {% assign per_line = section.settings.per_line | times: 1 | at_least: 2 %}
+            
+            {% case per_line %}
+              {% when 2 %}
+                {% assign grid_item_width = 'col-sm-6' %}
+              {% when 3 %}
+                {% assign grid_item_width = 'col-md-4 col-sm-6' %}
+              {% when 4 %}
+                {% assign grid_item_width = 'col-md-3 col-sm-6' %}
+              {% when 6 %}
+                {% assign grid_item_width = 'col-lg-2 col-sm-4' %}
+              {% else %}
+                {% assign grid_item_width = 'col-md-3 col-sm-6' %}
+            {% endcase %}
+
+            {% for guest in guests %}
+              {% assign remainer = forloop.index | modulo: per_line %}
+              {% if forloop.first or remainer == 1 %}
+                <div class="row {% if forloop.first %}up-s{% endif %}">
+              {% endif %}
+
+              {% assign image_url = guest[section.settings.illutration_field] %}
+
+              <div class="{{ grid_item_width }} guest-item guest-item-per-line-{{ per_line }}">
+                {% case section.settings.guest_item_link %}
+                  {% when "guest_info_page" %}
+                    {% if section.settings.guest_info_page_path != blank %}
+                      <a href="/{{ section.settings.guest_info_page_path | replace: "__id__", guest.id }}" class="thumbnail">
+                    {% else %}
+                      <div class="thumbnail">
+                    {% endif %}
+                  {% when "from_guest_field" %}
+                    {% assign field_value = guest[section.settings.link_from_guest_field] %}
+                    {% if section.settings.link_from_guest_field != blank and field_value != blank and field_value != nil %}
+                      {% if field_value contains "http" %}
+                        <a href="{{ field_value }}" target="_blank" class="thumbnail">
+                      {% else %}
+                        <a href="{{ "http://" | append: field_value }}" target="_blank" class="thumbnail">
+                      {% endif %}
+                    {% else %}
+                      <div class="thumbnail">
+                    {% endif %}
+                  {% else %}
+                    <div class="thumbnail">
+                {% endcase %}
+                  <div class="image-container">
+                    {% unless image_url == blank %}
+                      <img data-src="{{ image_url }}" alt="{{ guest.identity }}" />
+                    {% endunless %}
+                  </div>
+                  <div class="caption">
+                    {% for block in section.blocks %}
+                      {% assign field_value = guest[block.settings.column_field] %}
+
+                      {% if field_value == blank or block.settings.column_display == "image" or section.settings.guest_item_link != blank and block.settings.column_display == "link" %}
+                        {% continue %}
+                      {% endif %}
+
+                      {% if forloop.first %}
+                        <h3>{% if block.settings.highlight == true %}<strong>{% endif %}{{ field_value }}{% if block.settings.highlight == true %}</strong>{% endif %}</h3>
+                      {% else %}
+                        {% if block.settings.column_display == "text" %}
+                          <p>{% if block.settings.highlight == true %}<strong>{% endif %}{{ field_value }}{% if block.settings.highlight == true %}</strong>{% endif %}</p>
+                        {% elsif block.settings.column_display == "link" %}
+                          <p class="caption-link"><a href="{{ field_value }}" target="_blank" class="btn btn-default btn-sm">{{ block.settings.link_label }}</a></p>
+                        {% endif %}
+                      {% endif %}
+                    {% endfor %}
+                  </div>
+                {% case section.settings.guest_item_link %}
+                  {% when "guest_info_page" %}
+                    {% if section.settings.guest_info_page_path != blank %}
+                      </a>
+                    {% else %}
+                      </div>
+                    {% endif %}
+                  {% when "from_guest_field" %}
+                    {% assign field_value = guest[section.settings.link_from_guest_field] %}
+                    {% if section.settings.link_from_guest_field != blank and field_value != blank and field_value != nil %}
+                      </a>
+                    {% else %}
+                      </div>
+                    {% endif %}
+                  {% else %}
+                    </div>
+                {% endcase %}
+              </div>
+
+              {% if remainer == 0 or forloop.last %}
+                </div>
+              {% endif %}
+            {% endfor %}
+          {% endif %}
+        </div>
+      {% else %}
+        <div class="col-md-12 text-center panel panel-warning hide no-results">
+          <div class="panel-body">{{ section.settings.no_results_label }}</div>
+        </div>
+      {% endif %}
+    </div>
+    
+    {% if section.settings.enable_pagination == false and section.settings.enable_see_more_btn %}
+      <div class="row up-s">
+        <div class="col-xs-12 text-{{ section.settings.see_more_button_align }}">
+          <a href="/{{ section.settings.see_more_website_page_url }}" class="btn btn-primary">{{ section.settings.see_more_button_label }} &rang;</a>
+        </div>
+      </div>
+    {% endif %}
+
+    {% unless section.settings.enable_pagination == false or section.settings.pagination_position == "above" %}
+      <div class="pagination-container text-right">
+        {% include 'pagination' pagination_type: section.settings.pagination_type, id_scrollto: section.id %}
+      </div>
+    {% endunless %}
+  {% endguests_paginate %}
+</div>
+
+{% schema %}
+  {
+    "name": "List of guests",
+    "name_translations": { "fr": "Liste de participants" },
+    "class": "index-section",
+    "icon": "fa fa-group",
+    "hidden_from_user": false,
+    "group_key": "guests",
+    "group_rank": 1000,
+    "max_blocks": 6,
+    "settings": [
+      {
+        "type": "header",
+        "content": "General settings",
+        "content_translations": { "fr": "Paramètres généraux" }
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title",
+        "label_translations": { "fr": "Titre" },
+        "default": "Guests",
+        "default_translations": { "fr": "Participants" }
+      },
+      {
+        "type": "segments_picker",
+        "id": "segment_id",
+        "label": "Guests segment",
+        "label_translations": { "fr": "Segment de participants" }
+      },
+      {
+        "type": "header",
+        "content": "Display settings",
+        "content_translations": { "fr": "Paramètres d'affichage" }
+      },
+      {
+        "type": "select",
+        "id": "display_mode",
+        "label": "Display mode",
+        "label_translations": { "fr": "Mode d'affichage" },
+        "default": "grid",
+        "options": [
+          {
+            "value": "table",
+            "label": "Table",
+            "label_translations": { "fr": "Tableau" }
+          },
+          {
+            "value": "grid",
+            "label": "Grid",
+            "label_translations": { "fr": "Grille" }
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "table_style",
+        "label": "Table style",
+        "label_translations": { "fr": "Style du tableau" },
+        "default": "basic",
+        "options": [
+          {
+            "value": "basic",
+            "label": "Basic",
+            "label_translations": { "fr": "Basique" }
+          },
+          {
+            "value": "table-bordered",
+            "label": "Bordered",
+            "label_translations": { "fr": "Avec bordure" }
+          },
+          {
+            "value": "table-striped",
+            "label": "Striped",
+            "label_translations": { "fr": "Rayé" }
+          },
+          {
+            "value": "table-condensed",
+            "label": "Condensed",
+            "label_translations": { "fr": "Condensé" }
+          },
+          {
+            "value": "table-striped table-condensed",
+            "label": "Striped and condensed",
+            "label_translations": { "fr": "Rayé et condensé" }
+          },
+          {
+            "value": "table-bordered table-striped",
+            "label": "Striped and bordered",
+            "label_translations": { "fr": "Rayé avec bordure" }
+          },
+          {
+            "value": "table-bordered table-condensed",
+            "label": "Condensed and bordered",
+            "label_translations": { "fr": "Condensé avec bordure" }
+          },
+          {
+            "value": "table-bordered table-striped table-condensed",
+            "label": "Condensed striped and bordered",
+            "label_translations": { "fr": "Condensé, rayé et avec bordure" }
+          }
+        ],
+        "show_if": {
+          "source_id": "display_mode",
+          "operator": "==",
+          "value": "table"
+        }
+      },
+      {
+        "type": "guest_field_picker",
+        "id": "illutration_field",
+        "label": "Illustration",
+        "label_translations": { "fr": "Illustration" },
+        "default": "avatar",
+        "show_if": {
+          "source_id": "display_mode",
+          "operator": "==",
+          "value": "grid"
+        }
+      },
+      {
+        "type": "select",
+        "id": "per_line",
+        "label": "Number of items per line",
+        "label_translations": { "fr": "Nombre d'éléments par ligne" },
+        "default": "4",
+        "options": [
+          {
+            "value": 2,
+            "label": "2",
+            "label_translations": { "fr": "2" }
+          },
+          {
+            "value": 3,
+            "label": "3",
+            "label_translations": { "fr": "3" }
+          },
+          {
+            "value": 4,
+            "label": "4",
+            "label_translations": { "fr": "4" }
+          },
+          {
+            "value": 6,
+            "label": "6",
+            "label_translations": { "fr": "6" }
+          }
+        ],
+        "show_if": {
+          "source_id": "display_mode",
+          "operator": "==",
+          "value": "grid"
+        }
+      },
+      {
+        "type": "text",
+        "id": "per_page",
+        "label": "Number of items per page",
+        "label_translations": { "fr": "Nombre d'éléments par page" },
+        "default": "20",
+        "info": "Type in a number between 1 and 100",
+        "info_translations": { "fr" : "Spécifiez un nombre entre 1 et 100" }
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_pagination",
+        "label": "Enable pagination",
+        "label_translations": { "fr": "Activer la pagination" },
+        "default": true
+      },
+      {
+        "type": "select",
+        "id": "pagination_type",
+        "label": "Pagination type",
+        "label_translations": { "fr": "Style de la pagination" },
+        "default": "numbered",
+        "options": [
+          {
+            "value": "numbered",
+            "label": "Numbered",
+            "label_translations": { "fr": "Numérotée" }
+          },
+          {
+            "value": "non_numbered",
+            "label": "Non numbered",
+            "label_translations": { "fr": "Non numérotée" }
+          }
+        ],
+        "show_if": {
+          "source_id": "enable_pagination",
+          "operator": "==",
+          "value": true
+        }
+      },
+      {
+        "type": "select",
+        "id": "pagination_position",
+        "label": "Pagination position",
+        "label_translations": { "fr": "Position de la pagination" },
+        "default": "both",
+        "options": [
+          {
+            "value": "both",
+            "label": "Both above and below list",
+            "label_translations": { "fr": "Au-dessus et en-dessous de la liste" }
+          },
+          {
+            "value": "above",
+            "label": "Above the list only",
+            "label_translations": { "fr": "Au-dessus de la liste seulement" }
+          },
+          {
+            "value": "below",
+            "label": "Below the list only",
+            "label_translations": { "fr": "En-dessous de la liste seulement" }
+          }
+        ],
+        "show_if": {
+          "source_id": "enable_pagination",
+          "operator": "==",
+          "value": true
+        }
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_see_more_btn",
+        "label": "Enable button to see all items",
+        "label_translations": { "fr": "Activer le bouton vers la liste complète" },
+        "default": false,
+        "show_if": {
+          "source_id": "enable_pagination",
+          "operator": "==",
+          "value": false
+        }
+      },
+      {
+        "type": "website_page_picker",
+        "id": "see_more_website_page_url",
+        "label": "Page to complete list",
+        "label_translations": { "fr": "Page vers la liste complète" },
+        "show_if": {
+          "source_id": "enable_see_more_btn",
+          "operator": "==",
+          "value": true
+        }
+      },
+      {
+        "type": "text",
+        "id": "see_more_button_label",
+        "label": "Label for complete list's button",
+        "label_translations": { "fr": "Libellé du bouton vers la liste complète" },
+        "default": "See more",
+        "default_translations": { "fr": "Voir plus" },
+        "show_if": {
+          "source_id": "enable_see_more_btn",
+          "operator": "==",
+          "value": true
+        }
+      },
+      {
+        "type": "select",
+        "id": "see_more_button_align",
+        "label": "Text alignment",
+        "label_translations": { "fr": "Alignement du bouton" },
+        "default": "left",
+        "options": [
+          {
+            "value": "left",
+            "label": "Left",
+            "label_translations": { "fr": "Gauche" }
+          },
+          {
+            "value": "center",
+            "label": "Center",
+            "label_translations": { "fr": "Centre" }
+          },
+          {
+            "value": "right",
+            "label": "Right",
+            "label_translations": { "fr": "Droite" }
+          }
+        ],
+        "show_if": {
+          "source_id": "enable_see_more_btn",
+          "operator": "==",
+          "value": true
+        }
+      },
+      {
+        "type": "header",
+        "content": "Search settings",
+        "content_translations": { "fr": "Paramètres de la recherche" }
+      },
+      {
+        "type": "checkbox",
+        "id": "search_bar",
+        "label": "Enable search bar",
+        "label_translations": { "fr": "Activer la barre de recherche" },
+        "default": false
+      },
+      {
+        "type": "text",
+        "id": "search_bar_placeholder",
+        "label": "Search bar placeholder",
+        "label_translations": { "fr": "Texte par défaut dans la recherche" },
+        "default": "Search",
+        "default_translations": { "fr": "Recherchez" },
+        "show_if": {
+          "source_id": "search_bar",
+          "operator": "==",
+          "value": true
+        }
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_recommendations",
+        "label": "Enable recommendations",
+        "label_translations": { "fr": "Activer les recommandations" },
+        "default": false
+      },
+      {
+        "type": "text",
+        "id": "recommendations_label",
+        "label": "recommendations label",
+        "label_translations": { "fr": "Libellé pour les recommandations" },
+        "default": "My recommendations",
+        "default_translations": { "fr": "Mes recommandations" },
+        "show_if": {
+          "source_id": "enable_recommendations",
+          "operator": "==",
+          "value": true
+        }
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_thematics_search",
+        "label": "Enable thematics search",
+        "label_translations": { "fr": "Activer la recherche par thématiques" },
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "thematics_filter_title",
+        "label": "Thematics filter title",
+        "label_translations": { "fr": "Titre du filtre par thématiques" },
+        "default": "Thematics",
+        "default_translations": { "fr": "Thématiques" },
+        "show_if": {
+          "source_id": "enable_thematics_search",
+          "operator": "==",
+          "value": true
+        }
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_custom_filter_1",
+        "label": "Enable custom filters",
+        "label_translations": { "fr": "Activer des filtres personnalisés" },
+        "default": false
+      },
+      {
+        "type": "guest_field_picker",
+        "id": "custom_filter_1",
+        "guest_field_type": "value_list",
+        "label": "Filter 1",
+        "label_translations": { "fr": "Filtre 1" },
+        "show_if": {
+          "source_id": "enable_custom_filter_1",
+          "operator": "==",
+          "value": true
+        }
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_custom_filter_2",
+        "label": "Enable a second custom filters",
+        "label_translations": { "fr": "Activer un second filtre personnalisé" },
+        "default": false,
+        "show_if": {
+          "source_id": "enable_custom_filter_1",
+          "operator": "==",
+          "value": true
+        }
+      },
+      {
+        "type": "guest_field_picker",
+        "id": "custom_filter_2",
+        "guest_field_type": "value_list",
+        "label": "Filter 2",
+        "label_translations": { "fr": "Filtre 2" },
+        "show_if": {
+          "source_id": "enable_custom_filter_2",
+          "operator": "==",
+          "value": true
+        }
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_custom_filter_3",
+        "label": "Enable a third custom filters",
+        "label_translations": { "fr": "Activer un troisième filtre personnalisé" },
+        "default": false,
+        "show_if": {
+          "source_id": "enable_custom_filter_2",
+          "operator": "==",
+          "value": true
+        }
+      },
+      {
+        "type": "guest_field_picker",
+        "id": "custom_filter_3",
+        "guest_field_type": "value_list",
+        "label": "Filter 3",
+        "label_translations": { "fr": "Filtre 3" },
+        "show_if": {
+          "source_id": "enable_custom_filter_3",
+          "operator": "==",
+          "value": true
+        }
+      },
+      {
+        "type": "checkbox",
+        "id": "display_nb_entries",
+        "label": "Display number of entries",
+        "label_translations": { "fr": "Afficher le nombre d'éléments" },
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "entries_entity_name",
+        "label": "Name to display after number of entries",
+        "label_translations": { "fr": "Nom à afficher après le nombre d'éléments" },
+        "default": "guests",
+        "default_translations": { "fr": "participants" },
+        "show_if": {
+          "source_id": "display_nb_entries",
+          "operator": "==",
+          "value": true
+        }
+      },
+      {
+        "type": "text",
+        "id": "no_results_label",
+        "label": "No results label",
+        "label_translations": { "fr": "Libellé si aucun résultat" },
+        "default": "No results",
+        "default_translations": { "fr": "Aucun résultat" }
+      },
+      {
+        "type": "header",
+        "content": "Item link",
+        "content_translations": { "fr": "Lien de l'élément" }
+      },
+      {
+        "type": "select",
+        "id": "guest_item_link",
+        "label": "Add a link on the item",
+        "label_translations": { "fr": "Ajouter un lien sur l'élément" },
+        "options": [
+          {
+            "value": "guest_info_page",
+            "label": "Link to detailed page of the guest",
+            "label_translations": { "fr": "Lien vers page détaillée du participant" }
+          },
+          {
+            "value": "from_guest_field",
+            "label": "URL from guest field value",
+            "label_translations": { "fr": "URL à partir de la valeur d'un champ" }
+          }
+        ]
+      },
+      {
+        "type": "guest_field_picker",
+        "id": "link_from_guest_field",
+        "label": "Field name",
+        "label_translations": { "fr": "Nom du champ" },
+        "default": "identity",
+        "show_if": {
+          "source_id": "guest_item_link",
+          "operator": "==",
+          "value": "from_guest_field"
+        }
+      },
+      {
+        "type": "select_info_page_picker",
+        "id": "guest_info_page_path",
+        "resource_name": "guest",
+        "label": "Page for detailed view of guests",
+        "label_translations": { "fr": "Page pour la vue détaillée des participants" },
+        "default": "",
+        "show_if": {
+          "source_id": "guest_item_link",
+          "operator": "==",
+          "value": "guest_info_page"
+        }
+      }
+    ],
+    "blocks": [
+      {
+        "type": "table_columns",
+        "name": "Guest information",
+        "name_translations": { "fr": "Informations participant" },
+        "add_block": "New field to display",
+        "add_block_translations": { "fr": "Nouveau champ à afficher" },
+        "remove_block": "Remove this field",
+        "remove_block_translations": { "fr": "Retirer ce champ" },
+        "display_property": "column_label",
+        "settings": [
+          {
+            "type": "text",
+            "id": "column_label",
+            "label": "Column label",
+            "label_translations": { "fr": "Intitulé de la colonne" },
+            "default": "Name",
+            "default_translations": { "fr": "Nom" }
+          },
+          {
+            "type": "guest_field_picker",
+            "id": "column_field",
+            "label": "Field name",
+            "label_translations": { "fr": "Nom du champ" },
+            "default": "identity"
+          },
+          {
+            "type": "select",
+            "id": "column_display",
+            "label": "Information type",
+            "label_translations": { "fr": "Type d'information" },
+            "default": "text",
+            "options": [
+              {
+                "value": "text",
+                "label": "Text",
+                "label_translations": { "fr": "Texte" }
+              },
+              {
+                "value": "link",
+                "label": "Link",
+                "label_translations": { "fr": "Lien" }
+              },
+              {
+                "value": "image",
+                "label": "Image",
+                "label_translations": { "fr": "Image" },
+                "info": "Recommended dimensions of the image: 500px x 500px",
+                "info_translations": { "fr": "Dimensions recommandées de l'image: 500px x 500px" }
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "id": "link_label",
+            "label": "Link label",
+            "label_translations": { "fr": "Libellé du lien" },
+            "default": "Click",
+            "default_translations": { "fr": "Cliquez" },
+            "show_if": {
+              "source_id": "column_display",
+              "operator": "==",
+              "value": "link"
+            }
+          },
+          {
+            "type": "checkbox",
+            "id": "highlight",
+            "label": "Highlight text",
+            "label_translations": { "fr": "Mettre en évidence" },
+            "default": false,
+            "show_if": {
+              "source_id": "column_display",
+              "operator": "==",
+              "value": "text"
+            }
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "List of guests",
+        "name_translations": { "fr": "Liste de participants" },
+        "blocks": [
+          {
+            "type": "table_columns"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

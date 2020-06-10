@@ -1,0 +1,247 @@
+{% capture image_layout %}
+  <div class="col-sm-6 text-{{ section.settings.layout }} img-container">
+    {% if section.settings.image != blank %}
+      <img data-src="{{ section.settings.image }}" />
+    {% else %}
+      <img data-src="https://via.placeholder.com/400x300/F0F0F0/888888/?text=Eventmaker.io" alt="Image placeholder" />
+    {% endif %}
+  </div>
+{% endcapture %}
+
+<div class="container {{ settings.spacing }}" data-section-id="{{ section.id }}" data-section-type="image-with-text">
+  <div class="row {% if section.settings.layout_vertical_alignment != blank %}vertical-align-{{ section.settings.layout_vertical_alignment }}{% endif%}">
+    {% if section.settings.enable_image == true and section.settings.layout == 'left' %}
+      {{ image_layout }}
+    {% endif %}
+
+    <div class="{% if section.settings.enable_image == true %}col-sm-6{% else %}col-sm-12{% endif %} text-left">
+      {% if section.settings.title != blank %}
+        <h3 class="down-s">{{ section.settings.title | escape }}</h3>
+      {% endif %}
+      {% if section.settings.text.html.size > 6 %}
+        <div class="down-s">{{ section.settings.text.html | parse_liquid }}</div>
+      {% endif %}
+      {% if section.settings.enable_button == true %}
+        {% include "button", params: section.settings %}
+      {% endif %}
+    </div>
+
+    {% if section.settings.enable_image == true and section.settings.layout == 'right' %}
+      {{ image_layout }}
+    {% endif %}
+  </div>
+</div>
+
+{% schema %}
+  {
+    "name": "Text with illustration",
+    "name_translations": { "fr": "Texte avec illustration" },
+    "class": "index-section",
+    "icon": "fa fa-indent",
+    "hidden_from_user": false,
+    "group_key": "basic",
+    "group_rank": 2000,
+    "settings": [
+      {
+        "type": "header",
+        "content": "Illustration",
+        "content_translations": { "fr": "Illustration" }
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_image",
+        "label": "Show the illustration",
+        "label_translations": { "fr": "Afficher l'illustration" },
+        "default": true
+      },
+      {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Illustration",
+        "label_translations": { "fr": "Illustration" },
+        "info": "Recommended dimensions of the image: 900px x 600px",
+        "info_translations": { "fr": "Dimensions recommandées de l'image: 900px x 600px" },
+        "show_if": {
+          "source_id": "enable_image",
+          "operator": "==",
+          "value": true
+        }
+      },
+      {
+        "type": "select",
+        "id": "layout",
+        "label": "Illustration alignment",
+        "label_translations": { "fr": "Alignement de l'illustration" },
+        "show_if": {
+          "source_id": "enable_image",
+          "operator": "==",
+          "value": true
+        },
+        "default": "left",
+        "options": [
+          {
+            "value": "left",
+            "label": "Left",
+            "label_translations": { "fr": "Gauche" }
+          },
+          {
+            "value": "right",
+            "label": "Right",
+            "label_translations": { "fr": "Droite" }
+          }
+        ]
+      },
+      {
+        "type": "header",
+        "content": "Text",
+        "content_translations": { "fr": "Texte" }
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title",
+        "label_translations": { "fr": "Titre" },
+        "default": "Image with text",
+        "default_translations": { "fr": "Image avec texte" }
+      },
+      {
+        "type": "rte",
+        "id": "text",
+        "label": "Text",
+        "label_translations": { "fr": "Texte" },
+        "default": "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_button",
+        "label": "Show a button",
+        "label_translations": { "fr": "Afficher un bouton" },
+        "default": true
+      },
+      {
+        "type": "product_defined",
+        "value": "button_settings",
+        "show_if": {
+          "source_id": "enable_button",
+          "operator": "==",
+          "value": true
+        }
+      },
+      {
+        "type": "header",
+        "content": "Style",
+        "content_translations": { "fr": "Style" }
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_custom_css",
+        "label": "Apply a custom style",
+        "label_translations": { "fr": "Appliquer un style personnalisé" },
+        "show_if": {
+          "source_id": "enable_button",
+          "operator": "==",
+          "value": true
+        },
+        "default": false
+      },
+      {
+        "type": "color",
+        "id": "button_color",
+        "label": "Button color",
+        "label_translations": { "fr": "Couleur du bouton" },
+        "show_if": {
+          "source_id": "enable_custom_css",
+          "operator": "==",
+          "value": true
+        },
+        "default": "#000"
+      },
+      {
+        "type": "color",
+        "id": "button_text_color",
+        "label": "Button text color",
+        "label_translations": { "fr": "Couleur du texte du bouton" },
+        "show_if": {
+          "source_id": "enable_custom_css",
+          "operator": "==",
+          "value": true
+        },
+        "default": "#000"
+      },
+      {
+        "type": "select",
+        "id": "button_align",
+        "label": "Button align",
+        "label_translations": { "fr": "Alignement du bouton" },
+        "show_if": {
+          "source_id": "enable_button",
+          "operator": "==",
+          "value": true
+        },
+        "default": "left",
+        "options": [
+          {
+            "label": "Left",
+            "label_translations": { "fr": "Gauche" },
+            "value": "left"
+          },
+          {
+            "label": "Center",
+            "label_translations": { "fr": "Centre" },
+            "value": "center"
+          },
+          {
+            "label": "Right",
+            "label_translations": { "fr": "Droite" },
+            "value": "right"
+          }
+        ]
+      },
+      {
+        "type": "header",
+        "content": "Layout options",
+        "content_translations": { "fr": "Options de mise en page" },
+        "show_if": {
+          "source_id": "enable_image",
+          "operator": "==",
+          "value": true
+        }
+      },
+      {
+        "type": "select",
+        "id": "layout_vertical_alignment",
+        "label": "Vertical alignment",
+        "label_translations": { "fr": "Alignement vertical" },
+        "show_if": {
+          "source_id": "enable_image",
+          "operator": "==",
+          "value": true
+        },
+        "default": "top",
+        "options": [
+          {
+            "value": "top",
+            "label": "Top",
+            "label_translations": { "fr": "Haut" }
+          },
+          {
+            "value": "center",
+            "label": "Center",
+            "label_translations": { "fr": "Centrer" }
+          },
+          {
+            "value": "bottom",
+            "label": "Bottom",
+            "label_translations": { "fr": "Bas" }
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Text with illustration",
+        "name_translations": { "fr": "Texte avec illustration" }
+      }
+    ]
+  }
+{% endschema %}
