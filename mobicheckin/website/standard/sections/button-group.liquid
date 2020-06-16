@@ -38,7 +38,6 @@
   {
     "name": "Buttons group",
     "name_translations": { "fr": "Groupe de boutons" },
-    "class": "index-section",
     "icon": "fa fa-th-large",
     "hidden_from_user": false,
     "group_key": "basic",
@@ -92,24 +91,32 @@
             "id": "button_color",
             "label": "Button color",
             "label_translations": { "fr": "Couleur du bouton" },
-            "show_if": {
-              "source_id": "enable_custom_css",
-              "operator": "==",
-              "value": true
-            },
-            "default": "#000"
+            "default": "#000",
+            "show_if": [
+              [
+                {
+                  "source_id": "enable_custom_css",
+                  "operator": "==",
+                  "value": true
+                }
+              ]
+            ]
           },
           {
             "type": "color",
             "id": "button_text_color",
             "label": "Button text color",
             "label_translations": { "fr": "Couleur du texte du bouton" },
-            "show_if": {
-              "source_id": "enable_custom_css",
-              "operator": "==",
-              "value": true
-            },
-            "default": "#FFF"
+            "default": "#FFF",
+            "show_if": [
+              [
+                {
+                  "source_id": "enable_custom_css",
+                  "operator": "==",
+                  "value": true
+                }
+              ]
+            ]
           }
         ]
       }

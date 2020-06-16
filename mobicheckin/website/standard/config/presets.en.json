@@ -1,0 +1,248 @@
+{
+  "default":{
+    "general":{
+      "settings":{
+        "color_body_bg":"#f8f8f8",
+        "color_ticketing_bg":"#FFFFFF",
+        "color_text":"{{ event.primary_color }}",
+        "color_body_text":"{{ event.secondary_color }}",
+        "color_borders": "#e8e9eb",
+        "color_image_overlay_text":"#EFEFEF",
+        "color_image_overlay":"{{ event.primary_color }}",
+        "image_overlay_opacity":80,
+        "color_button":"{{ event.primary_color }}",
+        "color_button_text":"#FFFFFF",
+        "color_notification":"{{ event.primary_color }}",
+        "color_notification_text":"#FFFFFF",
+        "type_header_family":"Google_Lato_400_sans",
+        "type_header_base_size":"26px",
+        "type_base_family":"Arial, 'Helvetica Neue', Helvetica, sans-serif",
+        "type_base_size":"14px",
+        "social_twitter_link":"",
+        "social_facebook_link":"",
+        "social_pinterest_link":"",
+        "social_google_link":"",
+        "social_linkedin_link":"",
+        "social_instagram_link":"",
+        "favicon":"",
+        "spacing":"padding-lg"
+      }
+    },
+    "sections":{
+      "header":{
+        "type":"header",
+        "settings":{
+          "fixed": true,
+          "logo":"{% if event.photo_original != blank %}{{ event.photo_original }}{% else %}https://events-cms.s3.amazonaws.com/uploads/events/5800eb856431c33c4e43d58d/event_files/document/5cb70eb269c6a80022a8e51d-eventmaker_noir-png/eventmaker_noir.png{% endif %}",
+          "logo_max_width":"200",
+          "logo_max_height":"75",
+          "logo_clickable": true,
+          "message":false,
+          "home_page_only": false,
+          "message_text":"An information message",
+          "message_link":"",
+          "navigation": "navigation",
+          "color_bg":"#{{ event.primary_color }}",
+          "color_text":"#ffffff",
+          "color_bg_nav_bar":"#f2f5f7",
+          "color_text_nav_bar" : "{{ event.primary_color }}",
+          "color_text_nav_bar_hover" : "#757575"
+        }
+      },
+      "button-group":{
+        "type":"button-group",
+        "settings":{
+          "title":"Will you attend?",
+          "same_size_button":false,
+          "private": true
+        },
+        "blocks":{
+          "bloc-0":{
+            "type":"text_block",
+            "settings":{
+              "button_type":"accepted",
+              "button_link":"",
+              "website_page_url":"",
+              "auto_submit":false,
+              "enable_change_category":false,
+              "guest_category_id":"",
+              "document_name":"",
+              "enable_icon":"",
+              "button_label":"I will attend",
+              "step_number":"",
+              "enable_custom_css":false,
+              "button_color":"#000000",
+              "button_text_color":"#FFFFFF"
+            }
+          },
+          "bloc-1":{
+            "type":"text_block",
+            "settings":{
+              "button_type":"declined",
+              "button_link":"",
+              "website_page_url":"",
+              "auto_submit":true,
+              "enable_change_category":false,
+              "guest_category_id":"",
+              "document_name":"",
+              "enable_icon":"",
+              "button_label":"I will not attend",
+              "step_number":"",
+              "enable_custom_css":false,
+              "button_color":"#000000",
+              "button_text_color":"#FFFFFF"
+            }
+          }
+        },
+        "blocks_order":[
+          "bloc-0",
+          "bloc-1"
+        ]
+      },
+      "map":{
+        "type":"map",
+        "settings":{
+          "heading":"{{ event.title }}",
+          "address":{
+            "html":"{% if event.address != blank %}<div>{{ event.address }}</div>{% else %}<div>38, rue Laffitte</div>\n<div>75009 PARIS</div>{% endif %}",
+            "draftjs_content":{}
+          },
+          "map_address":"{% if event.address != blank %}{{ event.address }}{% else %}38, rue Laffitte 75009 PARIS{% endif %}",
+          "button_text":"See the directions"
+        }
+      },
+      "button-group-2":{
+        "type":"button-group",
+        "settings":{
+          "title":"",
+          "same_size_button":true
+        },
+        "blocks":{
+          "bloc-0":{
+            "type":"text_block",
+            "settings":{
+              "button_type":"add_to_my_calendar",
+              "button_link":"",
+              "website_page_url":"",
+              "force_new_registration":false,
+              "unknown_visitors_registration":false,
+              "confirmation_page_known_visitors":false,
+              "auto_submit":false,
+              "enable_change_category":false,
+              "guest_category_id":"",
+              "document_name":"",
+              "enable_icon":"",
+              "button_label":"Add to my calendar",
+              "step_number":"",
+              "enable_custom_css":false,
+              "button_color":"#000000",
+              "button_text_color":"#FFFFFF"
+            }
+          },
+          "bloc-1":{
+            "type":"text_block",
+            "settings":{
+              "button_type":"registration",
+              "button_link":"",
+              "website_page_url":"",
+              "force_new_registration":false,
+              "unknown_visitors_registration":false,
+              "confirmation_page_known_visitors":false,
+              "auto_submit":false,
+              "enable_change_category":false,
+              "guest_category_id":"",
+              "document_name":"",
+              "enable_icon":"",
+              "button_label_known_visitors":"Edit my registration",
+              "step_number":"",
+              "enable_custom_css":false,
+              "button_color":"#000000",
+              "button_text_color":"#FFFFFF"
+            }
+          },
+          "bloc-2":{
+            "type":"text_block",
+            "settings":{
+              "button_type":"badge",
+              "button_link":"",
+              "website_page_url":"",
+              "force_new_registration":false,
+              "unknown_visitors_registration":false,
+              "confirmation_page_known_visitors":false,
+              "auto_submit":false,
+              "enable_change_category":false,
+              "guest_category_id":"",
+              "document_name":"",
+              "enable_icon":"",
+              "button_label":"Download my badge",
+              "step_number":"",
+              "enable_custom_css":false,
+              "button_color":"#000000",
+              "button_text_color":"#FFFFFF"
+            }
+          }
+        },
+        "blocks_order":[
+          "bloc-0",
+          "bloc-1",
+          "bloc-2"
+        ]
+      },
+      "qrcode":{
+        "type":"qrcode",
+        "settings":{}
+      },
+      "footer":{
+        "type":"footer",
+        "settings":{
+          "contact_email":"{{ event.reply_to_email }}",
+          "contact_phone":"",
+          "address":"{{ event.address }}",
+          "copyright":"© {{ 'now' | date: '%Y' }} {{ event.organizer }} - All rights reserved",
+          "color_bg_footer_1":"#f8f8f8",
+          "color_text_footer_1":"{{ event.primary_color }}",
+          "color_bg_footer_2":"{{ event.primary_color }}",
+          "color_text_footer_2":"#FFFFFF"
+        }
+      }
+    },
+    "pages":{
+      "index":[
+        "image-with-overlay",
+        "button-group"
+      ],
+      "info":[
+        "map"
+      ],
+      "me":[
+        "qrcode",
+        "button-group-2"
+      ]
+    },
+    "menus":[
+      {
+        "name": "Navigation",
+        "menu_items_attributes":[
+          {
+            "name":"Home",
+            "type":"website_page",
+            "rank":10000,
+            "page_path_name":"index"
+          },
+          {
+            "name":"Information",
+            "type":"website_page",
+            "rank":20000,
+            "page_path_name":"info"
+          },
+          {
+            "name":"My information",
+            "type":"website_page",
+            "rank":40000,
+            "page_path_name":"me"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -12,7 +12,6 @@
   {
     "name": "Title only",
     "name_translations": { "fr": "Titre seul" },
-    "class": "index-section",
     "icon": "fa fa-font",
     "hidden_from_user": false,
     "group_key": "basic",
@@ -25,6 +24,44 @@
         "label_translations": { "fr": "Titre" },
         "default": "Title",
         "default_translations": { "fr": "Titre" }
+      },
+      {
+        "type": "checkbox",
+        "id": "ckb_1",
+        "label": "ckb_1",
+        "label_translations": { "fr": "ckb_1" },
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "ckb_2",
+        "label": "ckb_2",
+        "label_translations": { "fr": "ckb_2" },
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "ckb_3",
+        "label": "ckb_3",
+        "label_translations": { "fr": "ckb_3" },
+        "default": false
+      },
+      {
+        "type": "paragraph",
+        "id": "title_p",
+        "label": "Title p",
+        "label_translations": { "fr": "Titre p" },
+        "default": "Title",
+        "default_translations": { "fr": "Titre" },
+        "show_if": [
+          [
+            {
+              "source_id": "ckb_1",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "rte",
@@ -73,24 +110,32 @@
         "id": "button_color",
         "label": "Button color",
         "label_translations": { "fr": "Couleur du bouton" },
-        "show_if": {
-          "source_id": "enable_custom_css",
-          "operator": "==",
-          "value": true
-        },
-        "default": "#000"
+        "default": "#000",
+        "show_if": [
+          [
+            {
+              "source_id": "enable_custom_css",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "color",
         "id": "button_text_color",
         "label": "Button text color",
         "label_translations": { "fr": "Couleur du texte du bouton" },
-        "show_if": {
-          "source_id": "enable_custom_css",
-          "operator": "==",
-          "value": true
-        },
-        "default": "#000"
+        "default": "#000",
+        "show_if": [
+          [
+            {
+              "source_id": "enable_custom_css",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "select",

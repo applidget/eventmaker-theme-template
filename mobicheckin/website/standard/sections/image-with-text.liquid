@@ -36,7 +36,6 @@
   {
     "name": "Text with illustration",
     "name_translations": { "fr": "Texte avec illustration" },
-    "class": "index-section",
     "icon": "fa fa-indent",
     "hidden_from_user": false,
     "group_key": "basic",
@@ -61,22 +60,21 @@
         "label_translations": { "fr": "Illustration" },
         "info": "Recommended dimensions of the image: 900px x 600px",
         "info_translations": { "fr": "Dimensions recommandées de l'image: 900px x 600px" },
-        "show_if": {
-          "source_id": "enable_image",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_image",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "select",
         "id": "layout",
         "label": "Illustration alignment",
         "label_translations": { "fr": "Alignement de l'illustration" },
-        "show_if": {
-          "source_id": "enable_image",
-          "operator": "==",
-          "value": true
-        },
         "default": "left",
         "options": [
           {
@@ -89,6 +87,15 @@
             "label": "Right",
             "label_translations": { "fr": "Droite" }
           }
+        ],
+        "show_if": [
+          [
+            {
+              "source_id": "enable_image",
+              "operator": "==",
+              "value": true
+            }
+          ]
         ]
       },
       {
@@ -121,11 +128,15 @@
       {
         "type": "product_defined",
         "value": "button_settings",
-        "show_if": {
-          "source_id": "enable_button",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_button",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "header",
@@ -137,47 +148,54 @@
         "id": "enable_custom_css",
         "label": "Apply a custom style",
         "label_translations": { "fr": "Appliquer un style personnalisé" },
-        "show_if": {
-          "source_id": "enable_button",
-          "operator": "==",
-          "value": true
-        },
-        "default": false
+        "default": false,
+        "show_if": [
+          [
+            {
+              "source_id": "enable_button",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "color",
         "id": "button_color",
         "label": "Button color",
         "label_translations": { "fr": "Couleur du bouton" },
-        "show_if": {
-          "source_id": "enable_custom_css",
-          "operator": "==",
-          "value": true
-        },
-        "default": "#000"
+        "default": "#000",
+        "show_if": [
+          [
+            {
+              "source_id": "enable_custom_css",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "color",
         "id": "button_text_color",
         "label": "Button text color",
         "label_translations": { "fr": "Couleur du texte du bouton" },
-        "show_if": {
-          "source_id": "enable_custom_css",
-          "operator": "==",
-          "value": true
-        },
-        "default": "#000"
+        "default": "#000",
+        "show_if": [
+          [
+            {
+              "source_id": "enable_custom_css",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "select",
         "id": "button_align",
         "label": "Button align",
         "label_translations": { "fr": "Alignement du bouton" },
-        "show_if": {
-          "source_id": "enable_button",
-          "operator": "==",
-          "value": true
-        },
         "default": "left",
         "options": [
           {
@@ -195,28 +213,36 @@
             "label_translations": { "fr": "Droite" },
             "value": "right"
           }
+        ],
+        "show_if": [
+          [
+            {
+              "source_id": "enable_button",
+              "operator": "==",
+              "value": true
+            }
+          ]
         ]
       },
       {
         "type": "header",
         "content": "Layout options",
         "content_translations": { "fr": "Options de mise en page" },
-        "show_if": {
-          "source_id": "enable_image",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_image",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "select",
         "id": "layout_vertical_alignment",
         "label": "Vertical alignment",
         "label_translations": { "fr": "Alignement vertical" },
-        "show_if": {
-          "source_id": "enable_image",
-          "operator": "==",
-          "value": true
-        },
         "default": "top",
         "options": [
           {
@@ -234,6 +260,15 @@
             "label": "Bottom",
             "label_translations": { "fr": "Bas" }
           }
+        ],
+        "show_if": [
+          [
+            {
+              "source_id": "enable_image",
+              "operator": "==",
+              "value": true
+            }
+          ]
         ]
       }
     ],

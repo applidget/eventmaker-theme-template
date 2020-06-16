@@ -71,7 +71,6 @@
   {
     "name": "Photo gallery",
     "name_translations": { "fr": "Galerie photo" },
-    "class": "index-section",
     "icon": "fa fa-file-picture-o",
     "hidden_from_user": false,
     "group_key": "media",
@@ -125,11 +124,15 @@
             "label_translations": { "fr": "Carré" }
           }
         ],
-        "show_if": {
-          "source_id": "type_presentation",
-          "operator": "!=",
-          "value": "destructure"
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "type_presentation",
+              "operator": "!=",
+              "value": "destructure"
+            }
+          ]
+        ]
       },
       {
         "type": "select",
@@ -177,11 +180,15 @@
         "default": false,
         "info": "Displays the title under the picture during the slideshow",
         "info_translations": { "fr": "Affiche le titre sous la photo pendant le diaporama" },
-        "show_if": {
-          "source_id": "slideshow",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "slideshow",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "folder_picker",

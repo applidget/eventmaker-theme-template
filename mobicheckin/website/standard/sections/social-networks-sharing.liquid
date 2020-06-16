@@ -102,33 +102,45 @@
         "id": "custom_share_link",
         "label": "Custom share link",
         "label_translations": { "fr": "Lien de partage personnalisé" },
-        "show_if": {
-          "source_id": "link_type",
-          "operator": "==",
-          "value": "external_link"
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "link_type",
+              "operator": "==",
+              "value": "external_link"
+            }
+          ]
+        ]
       },
       {
         "type": "website_page_picker",
         "id": "website_page_url",
         "label": "Website page to share",
         "label_translations": { "fr": "Page de votre site à partager" },
-        "show_if": {
-          "source_id": "link_type",
-          "operator": "==",
-          "value": "internal_link"
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "link_type",
+              "operator": "==",
+              "value": "internal_link"
+            }
+          ]
+        ]
       },
       {
         "type": "paragraph",
         "id": "tweet_content",
         "label": "Tweet content",
         "label_translations": { "fr": "Contenu du tweet" },
-        "show_if": {
-          "source_id": "share_on_twitter",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "share_on_twitter",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       }
     ],
     "presets": [

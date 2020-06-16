@@ -1,0 +1,51 @@
+{
+  "basic": {
+    "name": "Basic",
+    "name_translations": {
+      "fr": "Basique"
+    },
+    "rank": 1000
+  },
+  "media": {
+    "name": "Media",
+    "name_translations": {
+      "fr": "Media"
+    },
+    "rank": 2000
+  },
+  "registration": {
+    "name": "Registration",
+    "name_translations": {
+      "fr": "Inscription"
+    },
+    "rank": 3000
+  },
+  "guests": {
+    "name": "Guests",
+    "name_translations": {
+      "fr": "Participants"
+    },
+    "rank": 4000
+  },
+  "programme": {
+    "name": "Programme",
+    "name_translations": {
+      "fr": "Programme"
+    },
+    "rank": 5000
+  },
+  "exhibitors": {
+    "name": "Exhibitors space",
+    "name_translations": {
+      "fr": "Espace exposants"
+    },
+    "rank": 6000
+  },
+  "advanced": {
+    "name": "Advanced",
+    "name_translations": {
+      "fr": "Avancé"
+    },
+    "rank": 7000
+  }
+}

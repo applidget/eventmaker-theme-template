@@ -259,7 +259,6 @@
   {
     "name": "Session information",
     "name_translations": { "fr": "Informations session" },
-    "class": "index-section",
     "icon": "fa fa-calendar-check-o",
     "hidden_from_user": false,
     "group_key": "programme",
@@ -295,11 +294,15 @@
             "label_translations": { "fr": "À droite du titre" }
           }
         ],
-        "show_if": {
-          "source_id": "enable_illustration",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_illustration",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "checkbox",
@@ -337,11 +340,15 @@
         "id": "back_button_url",
         "label": "Back button URL",
         "label_translations": { "fr": "URL du bouton de retour" },
-        "show_if": {
-          "source_id": "enable_back_button",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_back_button",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "text",
@@ -350,11 +357,15 @@
         "label_translations": { "fr": "Libellé du bouton de retour" },
         "default": "Back",
         "default_translations": { "fr": "Retour" },
-        "show_if": {
-          "source_id": "enable_back_button",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_back_button",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "select_info_page_picker",
@@ -385,11 +396,15 @@
         "label_translations": { "fr": "Libellé du bouton d'inscription" },
         "default": "Register",
         "default_translations": { "fr": "S'inscrire" },
-        "show_if": {
-          "source_id": "enable_registration",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_registration",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "checkbox",
@@ -397,11 +412,15 @@
         "label": "Display the remaining slots",
         "label_translations": { "fr": "Afficher les places restantes" },
         "default": false,
-        "show_if": {
-          "source_id": "enable_registration",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_registration",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "checkbox",
@@ -409,20 +428,28 @@
         "label": "Display a personalized button for unknown visitor",
         "label_translations": { "fr": "Afficher un bouton personnalisé aux visiteurs non connectés" },
         "default": false,
-        "show_if": {
-          "source_id": "enable_registration",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_registration",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "product_defined",
         "value": "button_settings",
-        "show_if": {
-          "source_id": "enable_unknown_guest_custom_button",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_unknown_guest_custom_button",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "checkbox",
@@ -430,11 +457,15 @@
         "label": "Enable unregistration from sessions",
         "label_translations": { "fr": "Activer la désincription aux sessions" },
         "default": true,
-        "show_if": {
-          "source_id": "enable_registration",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_registration",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "text",
@@ -443,11 +474,15 @@
         "label_translations": { "fr": "Libellé du bouton de désinscription" },
         "default": "Unregister",
         "default_translations": { "fr": "Se désinscrire" },
-        "show_if": {
-          "source_id": "enable_unregistration",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_unregistration",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "text",
@@ -456,11 +491,15 @@
         "label_translations": { "fr": "Libellé du bouton déjà inscrit" },
         "default": "Already registered",
         "default_translations": { "fr": "Déjà inscrit" },
-        "show_if": {
-          "source_id": "enable_unregistration",
-          "operator": "==",
-          "value": false
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_unregistration",
+              "operator": "==",
+              "value": false
+            }
+          ]
+        ]
       },
       {
         "type": "text",
@@ -471,11 +510,15 @@
         "default_translations": { "fr": "Session payante" },
         "info": "Charged sessions payment is not possible from schedule",
         "info_translations": { "fr": "Le paiement des sessions payantes ne peut pas se faire depuis le programme" },
-        "show_if": {
-          "source_id": "enable_registration",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_registration",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "header",
@@ -536,11 +579,15 @@
             "label_translations": { "fr": "6" }
           }
         ],
-        "show_if": {
-          "source_id": "speakers_display_mode",
-          "operator": "==",
-          "value": "grid"
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "speakers_display_mode",
+              "operator": "==",
+              "value": "grid"
+            }
+          ]
+        ]
       },
       {
         "type": "select_info_page_picker",

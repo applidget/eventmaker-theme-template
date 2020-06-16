@@ -297,7 +297,6 @@
   {
     "name": "Guest information",
     "name_translations": { "fr": "Informations participant" },
-    "class": "index-section",
     "icon": "fa fa-user",
     "hidden_from_user": false,
     "group_key": "guests",
@@ -328,11 +327,15 @@
         "label": "Field for the illustration",
         "label_translations": { "fr": "Champ pour l'illustration" },
         "default": "avatar",
-        "show_if": {
-          "source_id": "enable_illustration",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_illustration",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "select",
@@ -352,11 +355,15 @@
             "label_translations": { "fr": "À droite du titre" }
           }
         ],
-        "show_if": {
-          "source_id": "enable_illustration",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_illustration",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "checkbox",
@@ -370,11 +377,15 @@
         "id": "back_button_url",
         "label": "Back button URL",
         "label_translations": { "fr": "URL du bouton de retour" },
-        "show_if": {
-          "source_id": "enable_back_button",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_back_button",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "text",
@@ -383,11 +394,15 @@
         "label_translations": { "fr": "Libellé du bouton de retour" },
         "default": "Back",
         "default_translations": { "fr": "Retour" },
-        "show_if": {
-          "source_id": "enable_back_button",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_back_button",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "checkbox",
@@ -414,11 +429,15 @@
         "label_translations": { "fr": "Libellé du bouton de mise en contact" },
         "default": "Contact request",
         "default_translations": { "fr": "Demande de contact" },
-        "show_if": {
-          "source_id": "enable_contact_request_button",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_contact_request_button",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "text",
@@ -427,11 +446,15 @@
         "label_translations": { "fr": "Libellé du bouton de mise en contact si envoyée" },
         "default": "Contact request sent",
         "default_translations": { "fr": "Demande de contact envoyée" },
-        "show_if": {
-          "source_id": "enable_contact_request_button",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_contact_request_button",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "header",
@@ -639,121 +662,165 @@
             "id": "field_name_twitter",
             "label": "Field name for Twitter",
             "label_translations": { "fr": "Nom du champ pour Twitter" },
-            "show_if": {
-              "source_id": "field_display",
-              "operator": "==",
-              "value": "social_networks"
-            }
+            "show_if": [
+              [
+                {
+                  "source_id": "field_display",
+                  "operator": "==",
+                  "value": "social_networks"
+                }
+              ]
+            ]
           },
           {
             "type": "guest_field_picker",
             "id": "field_name_facebook",
             "label": "Field name for Facebook",
             "label_translations": { "fr": "Nom du champ pour Facebook" },
-            "show_if": {
-              "source_id": "field_display",
-              "operator": "==",
-              "value": "social_networks"
-            }
+            "show_if": [
+              [
+                {
+                  "source_id": "field_display",
+                  "operator": "==",
+                  "value": "social_networks"
+                }
+              ]
+            ]
           },
           {
             "type": "guest_field_picker",
             "id": "field_name_linkedin",
             "label": "Field name for LinkedIn",
             "label_translations": { "fr": "Nom du champ pour LinkedIn" },
-            "show_if": {
-              "source_id": "field_display",
-              "operator": "==",
-              "value": "social_networks"
-            }
+            "show_if": [
+              [
+                {
+                  "source_id": "field_display",
+                  "operator": "==",
+                  "value": "social_networks"
+                }
+              ]
+            ]
           },
           {
             "type": "guest_field_picker",
             "id": "field_name_instagram",
             "label": "Field name for Instagram",
             "label_translations": { "fr": "Nom du champ pour Instagram" },
-            "show_if": {
-              "source_id": "field_display",
-              "operator": "==",
-              "value": "social_networks"
-            }
+            "show_if": [
+              [
+                {
+                  "source_id": "field_display",
+                  "operator": "==",
+                  "value": "social_networks"
+                }
+              ]
+            ]
           },
           {
             "type": "guest_field_picker",
             "id": "field_name_viadeo",
             "label": "Field name for Viadeo",
             "label_translations": { "fr": "Nom du champ pour Viadeo" },
-            "show_if": {
-              "source_id": "field_display",
-              "operator": "==",
-              "value": "social_networks"
-            }
+            "show_if": [
+              [
+                {
+                  "source_id": "field_display",
+                  "operator": "==",
+                  "value": "social_networks"
+                }
+              ]
+            ]
           },
           {
             "type": "guest_field_picker",
             "id": "field_name_youtube",
             "label": "Field name for Youtube",
             "label_translations": { "fr": "Nom du champ pour Youtube" },
-            "show_if": {
-              "source_id": "field_display",
-              "operator": "==",
-              "value": "social_networks"
-            }
+            "show_if": [
+              [
+                {
+                  "source_id": "field_display",
+                  "operator": "==",
+                  "value": "social_networks"
+                }
+              ]
+            ]
           },
           {
             "type": "guest_field_picker",
             "id": "field_name_vimeo",
             "label": "Field name for Vimeo",
             "label_translations": { "fr": "Nom du champ pour Vimeo" },
-            "show_if": {
-              "source_id": "field_display",
-              "operator": "==",
-              "value": "social_networks"
-            }
+            "show_if": [
+              [
+                {
+                  "source_id": "field_display",
+                  "operator": "==",
+                  "value": "social_networks"
+                }
+              ]
+            ]
           },
           {
             "type": "guest_field_picker",
             "id": "field_name_google",
             "label": "Field name for Google",
             "label_translations": { "fr": "Nom du champ pour Google" },
-            "show_if": {
-              "source_id": "field_display",
-              "operator": "==",
-              "value": "social_networks"
-            }
+            "show_if": [
+              [
+                {
+                  "source_id": "field_display",
+                  "operator": "==",
+                  "value": "social_networks"
+                }
+              ]
+            ]
           },
           {
             "type": "guest_field_picker",
             "id": "field_name_website",
             "label": "Field name for website",
             "label_translations": { "fr": "Nom du champ pour le site internet" },
-            "show_if": {
-              "source_id": "field_display",
-              "operator": "==",
-              "value": "contacts"
-            }
+            "show_if": [
+              [
+                {
+                  "source_id": "field_display",
+                  "operator": "==",
+                  "value": "contacts"
+                }
+              ]
+            ]
           },
           {
             "type": "guest_field_picker",
             "id": "field_name_mail",
             "label": "Field name for email",
             "label_translations": { "fr": "Nom du champ pour l'email" },
-            "show_if": {
-              "source_id": "field_display",
-              "operator": "==",
-              "value": "contacts"
-            }
+            "show_if": [
+              [
+                {
+                  "source_id": "field_display",
+                  "operator": "==",
+                  "value": "contacts"
+                }
+              ]
+            ]
           },
           {
             "type": "guest_field_picker",
             "id": "field_name_phone",
             "label": "Field name for phone number",
             "label_translations": { "fr": "Nom du champ pour le téléphone" },
-            "show_if": {
-              "source_id": "field_display",
-              "operator": "==",
-              "value": "contacts"
-            }
+            "show_if": [
+              [
+                {
+                  "source_id": "field_display",
+                  "operator": "==",
+                  "value": "contacts"
+                }
+              ]
+            ]
           },
           {
             "type": "checkbox",
@@ -763,11 +830,15 @@
             "info": "Only if the current page belongs to an exhibitor",
             "info_translations": { "fr": "Possible seulement si la fiche correspond à un exposant" },
             "default": true,
-            "show_if": {
-              "source_id": "field_display",
-              "operator": "==",
-              "value": "interests"
-            }
+            "show_if": [
+              [
+                {
+                  "source_id": "field_display",
+                  "operator": "==",
+                  "value": "interests"
+                }
+              ]
+            ]
           }
         ]
       }

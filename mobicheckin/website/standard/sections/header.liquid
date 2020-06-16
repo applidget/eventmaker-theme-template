@@ -229,62 +229,82 @@
         "id": "home_page_only",
         "label": "Home page only",
         "label_translations": { "fr": "Page d'accueil uniquement" },
-        "show_if": {
-          "source_id": "message",
-          "operator": "==",
-          "value": true
-        },
-        "default": true
+        "default": true,
+        "show_if": [
+          [
+            {
+              "source_id": "message",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "text",
         "id": "message_text",
         "label": "Announcement message",
         "label_translations": { "fr": "Texte de l'annonce" },
-        "show_if": {
-          "source_id": "message",
-          "operator": "==",
-          "value": true
-        },
         "default": "Your message",
-        "default_translations": { "fr": "Annoncez quelque chose" }
+        "default_translations": { "fr": "Annoncez quelque chose" },
+        "show_if": [
+          [
+            {
+              "source_id": "message",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "text",
         "id": "message_link",
         "label": "Announcement link",
         "label_translations": { "fr": "Lien de l'annonce" },
-        "show_if": {
-          "source_id": "message",
-          "operator": "==",
-          "value": true
-        },
         "info": "Optional",
-        "info_translations": { "fr": "Optionnel" }
+        "info_translations": { "fr": "Optionnel" },
+        "show_if": [
+          [
+            {
+              "source_id": "message",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "color",
         "id": "color_bg",
         "label": "Navigation bar color",
         "label_translations": { "fr": "Couleur de la barre" },
-        "show_if": {
-          "source_id": "message",
-          "operator": "==",
-          "value": true
-        },
-        "default": "#7796a8"
+        "default": "#7796a8",
+        "show_if": [
+          [
+            {
+              "source_id": "message",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "color",
         "id": "color_text",
         "label": "Text color",
         "label_translations": { "fr": "Couleur du texte" },
-        "show_if": {
-          "source_id": "message",
-          "operator": "==",
-          "value": true
-        },
-        "default": "#fff"
+        "default": "#fff",
+        "show_if": [
+          [
+            {
+              "source_id": "message",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       }
     ]
   }

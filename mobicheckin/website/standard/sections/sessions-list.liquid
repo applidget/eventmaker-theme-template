@@ -272,7 +272,6 @@
   {
     "name": "Schedule",
     "name_translations": { "fr": "Programme" },
-    "class": "index-section",
     "icon": "fa fa-calendar",
     "hidden_from_user": false,
     "group_key": "programme",
@@ -324,11 +323,15 @@
         "label_translations": { "fr": "Texte par défaut dans la recherche" },
         "default": "Search",
         "default_translations": { "fr": "Recherchez" },
-        "show_if": {
-          "source_id": "enable_text_search",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_text_search",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "checkbox",
@@ -344,11 +347,15 @@
         "label_translations": { "fr": "Titre du filtre par recommandations" },
         "default": "RECOMMENDATIONS",
         "default_translations": { "fr": "RECOMMANDATIONS" },
-        "show_if": {
-          "source_id": "enable_recommendations_search",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_recommendations_search",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "text",
@@ -357,11 +364,15 @@
         "label_translations": { "fr": "Libellé de la case à cocher pour les recommandations" },
         "default": "Recommended for me",
         "default_translations": { "fr": "Recommandé pour moi" },
-        "show_if": {
-          "source_id": "enable_recommendations_search",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_recommendations_search",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "checkbox",
@@ -377,11 +388,15 @@
         "label_translations": { "fr": "Titre du filtre par dates" },
         "default": "DATES",
         "default_translations": { "fr": "DATES" },
-        "show_if": {
-          "source_id": "enable_dates_search",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_dates_search",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "checkbox",
@@ -397,11 +412,15 @@
         "label_translations": { "fr": "Titre du filtre par horaires" },
         "default": "TIME SLOT",
         "default_translations": { "fr": "HORAIRES" },
-        "show_if": {
-          "source_id": "enable_time_search",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_time_search",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "checkbox",
@@ -409,11 +428,15 @@
         "label": "Enable sessions types search",
         "label_translations": { "fr": "Activer la recherche par types de sessions" },
         "default": true,
-        "show_if": {
-          "source_id": "session_type_global_filter",
-          "operator": "==",
-          "value": ""
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "session_type_global_filter",
+              "operator": "==",
+              "value": ""
+            }
+          ]
+        ]
       },
       {
         "type": "text",
@@ -422,11 +445,15 @@
         "label_translations": { "fr": "Titre du filtre par types de session" },
         "default": "SESSION TYPES",
         "default_translations": { "fr": "TYPES DE SESSION" },
-        "show_if": {
-          "source_id": "enable_session_types_search",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_session_types_search",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "checkbox",
@@ -442,11 +469,15 @@
         "label_translations": { "fr": "Titre du filtre par thématiques" },
         "default": "TRACKS",
         "default_translations": { "fr": "THÉMATIQUES" },
-        "show_if": {
-          "source_id": "enable_tracks_search",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_tracks_search",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "checkbox",
@@ -462,11 +493,15 @@
         "label_translations": { "fr": "Titre du filtre par salles" },
         "default": "ROOMS",
         "default_translations": { "fr": "SALLES" },
-        "show_if": {
-          "source_id": "enable_locations_search",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_locations_search",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "text",
@@ -501,11 +536,15 @@
         "label": "Exhibitors illustration",
         "label_translations": { "fr": "Illustration des exposants" },
         "default": "avatar",
-        "show_if": {
-          "source_id": "display_exhibitors",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "display_exhibitors",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "checkbox",
@@ -550,11 +589,15 @@
         "label_translations": { "fr": "Libellé du bouton d'inscription" },
         "default": "Register",
         "default_translations": { "fr": "S'inscrire" },
-        "show_if": {
-          "source_id": "enable_registration",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_registration",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "checkbox",
@@ -562,11 +605,15 @@
         "label": "Display the remaining slots",
         "label_translations": { "fr": "Afficher les places restantes" },
         "default": false,
-        "show_if": {
-          "source_id": "enable_registration",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_registration",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "checkbox",
@@ -574,20 +621,28 @@
         "label": "Display a personalized button for unknown visitor",
         "label_translations": { "fr": "Afficher un bouton personnalisé aux visiteurs non connectés" },
         "default": false,
-        "show_if": {
-          "source_id": "enable_registration",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_registration",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "product_defined",
         "value": "button_settings",
-        "show_if": {
-          "source_id": "enable_unknown_guest_custom_button",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_unknown_guest_custom_button",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "checkbox",
@@ -595,11 +650,15 @@
         "label": "Enable unregistration from sessions",
         "label_translations": { "fr": "Activer la désincription aux sessions" },
         "default": true,
-        "show_if": {
-          "source_id": "enable_registration",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_registration",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "text",
@@ -608,11 +667,15 @@
         "label_translations": { "fr": "Libellé du bouton de désinscription" },
         "default": "Unregister",
         "default_translations": { "fr": "Se désinscrire" },
-        "show_if": {
-          "source_id": "enable_unregistration",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_unregistration",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "text",
@@ -621,11 +684,15 @@
         "label_translations": { "fr": "Libellé du bouton déjà inscrit" },
         "default": "Already registered",
         "default_translations": { "fr": "Déjà inscrit" },
-        "show_if": {
-          "source_id": "enable_unregistration",
-          "operator": "==",
-          "value": false
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_unregistration",
+              "operator": "==",
+              "value": false
+            }
+          ]
+        ]
       },
       {
         "type": "text",
@@ -634,11 +701,15 @@
         "label_translations": { "fr": "Libellé du bouton de session payante" },
         "default": "Charged session",
         "default_translations": { "fr": "Session payante" },
-        "show_if": {
-          "source_id": "enable_registration",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_registration",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       }
     ],
     "presets": [

@@ -578,7 +578,6 @@
   {
     "name": "Order summary",
     "name_translations": { "fr": "Récapitulatif de commande" },
-    "class": "index-section",
     "icon": "fa fa-shopping-cart",
     "hidden_from_user": false,
     "group_key": "registration",
@@ -603,11 +602,15 @@
         "label_translations": { "fr": "Titre du tableau" },
         "default": "Your accreditations",
         "default_translations": { "fr": "Vos accréditations" },
-        "show_if": {
-          "source_id": "enable_accreditations_table",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_accreditations_table",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "accesspoint_trait_picker",
@@ -617,11 +620,15 @@
         "default": "",
         "info": "By default, the checkin point label will be displayed",
         "info_translations": { "fr": "Par défaut, le libellé du point de check-in sera affiché." },
-        "show_if": {
-          "source_id": "enable_accreditations_table",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_accreditations_table",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "accesspoint_trait_picker",
@@ -631,11 +638,15 @@
         "default": "",
         "info": "If no filter, every accreditation will be displayed",
         "info_translations": { "fr": "Si aucun filtre, toutes les accréditations du participant seront affichées." },
-        "show_if": {
-          "source_id": "enable_accreditations_table",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_accreditations_table",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "text",
@@ -643,11 +654,15 @@
         "label": "Filter value",
         "label_translations": { "fr": "Valeur du filtre" },
         "default": "",
-        "show_if": {
-          "source_id": "filter_trait_key",
-          "operator": "!=",
-          "value": ""
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "filter_trait_key",
+              "operator": "!=",
+              "value": ""
+            }
+          ]
+        ]
       },
       {
         "type": "accesspoint_trait_picker",
@@ -657,11 +672,15 @@
         "default": "",
         "info": "By default, accreditations are ordered by checkin point name",
         "info_translations": { "fr": "Par défaut, les accréditations sont ordonnées selon le nom du point de check-in." },
-        "show_if": {
-          "source_id": "enable_accreditations_table",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_accreditations_table",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "header",
@@ -682,11 +701,15 @@
         "label_translations": { "fr": "Titre du tableau" },
         "default": "Your products",
         "default_translations": { "fr": "Vos produits" },
-        "show_if": {
-          "source_id": "enable_products_table",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_products_table",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "accesspoint_trait_picker",
@@ -696,11 +719,15 @@
         "default": "",
         "info": "By default, the product label will be displayed",
         "info_translations": { "fr": "Par défaut, le libellé du produit sera affiché." },
-        "show_if": {
-          "source_id": "enable_products_table",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_products_table",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "accesspoint_trait_picker",
@@ -710,11 +737,15 @@
         "default": "",
         "info": "If no filter, every product will be displayed",
         "info_translations": { "fr": "Si aucun filtre, tous les produits du participant seront affichés." },
-        "show_if": {
-          "source_id": "enable_products_table",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_products_table",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "text",
@@ -722,11 +753,15 @@
         "label": "Filter value",
         "label_translations": { "fr": "Valeur du filtre" },
         "default": "",
-        "show_if": {
-          "source_id": "products_filter_trait_key",
-          "operator": "!=",
-          "value": ""
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "products_filter_trait_key",
+              "operator": "!=",
+              "value": ""
+            }
+          ]
+        ]
       },
       {
         "type": "accesspoint_trait_picker",
@@ -736,11 +771,15 @@
         "default": "",
         "info": "By default, products are ordered by name",
         "info_translations": { "fr": "Par défaut, les produits sont ordonnés par nom." },
-        "show_if": {
-          "source_id": "enable_products_table",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_products_table",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "header",
@@ -761,11 +800,15 @@
         "label_translations": { "fr": "Titre du tableau" },
         "default": "Your schedule",
         "default_translations": { "fr": "Votre programme" },
-        "show_if": {
-          "source_id": "enable_sessions_table",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_sessions_table",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "checkbox",
@@ -773,11 +816,15 @@
         "label": "Display session type",
         "label_translations": { "fr": "Afficher le type de session" },
         "default": false,
-        "show_if": {
-          "source_id": "enable_sessions_table",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_sessions_table",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "checkbox",
@@ -785,11 +832,15 @@
         "label": "Display session tracks",
         "label_translations": { "fr": "Afficher les thématiques de la session" },
         "default": false,
-        "show_if": {
-          "source_id": "enable_sessions_table",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_sessions_table",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "checkbox",
@@ -797,11 +848,15 @@
         "label": "Colored thematics",
         "label_translations": { "fr": "Thématiques en couleur" },
         "default": true,
-        "show_if": {
-          "source_id": "enable_sessions_thematics",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_sessions_thematics",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "checkbox",
@@ -809,11 +864,15 @@
         "label": "Display session time",
         "label_translations": { "fr": "Afficher l'horaire de la session" },
         "default": false,
-        "show_if": {
-          "source_id": "enable_sessions_table",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_sessions_table",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "checkbox",
@@ -821,11 +880,15 @@
         "label": "Display session location",
         "label_translations": { "fr": "Afficher le lieu de la session" },
         "default": false,
-        "show_if": {
-          "source_id": "enable_sessions_table",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_sessions_table",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "guest_field_picker",
@@ -833,11 +896,15 @@
         "label": "Exhibitors illustration",
         "label_translations": { "fr": "Illustration des exposants" },
         "default": "avatar",
-        "show_if": {
-          "source_id": "enable_sessions_table",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_sessions_table",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "checkbox",
@@ -845,11 +912,15 @@
         "label": "Enable unregistration from sessions",
         "label_translations": { "fr": "Activer la désincription des sessions" },
         "default": true,
-        "show_if": {
-          "source_id": "enable_sessions_table",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_sessions_table",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "text",
@@ -858,11 +929,15 @@
         "label_translations": { "fr": "Libellé du bouton de désinscription" },
         "default": "Unregister",
         "default_translations": { "fr": "Se désinscrire" },
-        "show_if": {
-          "source_id": "enable_unregistration",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_unregistration",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "checkbox",
@@ -870,11 +945,15 @@
         "label": "Enable registration to sessions",
         "label_translations": { "fr": "Activer la réinscription aux sessions" },
         "default": true,
-        "show_if": {
-          "source_id": "enable_unregistration",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_unregistration",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "text",
@@ -883,11 +962,15 @@
         "label_translations": { "fr": "Libellé du bouton d'inscription" },
         "default": "Register",
         "default_translations": { "fr": "S'inscrire" },
-        "show_if": {
-          "source_id": "enable_registration",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_registration",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "select_info_page_picker",
@@ -917,11 +1000,15 @@
         "label_translations": { "fr": "Titre du tableau" },
         "default": "Your accommodations",
         "default_translations": { "fr": "Vos hébergements" },
-        "show_if": {
-          "source_id": "enable_accommodations_table",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_accommodations_table",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "accesspoint_trait_picker",
@@ -931,11 +1018,15 @@
         "info": "By default, the accommodation label will be displayed",
         "info_translations": { "fr": "Par défaut, le libellé de l'hébergement sera affiché." },
         "default": "",
-        "show_if": {
-          "source_id": "enable_accommodations_table",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_accommodations_table",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "accesspoint_trait_picker",
@@ -945,11 +1036,15 @@
         "default": "",
         "info": "If no filter, every accommodation will be displayed",
         "info_translations": { "fr": "Si aucun filtre, tous les hébergements du participant seront affichés." },
-        "show_if": {
-          "source_id": "enable_accommodations_table",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_accommodations_table",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "text",
@@ -957,11 +1052,15 @@
         "label": "Filter value",
         "label_translations": { "fr": "Valeur du filtre" },
         "default": "",
-        "show_if": {
-          "source_id": "accommodation_filter_trait_key",
-          "operator": "!=",
-          "value": ""
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "accommodation_filter_trait_key",
+              "operator": "!=",
+              "value": ""
+            }
+          ]
+        ]
       },
       {
         "type": "accesspoint_trait_picker",
@@ -971,11 +1070,15 @@
         "info": "By default, accreditations are ordered by accommodation name",
         "info_translations": { "fr": "Par défaut, les hébergements sont ordonnés par nom." },
         "default": "",
-        "show_if": {
-          "source_id": "enable_accommodations_table",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_accommodations_table",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "header",
@@ -996,11 +1099,15 @@
         "label_translations": { "fr": "Titre du tableau" },
         "default": "Your tickets",
         "default_translations": { "fr": "Vos tickets" },
-        "show_if": {
-          "source_id": "enable_linked_guests_table",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_linked_guests_table",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "guest_field_picker",
@@ -1008,11 +1115,15 @@
         "label": "Field for name",
         "label_translations": { "fr": "Champ pour le nom" },
         "default": "identity",
-        "show_if": {
-          "source_id": "enable_linked_guests_table",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_linked_guests_table",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "checkbox",
@@ -1022,11 +1133,15 @@
         "default": true,
         "info": "You can customize this information by adding metadata 'label' to category.",
         "info_translations": { "fr": "Il est possible de personnaliser cette information en ajoutant la metadata 'label' à la catégorie." },
-        "show_if": {
-          "source_id": "enable_linked_guests_table",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_linked_guests_table",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "checkbox",
@@ -1036,11 +1151,15 @@
         "default": true,
         "info": "You can customize this information by adding metadata 'description' to category.",
         "info_translations": { "fr": "Il est possible de personnaliser cette information en ajoutant la metadata 'description' à la catégorie." },
-        "show_if": {
-          "source_id": "enable_linked_guests_table",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_linked_guests_table",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "checkbox",
@@ -1050,11 +1169,15 @@
         "default": true,
         "info": "You can customize this information by adding metadata 'label' to check-in points.",
         "info_translations": { "fr": "Il est possible de personnaliser ces informations en ajoutant la metadata 'label' aux points de check-in." },
-        "show_if": {
-          "source_id": "enable_linked_guests_table",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_linked_guests_table",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "checkbox",
@@ -1064,11 +1187,15 @@
         "default": true,
         "info": "You can customize this information by adding metadata 'label' to products.",
         "info_translations": { "fr": "Il est possible de personnaliser ces informations en ajoutant la metadata 'label' aux produits." },
-        "show_if": {
-          "source_id": "enable_linked_guests_table",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_linked_guests_table",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "checkbox",
@@ -1076,11 +1203,15 @@
         "label": "Display badge download button",
         "label_translations": { "fr": "Afficher le bouton de téléchargement du badge" },
         "default": true,
-        "show_if": {
-          "source_id": "enable_linked_guests_table",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_linked_guests_table",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "text",
@@ -1089,11 +1220,15 @@
         "label_translations": { "fr": "Libellé du bouton de badge" },
         "default": "TICKET",
         "default_translations": { "fr": "BILLET" },
-        "show_if": {
-          "source_id": "display_badge_button",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "display_badge_button",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "checkbox",
@@ -1101,11 +1236,15 @@
         "label": "Display edit button",
         "label_translations": { "fr": "Afficher le bouton d'édition" },
         "default": true,
-        "show_if": {
-          "source_id": "enable_linked_guests_table",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_linked_guests_table",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "text",
@@ -1114,11 +1253,15 @@
         "label_translations": { "fr": "Libellé du bouton d'édition" },
         "default": "Edit this registration",
         "default_translations": { "fr": "Éditer cette inscription" },
-        "show_if": {
-          "source_id": "display_edit_button",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "display_edit_button",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "text",
@@ -1127,11 +1270,15 @@
         "label_translations": { "fr": "Numéro d'étape" },
         "default": "1",
         "default_translations": { "fr": "1" },
-        "show_if": {
-          "source_id": "display_edit_button",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "display_edit_button",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "checkbox",
@@ -1139,11 +1286,15 @@
         "label": "Display confirmation page button",
         "label_translations": { "fr": "Afficher le bouton vers la page de confirmation" },
         "default": true,
-        "show_if": {
-          "source_id": "enable_linked_guests_table",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_linked_guests_table",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "text",
@@ -1152,11 +1303,15 @@
         "label_translations": { "fr": "Libellé du bouton vers la page de confirmation" },
         "default": "Confirmation page",
         "default_translations": { "fr": "Page de confirmation" },
-        "show_if": {
-          "source_id": "display_confirmation_page_button",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "display_confirmation_page_button",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "header",
@@ -1177,11 +1332,15 @@
         "label_translations": { "fr": "Titre du tableau" },
         "default": "Your orders",
         "default_translations": { "fr": "Vos commandes" },
-        "show_if": {
-          "source_id": "enable_carts_table",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_carts_table",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "text",
@@ -1190,11 +1349,15 @@
         "label_translations": { "fr": "Entête de la 1è colonne" },
         "default": "Services",
         "default_translations": { "fr": "Prestations" },
-        "show_if": {
-          "source_id": "enable_carts_table",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_carts_table",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "checkbox",
@@ -1204,11 +1367,15 @@
         "default": false,
         "info": "It will displayed for unpaid orders and if online payment is enabled.",
         "info_translations": { "fr": "Il sera affiché en cas de paiment non produit et si le paiment en ligne est activé." },
-        "show_if": {
-          "source_id": "enable_carts_table",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_carts_table",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "text",
@@ -1217,11 +1384,15 @@
         "label_translations": { "fr": "Libellé du bouton de paiement" },
         "default": "Pay online",
         "default_translations": { "fr": "Payer en ligne" },
-        "show_if": {
-          "source_id": "display_online_payment_button",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "display_online_payment_button",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       }
     ],
     "presets": [

@@ -48,7 +48,6 @@
   {
     "name": "Managed sessions",
     "name_translations": { "fr": "Sessions administrées" },
-    "class": "index-section",
     "icon": "fa fa-list-ul",
     "hidden_from_user": false,
     "group_key": "exhibitors",
@@ -105,11 +104,15 @@
         "label_translations": { "fr": "Libellé du bouton" },
         "default": "Download your leads",
         "default_translations": { "fr": "Téléchargez vos leads" },
-        "show_if": {
-          "source_id": "download_leads_conference_button_enabled",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "download_leads_conference_button_enabled",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       }
     ]
   }

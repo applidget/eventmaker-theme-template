@@ -66,7 +66,6 @@
   {
     "name": "Columns of text and image",
     "name_translations": { "fr": "Colonnes de texte et image" },
-    "class": "index-section",
     "icon": "fa fa-columns",
     "hidden_from_user": false,
     "group_key": "basic",
@@ -129,11 +128,15 @@
             "id": "image",
             "label": "Illustration",
             "label_translations": { "fr": "Illustration" },
-            "show_if": {
-              "source_id": "enable_image",
-              "operator": "==",
-              "value": true
-            }
+            "show_if": [
+              [
+                {
+                  "source_id": "enable_image",
+                  "operator": "==",
+                  "value": true
+                }
+              ]
+            ]
           },
           {
             "type": "checkbox",
@@ -147,12 +150,16 @@
             "id": "icon",
             "label": "Icon",
             "label_translations": { "fr": "Icône" },
-            "show_if": {
-              "source_id": "enable_icon",
-              "operator": "==",
-              "value": true
-            },
-            "default": "fa fa-user"
+            "default": "fa fa-user",
+            "show_if": [
+              [
+                {
+                  "source_id": "enable_icon",
+                  "operator": "==",
+                  "value": true
+                }
+              ]
+            ]
           },
           {
             "type": "text",
@@ -195,24 +202,32 @@
             "id": "button_color",
             "label": "Button color",
             "label_translations": { "fr": "Couleur du bouton" },
-            "show_if": {
-              "source_id": "enable_custom_css",
-              "operator": "==",
-              "value": true
-            },
-            "default": "#000"
+            "default": "#000",
+            "show_if": [
+              [
+                {
+                  "source_id": "enable_custom_css",
+                  "operator": "==",
+                  "value": true
+                }
+              ]
+            ]
           },
           {
             "type": "color",
             "id": "button_text_color",
             "label": "Button text color",
             "label_translations": { "fr": "Couleur du texte du bouton" },
-            "show_if": {
-              "source_id": "enable_custom_css",
-              "operator": "==",
-              "value": true
-            },
-            "default": "#000"
+            "default": "#000",
+            "show_if": [
+              [
+                {
+                  "source_id": "enable_custom_css",
+                  "operator": "==",
+                  "value": true
+                }
+              ]
+            ]
           }
         ]
       }

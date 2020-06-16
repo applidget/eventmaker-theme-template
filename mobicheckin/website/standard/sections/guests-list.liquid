@@ -290,7 +290,6 @@
   {
     "name": "List of guests",
     "name_translations": { "fr": "Liste de participants" },
-    "class": "index-section",
     "icon": "fa fa-group",
     "hidden_from_user": false,
     "group_key": "guests",
@@ -388,11 +387,15 @@
             "label_translations": { "fr": "Condensé, rayé et avec bordure" }
           }
         ],
-        "show_if": {
-          "source_id": "display_mode",
-          "operator": "==",
-          "value": "table"
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "display_mode",
+              "operator": "==",
+              "value": "table"
+            }
+          ]
+        ]
       },
       {
         "type": "guest_field_picker",
@@ -400,11 +403,15 @@
         "label": "Illustration",
         "label_translations": { "fr": "Illustration" },
         "default": "avatar",
-        "show_if": {
-          "source_id": "display_mode",
-          "operator": "==",
-          "value": "grid"
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "display_mode",
+              "operator": "==",
+              "value": "grid"
+            }
+          ]
+        ]
       },
       {
         "type": "select",
@@ -434,11 +441,15 @@
             "label_translations": { "fr": "6" }
           }
         ],
-        "show_if": {
-          "source_id": "display_mode",
-          "operator": "==",
-          "value": "grid"
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "display_mode",
+              "operator": "==",
+              "value": "grid"
+            }
+          ]
+        ]
       },
       {
         "type": "text",
@@ -474,11 +485,15 @@
             "label_translations": { "fr": "Non numérotée" }
           }
         ],
-        "show_if": {
-          "source_id": "enable_pagination",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_pagination",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "select",
@@ -503,11 +518,15 @@
             "label_translations": { "fr": "En-dessous de la liste seulement" }
           }
         ],
-        "show_if": {
-          "source_id": "enable_pagination",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_pagination",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "checkbox",
@@ -515,22 +534,30 @@
         "label": "Enable button to see all items",
         "label_translations": { "fr": "Activer le bouton vers la liste complète" },
         "default": false,
-        "show_if": {
-          "source_id": "enable_pagination",
-          "operator": "==",
-          "value": false
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_pagination",
+              "operator": "==",
+              "value": false
+            }
+          ]
+        ]
       },
       {
         "type": "website_page_picker",
         "id": "see_more_website_page_url",
         "label": "Page to complete list",
         "label_translations": { "fr": "Page vers la liste complète" },
-        "show_if": {
-          "source_id": "enable_see_more_btn",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_see_more_btn",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "text",
@@ -539,11 +566,15 @@
         "label_translations": { "fr": "Libellé du bouton vers la liste complète" },
         "default": "See more",
         "default_translations": { "fr": "Voir plus" },
-        "show_if": {
-          "source_id": "enable_see_more_btn",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_see_more_btn",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]]
       },
       {
         "type": "select",
@@ -568,11 +599,15 @@
             "label_translations": { "fr": "Droite" }
           }
         ],
-        "show_if": {
-          "source_id": "enable_see_more_btn",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_see_more_btn",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "header",
@@ -593,11 +628,15 @@
         "label_translations": { "fr": "Texte par défaut dans la recherche" },
         "default": "Search",
         "default_translations": { "fr": "Recherchez" },
-        "show_if": {
-          "source_id": "search_bar",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "search_bar",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "checkbox",
@@ -613,11 +652,15 @@
         "label_translations": { "fr": "Libellé pour les recommandations" },
         "default": "My recommendations",
         "default_translations": { "fr": "Mes recommandations" },
-        "show_if": {
-          "source_id": "enable_recommendations",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_recommendations",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "checkbox",
@@ -633,11 +676,15 @@
         "label_translations": { "fr": "Titre du filtre par thématiques" },
         "default": "Thematics",
         "default_translations": { "fr": "Thématiques" },
-        "show_if": {
-          "source_id": "enable_thematics_search",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_thematics_search",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "checkbox",
@@ -652,11 +699,15 @@
         "guest_field_type": "value_list",
         "label": "Filter 1",
         "label_translations": { "fr": "Filtre 1" },
-        "show_if": {
-          "source_id": "enable_custom_filter_1",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_custom_filter_1",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "checkbox",
@@ -664,11 +715,15 @@
         "label": "Enable a second custom filters",
         "label_translations": { "fr": "Activer un second filtre personnalisé" },
         "default": false,
-        "show_if": {
-          "source_id": "enable_custom_filter_1",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_custom_filter_1",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "guest_field_picker",
@@ -676,11 +731,15 @@
         "guest_field_type": "value_list",
         "label": "Filter 2",
         "label_translations": { "fr": "Filtre 2" },
-        "show_if": {
-          "source_id": "enable_custom_filter_2",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_custom_filter_2",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "checkbox",
@@ -688,11 +747,15 @@
         "label": "Enable a third custom filters",
         "label_translations": { "fr": "Activer un troisième filtre personnalisé" },
         "default": false,
-        "show_if": {
-          "source_id": "enable_custom_filter_2",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_custom_filter_2",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "guest_field_picker",
@@ -700,11 +763,15 @@
         "guest_field_type": "value_list",
         "label": "Filter 3",
         "label_translations": { "fr": "Filtre 3" },
-        "show_if": {
-          "source_id": "enable_custom_filter_3",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "enable_custom_filter_3",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "checkbox",
@@ -720,11 +787,15 @@
         "label_translations": { "fr": "Nom à afficher après le nombre d'éléments" },
         "default": "guests",
         "default_translations": { "fr": "participants" },
-        "show_if": {
-          "source_id": "display_nb_entries",
-          "operator": "==",
-          "value": true
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "display_nb_entries",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
       },
       {
         "type": "text",
@@ -763,11 +834,15 @@
         "label": "Field name",
         "label_translations": { "fr": "Nom du champ" },
         "default": "identity",
-        "show_if": {
-          "source_id": "guest_item_link",
-          "operator": "==",
-          "value": "from_guest_field"
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "guest_item_link",
+              "operator": "==",
+              "value": "from_guest_field"
+            }
+          ]
+        ]
       },
       {
         "type": "select_info_page_picker",
@@ -776,11 +851,15 @@
         "label": "Page for detailed view of guests",
         "label_translations": { "fr": "Page pour la vue détaillée des participants" },
         "default": "",
-        "show_if": {
-          "source_id": "guest_item_link",
-          "operator": "==",
-          "value": "guest_info_page"
-        }
+        "show_if": [
+          [
+            {
+              "source_id": "guest_item_link",
+              "operator": "==",
+              "value": "guest_info_page"
+            }
+          ]
+        ]
       }
     ],
     "blocks": [
@@ -842,11 +921,15 @@
             "label_translations": { "fr": "Libellé du lien" },
             "default": "Click",
             "default_translations": { "fr": "Cliquez" },
-            "show_if": {
-              "source_id": "column_display",
-              "operator": "==",
-              "value": "link"
-            }
+            "show_if": [
+              [
+                {
+                  "source_id": "column_display",
+                  "operator": "==",
+                  "value": "link"
+                }
+              ]
+            ]
           },
           {
             "type": "checkbox",
@@ -854,11 +937,15 @@
             "label": "Highlight text",
             "label_translations": { "fr": "Mettre en évidence" },
             "default": false,
-            "show_if": {
-              "source_id": "column_display",
-              "operator": "==",
-              "value": "text"
-            }
+            "show_if": [
+              [
+                {
+                  "source_id": "column_display",
+                  "operator": "==",
+                  "value": "text"
+                }
+              ]
+            ]
           }
         ]
       }
