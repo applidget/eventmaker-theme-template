@@ -153,6 +153,7 @@ Comment se presentent les `settings` ?
 Certains types de setting on besoin de plus qu'un label, un id et un type pour fonctionné.
 
 - `select` : les settings de type _select_ on besoin d'options pour focntionné. L'option vide est générer automatiquement.
+
     {
       "type": "select",
       "id": "text_size",
@@ -172,6 +173,7 @@ Certains types de setting on besoin de plus qu'un label, un id et un type pour f
         }
       ]
     }
+
 - `checkbox` : sa valeur par defaut sera un booléen (`true` / `false`) mais pas une String.
 - `color` : sa valeur par defaut doit être un code héxadécimal.
 
