@@ -1,0 +1,858 @@
+<div class="container {{ settings.spacing }}" data-section-id="{{ section.id }}" data-section-type="guest-info">
+  {% if section.settings.enable_back_button == true and section.settings.back_button_url != blank %}
+    <div class="row down-s">
+      <div class="col-xs-12">
+        <a href="/{{ section.settings.back_button_url }}"><i class="fa fa-angle-left"></i> {{ section.settings.back_button_label }}</a>
+      </div>
+    </div>
+  {% endif %}
+
+  <div class="row guest-info-header down-s">
+    {% if section.settings.enable_illustration == true and section.settings.illustration_field != blank %}
+      {% assign illustration_url = current_resource[section.settings.illustration_field] %}
+    {% endif %}
+
+    {% if illustration_url != blank and section.settings.illustration_alignment == "left" %}
+      <div class="col-md-2 col-sm-3 col-xs-4 image-container">
+        <img data-src="{{ illustration_url }}" alt="{{ current_resource[section.settings.title_field] }}" />
+      </div>
+    {% endif %}
+
+    <div class="{% if illustration_url != blank %}col-md-10 col-sm-9 col-xs-8{% else %}col-xs-12{% endif %}">
+      <h2 class="big-title">{{ current_resource[section.settings.title_field] }}</h2>
+
+      {% if current_resource.leadmaker_guest != nil %}
+        <p class="guest-thematics">
+          {% for thematic in current_resource.leadmaker_guest.thematics %}
+            <span class="label label-default" style="{% if section.settings.colored_thematics %}background-color: {{ thematic.color }};{% endif %}">{{ thematic.localized_name }}</span>
+          {% endfor %}
+        </p>
+      {% endif %}
+
+      {% if section.settings.enable_contact_request_button == true and section.settings.contact_request_button_label != blank and current_resource.leadmaker_exhibitor != nil %}
+        {% new_web_lead_form exhibitor_id: current_resource.leadmaker_exhibitor.id, button_class: "btn btn-primary btn-sm", request_button_label: section.settings.contact_request_button_label, requested_button_label: section.settings.sent_contact_request_button_label %}
+      {% endif %}
+    </div>
+
+    {% if illustration_url != blank and section.settings.illustration_alignment == "right" %}
+      <div class="col-md-2 col-sm-3 col-xs-4 image-container">
+        <img data-src="{{ illustration_url }}" alt="{{ current_resource[section.settings.title_field] }}" />
+      </div>
+    {% endif %}
+  </div>
+
+  {% unless section.settings.inversed_bg == true %}
+    <hr style="background: #eee; margin: 10px 0; height: 1px;" />
+  {% endunless %}
+
+  <div class="row {% if section.settings.inversed_bg == true %}down-s{% endif %}">
+    <div class="col-xs-12">
+      <div class="guest-info-details {% if section.settings.inversed_bg == true %}bg-inverse{% endif %}">
+        {% if section.settings.information_title != blank %}
+          <h3>{{ section.settings.information_title }}</h3>
+        {% endif %}
+        {% for block in section.blocks %}
+          {% assign field_label = block.settings.field_label %}
+          {% assign field_display = block.settings.field_display %}
+
+          {% if field_display == "title" and field_label != blank  %}
+            <h3>{{ field_label }}</h3>
+          {% else %}
+            {% assign display_field_label = true %}
+            {% assign display_field_value = true %}
+            {% assign field_value = current_resource[block.settings.field_name] %}
+
+            {% if field_display == "social_networks" %}
+              {% assign field_linkedin = current_resource[block.settings.field_name_linkedin] %}
+              {% assign field_viadeo = current_resource[block.settings.field_name_viadeo] %}
+              {% assign field_twitter = current_resource[block.settings.field_name_twitter] %}
+              {% assign field_facebook = current_resource[block.settings.field_name_facebook] %}
+              {% assign field_instagram = current_resource[block.settings.field_name_instagram] %}
+              {% assign field_google = current_resource[block.settings.field_name_google] %}
+              {% assign field_youtube = current_resource[block.settings.field_name_youtube] %}
+              {% assign field_vimeo = current_resource[block.settings.field_name_vimeo] %}
+              {% if field_linkedin == blank and field_viadeo == blank and field_twitter == blank and field_facebook == blank and field_instagram == blank and field_google == blank and field_youtube == blank and field_vimeo == blank %}
+                {% assign display_field_label = false %}
+                {% assign display_field_value = false %}
+              {% endif %}
+            {% elsif field_display == "contacts" %}
+              {% assign field_website = current_resource[block.settings.field_name_website] %}
+              {% assign field_mail = current_resource[block.settings.field_name_mail] %}
+              {% assign field_phone = current_resource[block.settings.field_name_phone] %}
+              {% if field_website == blank and field_mail == blank and field_phone == blank %}
+                {% assign display_field_label = false %}
+                {% assign display_field_value = false %}
+              {% endif %}
+            {% elsif field_display == "interests" and current_resource.thematics.size == 0 %}
+              {% assign display_field_label = false %}
+              {% assign display_field_value = false %}
+            {% else %}
+              {% if field_value == blank %}
+                {% assign display_field_label = false %}
+                {% assign display_field_value = false %}
+              {% else %}
+                {% if field_display == "person_file" %}
+                  {% assign display_field_label = false %}
+                  {% if field_label == blank %}
+                    {% assign display_field_value = false %}
+                  {% endif %}
+                {% elsif field_display == "values_list" %}
+                  {% assign values = field_value | split: ";" %}
+                  {% unless values.size > 0 %}
+                    {% assign display_field_label = false %}
+                    {% assign display_field_value = false %}
+                  {% endunless %}
+                {% endif %}
+              {% endif %}
+            {% endif %}
+
+            <dl class="{% if section.settings.information_alignment == "horizontal" %}dl-horizontal{% endif %}">
+              {% if display_field_label %}
+                <dt>{{ field_label }}</dt>
+              {% endif %}
+              {% if display_field_value %}
+                <dd {% if section.settings.information_alignment == "vertical" and block.settings.field_display == "image" %}style="padding-top: 5px;"{% endif %}>
+                  {% if field_display == "text" %}
+                    {{ field_value | newline_to_br }}
+                  {% elsif field_display == "link" %}
+                    <a href="{{ field_value }}" target="_blank">{{ field_value }}</a>
+                  {% elsif field_display == "image" %}
+                    <img data-src="{{ field_value }}" alt="{{ field_value }}" style="max-height: 100px;" />
+                  {% elsif field_display == "person_file" %}
+                    <a class="btn btn-primary" href="{{ field_value }}" target="_blank">{{ field_label }}</a>
+                  {% elsif field_display == "embedded_video" %}
+                    {% include "embedded-video", url: field_value %}
+                  {% elsif field_display == "values_list" %}
+                    {% for value in values %}
+                      <div class="label label-default">{{ value }}</div>
+                    {% endfor %}
+                  {% elsif field_display == "social_networks" %}
+                    <div class="social-networks">
+                      {% if field_linkedin != blank %}
+                        <a href="{{ field_linkedin | escape }}" target="_blank" class="linkedin"><i class="fa fa-lg fa-linkedin"></i></a>
+                      {% endif %}
+                      {% if field_viadeo != blank %}
+                        <a href="{{ field_viadeo | escape }}" target="_blank" class="viadeo"><i class="fa fa-lg fa-viadeo"></i></a>
+                      {% endif %}
+                      {% if field_twitter != blank %}
+                        <a href="{{ field_twitter | escape }}" target="_blank" class="twitter"><i class="fa fa-lg fa-twitter"></i></a>
+                      {% endif %}
+                      {% if field_facebook != blank %}
+                        <a href="{{ field_facebook | escape }}" target="_blank" class="facebook"><i class="fa fa-lg fa-facebook"></i></a>
+                      {% endif %}
+                      {% if field_instagram != blank %}
+                        <a href="{{ field_instagram | escape }}" target="_blank" class="instagram"><i class="fa fa-lg fa-instagram"></i></a>
+                      {% endif %}
+                      {% if field_google != blank %}
+                        <a href="{{ field_google | escape }}" target="_blank" class="google"><i class="fa fa-lg fa-google"></i></a>
+                      {% endif %}
+                      {% if field_youtube != blank %}
+                        <a href="{{ field_youtube | escape }}" target="_blank" class="youtube"><i class="fa fa-lg fa-youtube"></i></a>
+                      {% endif %}
+                      {% if field_vimeo != blank %}
+                        <a href="{{ field_vimeo | escape }}" target="_blank" class="vimeo"><i class="fa fa-lg fa-vimeo"></i></a>
+                      {% endif %}
+                    </div>
+                  {% elsif field_display == "contacts" %}
+                    {% if field_website != blank %}
+                      <a href="{{ field_website | escape }}" target="_blank" class="mr-20"><i class="fa fa-lg fa-globe"></i> {{ field_website | escape }}</a>
+                    {% endif %}
+                    {% if field_mail != blank %}
+                      <a href="mailto:{{ field_mail | escape }}" target="_blank" class="mr-20"><i class="fa fa-lg fa-envelope-o"></i> {{ field_mail | escape }}</a>
+                    {% endif %}
+                    {% if field_phone != blank %}
+                      <a href="tel:{{ field_phone | escape }}" target="_blank" class="mr-20"><i class="fa fa-lg fa-phone"></i> {{ field_phone | escape }}</a>
+                    {% endif %}
+                  {% elsif field_display == "interests" %}
+                    {% for interest in current_resource.thematics %}
+                      <span class="label label-default" style="{% if block.settings.colored_interests %}background-color: {{ interest.color }};{% endif %}">{{ interest.localized_name }}</span>
+                    {% endfor %}
+                  {% endif %}
+                </dd>
+                <br />
+              {% endif %}
+            </dl>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  {% if current_resource.sessions_as_speaker.size > 0 %}
+    <div class="row down-s">
+      <div class="col-xs-12 guest-sessions">
+        <h3>{{ section.settings.session_speaker_title }}</h3>
+
+        {% for session in current_resource.sessions_as_speaker %}
+          <div class="panel panel-default">
+            <div class="panel-body">
+              <h4 class="title">
+                {% if section.settings.session_info_page_path != blank %}
+                  <a href="/{{ section.settings.session_info_page_path | replace: "__id__", session.id }}">{{ session.localized_name }}</a>
+                {% else %}
+                  {{ session.localized_name }}
+                {% endif %}
+              </h4>
+              <p class="session-type-and-thematics">
+                <span class="label label-default session-type">{{ session.localized_session_type_label }}</span>
+
+                <span class="session-thematics">
+                  {% for thematic_id in session.thematic_ids %}
+                    {% assign thematic = event.cached_thematics[thematic_id] %}
+                    <span class="label label-default" style="{% if section.settings.colored_thematics %}background-color: {{ thematic.color }};{% endif %}">{{ thematic.localized_name }}</span>
+                  {% endfor %}
+                </span>
+              </p>
+              <p class="session-details">
+                <span><i class="fa fa-calendar-o"></i> {{ session.formatted_start_day }}</span>
+                <span class="vertical-separator">|</span>
+                <span><i class="fa fa-clock-o"></i> {{ session.start_time }} - {{ session.end_time }}</span>
+                {% if session.localized_location != blank %}
+                  <span class="vertical-separator">|</span>
+                  <span><i class="fa fa-map-marker"></i> {{ session.localized_location }}</span>
+                {% endif %}
+              </p>
+              {% if guest and section.settings.session_live_page_path != blank %}
+                {% capture live_page_path %}/{{ section.settings.session_live_page_path | replace: "__id__", session.id }}{% endcapture %}
+                {% assign live_button_wording = nil %}
+                {% assign live_button_class = "btn-danger" %}
+                {% if session.live? %}
+                  {% assign live_button_wording = t.accesspoint_live_streaming %}
+                {% elsif session.live_over? and session.streaming_archives != blank %}
+                  {% assign live_button_wording = t.accesspoint_live_replay %}
+                  {% assign live_button_class = "btn-primary" %}
+                {% endif %}
+                {% if live_button_wording != nil %}
+                  <div class="pull-left mt-10 {% unless guest.may_access_live_session_ids[session.id] %}hidden{% endunless %}" data-live-access-session-id={{ session.id }}>
+                    <a href="{{ live_page_path }}" class="btn {{ live_button_class }} btn-sm"><i class="fa fa-youtube-play" aria-hidden="true"></i>&nbsp;&nbsp;{{ live_button_wording }}</a>
+                  </div>
+                {% endif %}
+              {% endif %}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+
+  {% if current_resource.sessions_as_exhibitor.size > 0 %}
+    <div class="row down-s">
+      <div class="col-xs-12 guest-sessions">
+        <h3>{{ section.settings.session_exhibitor_title }}</h3>
+
+        {% for session in current_resource.sessions_as_exhibitor %}
+          <div class="panel panel-default">
+            <div class="panel-body">
+              <h4 class="title">
+                {% if section.settings.session_info_page_path != blank %}
+                  <a href="/{{ section.settings.session_info_page_path | replace: "__id__", session.id }}">{{ session.localized_name }}</a>
+                {% else %}
+                  {{ session.localized_name }}
+                {% endif %}
+              </h4>
+              <p class="session-type-and-thematics">
+                <span class="label label-default session-type">{{ session.localized_session_type_label }}</span>
+
+                <span class="session-thematics">
+                  {% for thematic_id in session.thematic_ids %}
+                    {% assign thematic = event.cached_thematics[thematic_id] %}
+                    <span class="label label-default" style="{% if section.settings.colored_thematics %}background-color: {{ thematic.color }};{% endif %}">{{ thematic.localized_name }}</span>
+                  {% endfor %}
+                </span>
+              </p>
+              <p class="session-details">
+                <span><i class="fa fa-calendar-o"></i> {{ session.formatted_start_day }}</span>
+                <span class="vertical-separator">|</span>
+                <span><i class="fa fa-clock-o"></i> {{ session.start_time }} - {{ session.end_time }}</span>
+                {% if session.localized_location != blank %}
+                  <span class="vertical-separator">|</span>
+                  <span><i class="fa fa-map-marker"></i> {{ session.localized_location }}</span>
+                {% endif %}
+              </p>
+              {% if guest and section.settings.session_live_page_path != blank %}
+                {% capture live_page_path %}/{{ section.settings.session_live_page_path | replace: "__id__", session.id }}{% endcapture %}
+                {% assign live_button_wording = nil %}
+                {% assign live_button_class = "btn-danger" %}
+                {% if session.live? %}
+                  {% assign live_button_wording = t.accesspoint_live_streaming %}
+                {% elsif session.live_over? and session.streaming_archives != blank %}
+                  {% assign live_button_wording = t.accesspoint_live_replay %}
+                  {% assign live_button_class = "btn-primary" %}
+                {% endif %}
+                {% if live_button_wording != nil %}
+                  <div class="pull-left mt-10 {% unless guest.may_access_live_session_ids[session.id] %}hidden{% endunless %}" data-live-access-session-id={{ session.id }}>
+                    <a href="{{ live_page_path }}" class="btn {{ live_button_class }} btn-sm"><i class="fa fa-youtube-play" aria-hidden="true"></i>&nbsp;&nbsp;{{ live_button_wording }}</a>
+                  </div>
+                {% endif %}
+              {% endif %}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+</div>
+
+{% schema %}
+  {
+    "name": "Guest information",
+    "name_translations": { "fr": "Informations participant" },
+    "icon": "fa fa-user",
+    "hidden_from_user": false,
+    "group_key": "guests",
+    "group_rank": 2000,
+    "settings": [
+      {
+        "type": "header",
+        "content": "Header",
+        "content_translations": { "fr": "Entête" }
+      },
+      {
+        "type": "guest_field_picker",
+        "id": "title_field",
+        "label": "Field for the title",
+        "label_translations": { "fr": "Champ pour le titre" },
+        "default": "identity"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_illustration",
+        "label": "Display an illustration",
+        "label_translations": { "fr": "Afficher une illustration" },
+        "default": false
+      },
+      {
+        "type": "guest_field_picker",
+        "id": "illustration_field",
+        "label": "Field for the illustration",
+        "label_translations": { "fr": "Champ pour l'illustration" },
+        "default": "avatar",
+        "show_if": [
+          [
+            {
+              "source_id": "enable_illustration",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
+      },
+      {
+        "type": "select",
+        "id": "illustration_alignment",
+        "label": "Illustration's alignment",
+        "label_translations": { "fr": "Alignement de l'illustration" },
+        "default": "left",
+        "options": [
+          {
+            "value": "left",
+            "label": "On the left of the title",
+            "label_translations": { "fr": "À gauche du titre" }
+          },
+          {
+            "value": "right",
+            "label": "On the right of the title",
+            "label_translations": { "fr": "À droite du titre" }
+          }
+        ],
+        "show_if": [
+          [
+            {
+              "source_id": "enable_illustration",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_back_button",
+        "label": "Display a back button",
+        "label_translations": { "fr": "Afficher un bouton retour" },
+        "default": false
+      },
+      {
+        "type": "website_page_picker",
+        "id": "back_button_url",
+        "label": "Back button URL",
+        "label_translations": { "fr": "URL du bouton de retour" },
+        "show_if": [
+          [
+            {
+              "source_id": "enable_back_button",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
+      },
+      {
+        "type": "text",
+        "id": "back_button_label",
+        "label": "Back button label",
+        "label_translations": { "fr": "Libellé du bouton de retour" },
+        "default": "Back",
+        "default_translations": { "fr": "Retour" },
+        "show_if": [
+          [
+            {
+              "source_id": "enable_back_button",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
+      },
+      {
+        "type": "checkbox",
+        "id": "colored_thematics",
+        "label": "Colored thematics",
+        "label_translations": { "fr": "Thématiques en couleur" },
+        "default": true,
+        "info": "Only if the current page belongs to an exhibitor",
+        "info_translations": { "fr": "Possible seulement si la fiche correspond à un exposant" }
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_contact_request_button",
+        "label": "Display an exhibitor contact request button",
+        "label_translations": { "fr": "Afficher un bouton de mise en contact exposant" },
+        "default": false,
+        "info": "Only if the visitor is logged in and the current page belongs to an exhibitor",
+        "info_translations": { "fr": "Possible seulement si le visiteur est connecté sur le site et que la fiche correspond à un exposant" }
+      },
+      {
+        "type": "text",
+        "id": "contact_request_button_label",
+        "label": "Contact request button label",
+        "label_translations": { "fr": "Libellé du bouton de mise en contact" },
+        "default": "Contact request",
+        "default_translations": { "fr": "Demande de contact" },
+        "show_if": [
+          [
+            {
+              "source_id": "enable_contact_request_button",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
+      },
+      {
+        "type": "text",
+        "id": "sent_contact_request_button_label",
+        "label": "Contact request button label if sent",
+        "label_translations": { "fr": "Libellé du bouton de mise en contact si envoyée" },
+        "default": "Contact request sent",
+        "default_translations": { "fr": "Demande de contact envoyée" },
+        "show_if": [
+          [
+            {
+              "source_id": "enable_contact_request_button",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
+      },
+      {
+        "type": "header",
+        "content": "Information section",
+        "content_translations": { "fr": "Section Informations" }
+      },
+      {
+        "type": "text",
+        "id": "information_title",
+        "label": "Title of information section",
+        "label_translations": { "fr": "Titre de la section d'informations" },
+        "default": "Information",
+        "default_translations": { "fr": "Informations" }
+      },
+      {
+        "type": "select",
+        "id": "information_alignment",
+        "label": "Information's alignment",
+        "label_translations": { "fr": "Alignement des informations" },
+        "default": "horizontal",
+        "options": [
+          {
+            "value": "horizontal",
+            "label": "Horizontal",
+            "label_translations": { "fr": "Horizontal" }
+          },
+          {
+            "value": "vertical",
+            "label": "Vertical",
+            "label_translations": { "fr": "Vertical" }
+          }
+        ]
+      },
+      {
+        "type": "checkbox",
+        "id": "inversed_bg",
+        "label": "Inversed background",
+        "label_translations": { "fr": "Fond inversé" },
+        "default": false,
+        "info": "Background and text colors will be the same as buttons",
+        "info_translations": { "fr": "Les couleurs de fond et du texte seront telles que définies pour les boutons" }
+      },
+      {
+        "type": "header",
+        "content": "Schedule's sessions",
+        "content_translations": { "fr": "Sessions du programme" }
+      },
+      {
+        "type": "text",
+        "id": "session_speaker_title",
+        "label": "Title of speaker section",
+        "label_translations": { "fr": "Titre de la section conférencier" },
+        "default": "Speaker on",
+        "default_translations": { "fr": "Conférencier sur" },
+        "info": "Display sessions the guest is speaker on",
+        "info_translations": { "fr": "Affiche les sessions sur lesquels le participant est conférencier" }
+      },
+      {
+        "type": "text",
+        "id": "session_exhibitor_title",
+        "label": "Title of exhibitor section",
+        "label_translations": { "fr": "Titre de la section exposant" },
+        "default": "Organize",
+        "default_translations": { "fr": "Organise" },
+        "info": "Display sessions the guest organize",
+        "info_translations": { "fr": "Affiche les sessions que le participant organise" }
+      },
+      {
+        "type": "checkbox",
+        "id": "colored_thematics",
+        "label": "Colored thematics",
+        "label_translations": { "fr": "Thématiques en couleur" },
+        "default": true
+      },
+      {
+        "type": "select_info_page_picker",
+        "id": "session_info_page_path",
+        "resource_name": "session",
+        "allow_page_creation": false,
+        "label": "Page for detailed view of sessions",
+        "label_translations": { "fr": "Page pour la vue détaillée des sessions" },
+        "default": ""
+      },
+      {
+        "type": "select_info_page_picker",
+        "id": "session_live_page_path",
+        "resource_name": "session",
+        "resource_live": true,
+        "label": "Page for live sessions",
+        "label_translations": { "fr": "Page pour le live des sessions" },
+        "default": ""
+      }
+    ],
+    "blocks": [
+      {
+        "type": "field_block",
+        "name": "Guest information",
+        "name_translations": { "fr": "Informations participant" },
+        "add_block": "New field to display",
+        "add_block_translations": { "fr": "Nouveau champ à afficher" },
+        "remove_block": "Remove this field",
+        "remove_block_translations": { "fr": "Retirer ce champ" },
+        "display_property": "field_label",
+        "settings": [
+          {
+            "type": "select",
+            "id": "field_display",
+            "label": "Information type",
+            "label_translations": { "fr": "Type d'information" },
+            "default": "text",
+            "options": [
+              {
+                "value": "title",
+                "label": "Title",
+                "label_translations": { "fr": "Titre" }
+              },
+              {
+                "value": "text",
+                "label": "Text",
+                "label_translations": { "fr": "Texte" }
+              },
+              {
+                "value": "link",
+                "label": "Link",
+                "label_translations": { "fr": "Lien" }
+              },
+              {
+                "value": "image",
+                "label": "Image",
+                "label_translations": { "fr": "Image" }
+              },
+              {
+                "value": "embedded_video",
+                "label": "Video",
+                "label_translations": { "fr": "Vidéo" }
+              },
+              {
+                "value": "person_file",
+                "label": "File",
+                "label_translations": { "fr": "Fichier" }
+              },
+              {
+                "value": "contacts",
+                "label": "Contacts",
+                "label_translations": { "fr": "Contacts" }
+              },
+              {
+                "value": "social_networks",
+                "label": "Social networks",
+                "label_translations": { "fr": "Réseaux sociaux" }
+              },
+              {
+                "value": "values_list",
+                "label": "List of values",
+                "label_translations": { "fr": "Liste de valeurs" }
+              },
+              {
+                "value": "interests",
+                "label": "Interests",
+                "label_translations": { "fr": "Centres d'intérêt" }
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "id": "field_label",
+            "label": "Field label",
+            "label_translations": { "fr": "Intitulé du champ" },
+            "default": "Email",
+            "default_translations": { "fr": "Email" }
+          },
+          {
+            "type": "guest_field_picker",
+            "id": "field_name",
+            "label": "Field name",
+            "label_translations": { "fr": "Nom du champ" },
+            "default": "email",
+            "show_if": [
+              [
+                {
+                  "source_id": "field_display",
+                  "operator": "!=",
+                  "value": "title"
+                },
+                {
+                  "source_id": "field_display",
+                  "operator": "!=",
+                  "value": "social_networks"
+                },
+                {
+                  "source_id": "field_display",
+                  "operator": "!=",
+                  "value": "contacts"
+                },
+                {
+                  "source_id": "field_display",
+                  "operator": "!=",
+                  "value": "interests"
+                }
+              ]
+            ]
+          },
+          {
+            "type": "guest_field_picker",
+            "id": "field_name_twitter",
+            "label": "Field name for Twitter",
+            "label_translations": { "fr": "Nom du champ pour Twitter" },
+            "show_if": [
+              [
+                {
+                  "source_id": "field_display",
+                  "operator": "==",
+                  "value": "social_networks"
+                }
+              ]
+            ]
+          },
+          {
+            "type": "guest_field_picker",
+            "id": "field_name_facebook",
+            "label": "Field name for Facebook",
+            "label_translations": { "fr": "Nom du champ pour Facebook" },
+            "show_if": [
+              [
+                {
+                  "source_id": "field_display",
+                  "operator": "==",
+                  "value": "social_networks"
+                }
+              ]
+            ]
+          },
+          {
+            "type": "guest_field_picker",
+            "id": "field_name_linkedin",
+            "label": "Field name for LinkedIn",
+            "label_translations": { "fr": "Nom du champ pour LinkedIn" },
+            "show_if": [
+              [
+                {
+                  "source_id": "field_display",
+                  "operator": "==",
+                  "value": "social_networks"
+                }
+              ]
+            ]
+          },
+          {
+            "type": "guest_field_picker",
+            "id": "field_name_instagram",
+            "label": "Field name for Instagram",
+            "label_translations": { "fr": "Nom du champ pour Instagram" },
+            "show_if": [
+              [
+                {
+                  "source_id": "field_display",
+                  "operator": "==",
+                  "value": "social_networks"
+                }
+              ]
+            ]
+          },
+          {
+            "type": "guest_field_picker",
+            "id": "field_name_viadeo",
+            "label": "Field name for Viadeo",
+            "label_translations": { "fr": "Nom du champ pour Viadeo" },
+            "show_if": [
+              [
+                {
+                  "source_id": "field_display",
+                  "operator": "==",
+                  "value": "social_networks"
+                }
+              ]
+            ]
+          },
+          {
+            "type": "guest_field_picker",
+            "id": "field_name_youtube",
+            "label": "Field name for Youtube",
+            "label_translations": { "fr": "Nom du champ pour Youtube" },
+            "show_if": [
+              [
+                {
+                  "source_id": "field_display",
+                  "operator": "==",
+                  "value": "social_networks"
+                }
+              ]
+            ]
+          },
+          {
+            "type": "guest_field_picker",
+            "id": "field_name_vimeo",
+            "label": "Field name for Vimeo",
+            "label_translations": { "fr": "Nom du champ pour Vimeo" },
+            "show_if": [
+              [
+                {
+                  "source_id": "field_display",
+                  "operator": "==",
+                  "value": "social_networks"
+                }
+              ]
+            ]
+          },
+          {
+            "type": "guest_field_picker",
+            "id": "field_name_google",
+            "label": "Field name for Google",
+            "label_translations": { "fr": "Nom du champ pour Google" },
+            "show_if": [
+              [
+                {
+                  "source_id": "field_display",
+                  "operator": "==",
+                  "value": "social_networks"
+                }
+              ]
+            ]
+          },
+          {
+            "type": "guest_field_picker",
+            "id": "field_name_website",
+            "label": "Field name for website",
+            "label_translations": { "fr": "Nom du champ pour le site internet" },
+            "show_if": [
+              [
+                {
+                  "source_id": "field_display",
+                  "operator": "==",
+                  "value": "contacts"
+                }
+              ]
+            ]
+          },
+          {
+            "type": "guest_field_picker",
+            "id": "field_name_mail",
+            "label": "Field name for email",
+            "label_translations": { "fr": "Nom du champ pour l'email" },
+            "show_if": [
+              [
+                {
+                  "source_id": "field_display",
+                  "operator": "==",
+                  "value": "contacts"
+                }
+              ]
+            ]
+          },
+          {
+            "type": "guest_field_picker",
+            "id": "field_name_phone",
+            "label": "Field name for phone number",
+            "label_translations": { "fr": "Nom du champ pour le téléphone" },
+            "show_if": [
+              [
+                {
+                  "source_id": "field_display",
+                  "operator": "==",
+                  "value": "contacts"
+                }
+              ]
+            ]
+          },
+          {
+            "type": "checkbox",
+            "id": "colored_interests",
+            "label": "Colored interests",
+            "label_translations": { "fr": "Centre d'intérêt en couleur" },
+            "info": "Only if the current page belongs to an exhibitor",
+            "info_translations": { "fr": "Possible seulement si la fiche correspond à un exposant" },
+            "default": true,
+            "show_if": [
+              [
+                {
+                  "source_id": "field_display",
+                  "operator": "==",
+                  "value": "interests"
+                }
+              ]
+            ]
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Guest information",
+        "name_translations": { "fr": "Informations participant" },
+        "blocks": [
+          {
+            "type": "field_block"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

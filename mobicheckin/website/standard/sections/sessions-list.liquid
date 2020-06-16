@@ -1,0 +1,722 @@
+{% assign search_pan = false %}
+{% if section.settings.enable_text_search or section.settings.enable_recommendations_search or section.settings.enable_dates_search or section.settings.enable_time_search or section.settings.enable_session_types_search or section.settings.enable_tracks_search or section.settings.enable_locations_search %}
+  {% assign search_pan = true %}
+{% endif %}
+
+<div class="container {{ settings.spacing }} position-r sessions-list-section" data-section-id="{{ section.id }}" data-section-type="sessions-list">
+
+  {% if section.settings.title != blank %}
+    <div class="section-header text-center down-s">
+      <h2 class="title">{{ section.settings.title | escape }}</h2>
+    </div>
+  {% endif %}
+
+  <div class="row up-s">
+    <div class="{% if search_pan %}col-sm-3{% else %}hide{% endif %}">
+      <div class="panel panel-default">
+        <div class="panel-body">
+          {% sessions_search_form class: 'sessions-search-form' %}
+            {% if section.settings.enable_text_search %}
+              <div class="search-filter form-group has-feedback">
+                <input type="text" name="q" class="form-control form-text-search" placeholder="{{ section.settings.text_search_placeholder }}" value="{{ url_params.q }}" />
+                <span class="fa fa-search form-control-feedback" aria-hidden="true"></span>
+              </div>
+            {% endif %}
+
+            {% if guest and section.settings.enable_recommendations_search %}
+              <div class="search-filter">
+                <label>{{ section.settings.recommendations_filter_title }}</label>
+                <div class="checkbox">
+                  <label><input type="checkbox" value="true" name="recommendations" {% if url_params.recommendations == "true" %}checked{% endif %} /> {{ section.settings.recommendations_checkbox_label }}</label>
+                </div>
+              </div>
+            {% endif %}
+
+            {% if section.settings.enable_dates_search and days.size > 1 %}
+              <div class="search-filter">
+                <label>{{ section.settings.dates_filter_title }}</label>
+                {% for day in days %}
+                  <div class="checkbox">
+                    <label><input type="checkbox" value="{{ day.key }}" name="dates[]" {% if url_params.dates contains day.key %}checked{% endif %} /><span>{{ day.label | capitalize }}</span></label>
+                  </div>
+                {% endfor %}
+              </div>
+            {% endif %}
+
+            {% if section.settings.enable_time_search and earliest_start_time != nil and latest_end_time != nil %}
+              {% assign earliest_start_time_splitted = earliest_start_time | split: ":" %}
+              {% assign earliest_start_time_int = earliest_start_time_splitted[0] | times: 60 | plus: earliest_start_time_splitted[1] %}
+              {% assign latest_end_time_splitted = latest_end_time | split: ":" %}
+              {% assign latest_end_time_int = latest_end_time_splitted[0] | times: 60 | plus: latest_end_time_splitted[1] %}
+
+              <div class="search-filter">
+                <label>{{ section.settings.timeslot_filter_title }}</label>
+                <div id="slider-range" data-default-start-time="{{ earliest_start_time_int }}" data-default-end-time="{{ latest_end_time_int }}" data-locale="{{ locale }}"></div>
+                <p class="slider-info"><span class="slider-time-start"></span> - <span class="slider-time-end"></span></p>
+                <input type="hidden" name="start_time" value="{% if url_params.start_time %}{{ url_params.start_time }}{% else %}{{ earliest_start_time_int }}{% endif %}" class="form-slider-handle" />
+                <input type="hidden" name="end_time" value="{% if url_params.end_time %}{{ url_params.end_time }}{% else %}{{ latest_end_time_int }}{% endif %}" class="form-slider-handle" />
+              </div>
+            {% endif %}
+
+            {% if section.settings.session_type_global_filter == blank and section.settings.enable_session_types_search and session_types.size > 1 %}
+              <div class="search-filter">
+                <label>{{ section.settings.session_types_filter_title }}</label>
+                {% for session_type in session_types %}
+                  <label class="checkbox">
+                    <input type="checkbox" value="{{ session_type.key }}" name="session_types[]" {% if url_params.session_types contains session_type.key %}checked{% endif %} /> {{ session_type.label }}
+                  </label>
+                {% endfor %}
+              </div>
+            {% endif %}
+
+            {% if section.settings.enable_tracks_search and thematics.size > 1 %}
+              <div class="search-filter search-thematics">
+                <label>{{ section.settings.tracks_filter_title }}</label>
+                {% for thematic in thematics %}
+                  <label class="checkbox">
+                    <input type="checkbox" value="{{ thematic.id }}" name="thematics[]" {% if url_params.thematics contains thematic.id %}checked{% endif %} />
+                    {% if section.settings.colored_thematics %}<span class="label label-default" style="background-color: {{ thematic.color }}; border-radius: 50%; font-size: 65%; vertical-align: 40%;">&nbsp;&nbsp;</span> {% endif %}{{ thematic.localized_name }}
+                  </label>
+                {% endfor %}
+              </div>
+            {% endif %}
+
+            {% if section.settings.enable_locations_search and locations.size > 1 %}
+              <div class="search-filter">
+                <label>{{ section.settings.locations_filter_title }}</label>
+                {% for location in locations %}
+                  <label class="checkbox">
+                    <input type="checkbox" value="{{ location }}" name="locations[]" {% if url_params.locations contains location %}checked{% endif %} /> {{ location }}
+                  </label>
+                {% endfor %}
+              </div>
+            {% endif %}
+          {% endsessions_search_form %}
+        </div>
+      </div>
+    </div>
+
+    <div class="{% if search_pan %}col-sm-9{% else %}col-sm-12{% endif %} sessions-list">
+      {% sessions_list session_type: section.settings.session_type_global_filter, display_speakers: section.settings.display_speakers, display_exhibitors: section.settings.display_exhibitors, recommendations: section.settings.enable_recommendations_search %}
+        {% if guest and guest.errors != blank %}
+          {% include 'form-errors', guest: guest, title: t.form_contains_errors %}
+        {% endif %}
+
+        {% for session in sessions %}
+          {% assign match_search = false %}
+          {% assign match_days = false %}
+          {% assign match_time = false %}
+          {% assign match_session_types = false %}
+          {% assign match_thematics = false %}
+          {% assign match_locations = false %}
+          {% assign speakers_searchable_keywords = "" %}
+          {% assign exhibitors_searchable_keywords = "" %}
+
+          {% for guest_ids in speaker_roles[session.id] %}
+            {% for guest_id in guest_ids %}
+              {% assign speakers_searchable_keywords = speakers_searchable_keywords | append: " " | append: guests[guest_id].first_name | append: " " | append: guests[guest_id].last_name | append: " " | append: guests[guest_id].company_name %}
+            {% endfor %}
+          {% endfor %}
+          {% for guest_ids in exhibitor_roles[session.id] %}
+            {% for guest_id in guest_ids %}
+              {% assign exhibitors_searchable_keywords = exhibitors_searchable_keywords | append: " " | append: guests[guest_id].first_name | append: " " | append: guests[guest_id].last_name | append: " " | append: guests[guest_id].company_name %}
+            {% endfor %}
+          {% endfor %}
+
+          {% assign speakers_searchable_keywords = speakers_searchable_keywords | downcase %}
+          {% assign exhibitors_searchable_keywords = exhibitors_searchable_keywords | downcase %}
+          {% assign frontend_searchable_keywords = session.frontend_searchable_keywords | join: ' ' | append: " " | append: speakers_searchable_keywords  | append: " " | append: exhibitors_searchable_keywords %}
+
+          <!-- Converts time into number of minutes since midnight (ex: 9h30 => 570) -->
+          {% assign start_time = session.start_hour | times: 60 | plus: session.start_minute %}
+          {% assign end_time = session.end_hour | times: 60 | plus: session.end_minute %}
+          {% if url_params.start_time == nil %}
+            {% assign search_start_time = earliest_start_time_int %}
+          {% else %}
+            {% assign search_start_time = url_params.start_time | times: 1 %}
+          {% endif %}
+
+          {% if url_params.end_time == nil %}
+            {% assign search_end_time = latest_end_time_int %}
+          {% else %}
+            {% assign search_end_time = url_params.end_time | times: 1 %}
+          {% endif %}
+
+          {% if url_params.q == nil or url_params.q == blank or frontend_searchable_keywords contains url_params.q %}
+            {% assign match_search = true %}
+          {% endif %}
+          {% if url_params.dates == nil or url_params.dates contains session.start_day %}
+            {% assign match_days = true %}
+          {% endif %}
+          {% if start_time >= search_start_time and start_time <= search_end_time and end_time >= search_start_time and end_time <= search_end_time %}
+            {% assign match_time = true %}
+          {% endif %}
+          {% if url_params.session_types == nil or url_params.session_types contains session.session_type %}
+            {% assign match_session_types = true %}
+          {% endif %}
+          {% if url_params.thematics == nil or url_params.thematics contains session.thematic_ids %}
+            {% assign match_thematics = true %}
+          {% endif %}
+          {% if url_params.locations == nil or url_params.locations contains session.location %}
+            {% assign match_locations = true %}
+          {% endif %}
+
+          <div class="session-item panel panel-default {% unless match_search and match_days and match_time and match_session_types and match_thematics and match_locations %}hide{% endunless %}" data-session-type="{{ session.session_type }}" data-datetime-overlapse="true" data-thematics="{{ session.thematic_ids | join: ',' }}" data-location="{{ session.location }}" data-date="{{ session.start_day }}" data-start-time="{{ start_time }}" data-end-time="{{ end_time }}" {% if guest and section.settings.enable_recommendations_search %}data-recommendation-distance="{{ session.distance }}"{% endif %} data-rank="{{ forloop.index }}" data-searchable-keywords="{{ frontend_searchable_keywords }}">
+            <div class="panel-body">
+              <div class="col-sm-3 session-sidebar">
+                <p class="session-type"><span class="label label-default">{{ session.localized_session_type_label }}</span></p>
+                {% if session.formatted_start_day != nil %}
+                  <p>
+                    <i class="fa fa-calendar-o"></i> {{ session.formatted_start_day }}<br />
+                    <i class="fa fa-clock-o"></i> {{ session.start_time }} - {{ session.end_time }}
+                  </p>
+                {% endif %}
+                {% if session.localized_location != blank %}
+                  <p><i class="fa fa-map-marker"></i> {{ session.localized_location }}</p>
+                {% endif %}
+              </div>
+              <div class="col-sm-9 session-main" data-accesspoint="true">
+                <h3 class="session-title">
+                  {% if section.settings.session_info_page_path != blank %}
+                    <a href="/{{ section.settings.session_info_page_path | replace: "__id__", session.id }}">{{ session.localized_name }}</a>
+                  {% elsif session.localized_description.size > 6 %}
+                      <a data-toggle="collapse" href="#collapse-{{ session.uid }}" aria-expanded="false" aria-controls="collapse">{{ session.localized_name }} <i class="fa fa-caret-down"></i></a>
+                  {% else %}
+                    {{ session.localized_name }}
+                  {% endif %}
+                </h3>
+                <p class="session-thematics">
+                  {% for thematic_id in session.thematic_ids %}
+                    {% assign thematic = thematics_by_id[thematic_id] %}
+                    {% if section.settings.enable_tracks_search %}
+                      <a class="label label-default" style="{% if section.settings.colored_thematics %}background-color: {{ thematic.color }};{% endif %};" data-thematic-id="{{ thematic_id }}">{{ thematic.localized_name }}</a>
+                    {% else %}
+                      <span class="label label-default" style="{% if section.settings.colored_thematics %}background-color: {{ thematic.color }};{% endif %};" data-thematic-id="{{ thematic_id }}">{{ thematic.localized_name }}</span>
+                    {% endif %}
+                  {% endfor %}
+                </p>
+
+                {% if section.settings.display_speakers and speaker_roles[session.id].size > 0 %}
+                  <p class="session-speakers">
+                    <i class="fa fa-microphone"></i>
+                    {% for guest_ids in speaker_roles[session.id] %}
+                      {% for guest_id in guest_ids %}
+                        {% if guests[guest_id].status == "registered" %}
+                          <span class="session-speaker">{{ guests[guest_id].identity }}</span>
+                        {% endif %}
+                      {% endfor %}
+                    {% endfor %}
+                  </p>
+                {% endif %}
+
+                {% if section.settings.display_exhibitors and exhibitor_roles[session.id].size > 0 %}
+                  <p class="session-exhibitors">
+                    {% for guest_ids in exhibitor_roles[session.id] %}
+                      {% for guest_id in guest_ids %}
+                        {% assign illustration_url = guests[guest_id][section.settings.exhibitor_illustration_field] %}
+                        {% if illustration_url != blank and illustration_url != nil %}
+                          <img data-src="{{ illustration_url }}" alt="{{ guests[guest_id].company_name }}" height="50" title="{{ guests[guest_id].company_name }}" />
+                        {% else %}
+                          <span>{{ guests[guest_id].company_name }}</span>
+                        {% endif %}
+                      {% endfor %}
+                    {% endfor %}
+                  </p>
+                {% endif %}
+
+                {% if section.settings.enable_registration and section.settings.display_remaining_slots %}
+                  {% if session.remaining_slots > -1 %}
+                    {% capture remaining_slots %}{{ session.remaining_slots }}{% endcapture %}
+                    <p class="text text-danger" data-capacity-reached="true" {% unless session.capacity_reached? %}style="display: none;"{% endunless %}><i class="fa fa-times"></i> {{ t.capacity_reached }}</p>
+                    <p class="text text-warning" data-capacity-remaining="true" {% if session.capacity_reached? %}style="display: none;"{% endif %}><i class="fa fa-warning"></i> {{ t.capacity_remaining }}</p>
+                  {% endif %}
+                {% endif %}
+
+                {% if section.settings.session_info_page_path == blank and session.localized_description.size > 6 %}
+                  <div class="session-description collapse" id="collapse-{{ session.uid }}">{{ session.localized_description }}</div>
+                {% endif %}
+
+                {% if section.settings.enable_registration %}
+                  <div class="pull-right" data-title="{{ t.datetime_overlapse_message }}">
+                    {% if guest %}
+                      {% checkin_point_register_button section.settings.register_button_label, accesspoint_id: session.id, class: "btn btn-primary btn-sm pull-right btn-datetime-overlapse", unregister_label: section.settings.unregister_button_label, registered_label: section.settings.registered_button_label, unregisterable: section.settings.enable_unregistration, paid_session_label: t.paid, charged_session_label: section.settings.charged_session_button_label %}
+                    {% elsif section.settings.enable_unknown_guest_custom_button %}
+                      {% include "button", params: section.settings %}
+                    {% endif %}
+                    <div class="text text-danger accesspoint-error-message up-s" style="display: none;"></div>
+                  </div>
+                {% endif %}
+                {% if guest and section.settings.session_live_page_path != blank %}
+                  <div class="pull-left">
+                    {% capture livePagePath %}/{{ section.settings.session_live_page_path | replace: "__id__", session.id }}{% endcapture %}
+                    {% if session.live? %}
+                      <a href="{{livePagePath}}" class="btn btn-danger btn-sm"><i class="fa fa-youtube-play" aria-hidden="true"></i>&nbsp;&nbsp;{{t.accesspoint_live_streaming}}</a>
+                    {% elsif session.live_over? and session.streaming_archives != blank %}
+                      <a href="{{livePagePath}}" class="btn btn-primary btn-sm"><i class="fa fa-youtube-play" aria-hidden="true"></i>&nbsp;&nbsp;{{t.accesspoint_live_replay}}</a>
+                    {% endif %}
+                  </div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+        <div class="panel panel-warning hide no-results">
+          <div class="panel-body">{{ section.settings.no_results_label }}</div>
+        </div>
+      {% endsessions_list %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+  {
+    "name": "Schedule",
+    "name_translations": { "fr": "Programme" },
+    "icon": "fa fa-calendar",
+    "hidden_from_user": false,
+    "group_key": "programme",
+    "group_rank": 1000,
+    "settings": [
+      {
+        "type": "header",
+        "content": "General settings",
+        "content_translations": { "fr": "Paramètres généraux" }
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title",
+        "label_translations": { "fr": "Titre" },
+        "default": "Schedule",
+        "default_translations": { "fr": "Programme" }
+      },
+      {
+        "type": "header",
+        "content": "Initial filter",
+        "content_translations": { "fr": "Filtre initial" }
+      },
+      {
+        "type": "accesspoint_session_type_picker",
+        "id": "session_type_global_filter",
+        "label": "Filter on a session type",
+        "label_translations": { "fr": "Filtrer sur un type de session" },
+        "info": "By default, all sessions are displayed",
+        "info_translations": { "fr": "Par défault, toutes les sessions sont affichées" },
+        "default": ""
+      },
+      {
+        "type": "header",
+        "content": "Search filters",
+        "content_translations": { "fr": "Filtres de recherche" }
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_text_search",
+        "label": "Enable text search",
+        "label_translations": { "fr": "Activer la recherche textuelle" },
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "text_search_placeholder",
+        "label": "Text search placeholder",
+        "label_translations": { "fr": "Texte par défaut dans la recherche" },
+        "default": "Search",
+        "default_translations": { "fr": "Recherchez" },
+        "show_if": [
+          [
+            {
+              "source_id": "enable_text_search",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_recommendations_search",
+        "label": "Enable recommendations",
+        "label_translations": { "fr": "Activer les recommandations" },
+        "default": false
+      },
+      {
+        "type": "text",
+        "id": "recommendations_filter_title",
+        "label": "Recommendations filter title",
+        "label_translations": { "fr": "Titre du filtre par recommandations" },
+        "default": "RECOMMENDATIONS",
+        "default_translations": { "fr": "RECOMMANDATIONS" },
+        "show_if": [
+          [
+            {
+              "source_id": "enable_recommendations_search",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
+      },
+      {
+        "type": "text",
+        "id": "recommendations_checkbox_label",
+        "label": "Recommendations checkbox label",
+        "label_translations": { "fr": "Libellé de la case à cocher pour les recommandations" },
+        "default": "Recommended for me",
+        "default_translations": { "fr": "Recommandé pour moi" },
+        "show_if": [
+          [
+            {
+              "source_id": "enable_recommendations_search",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_dates_search",
+        "label": "Enable dates search",
+        "label_translations": { "fr": "Activer la recherche par dates" },
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "dates_filter_title",
+        "label": "Dates filter title",
+        "label_translations": { "fr": "Titre du filtre par dates" },
+        "default": "DATES",
+        "default_translations": { "fr": "DATES" },
+        "show_if": [
+          [
+            {
+              "source_id": "enable_dates_search",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_time_search",
+        "label": "Enable time search",
+        "label_translations": { "fr": "Activer la recherche par plage horaire" },
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "timeslot_filter_title",
+        "label": "Time slot filter title",
+        "label_translations": { "fr": "Titre du filtre par horaires" },
+        "default": "TIME SLOT",
+        "default_translations": { "fr": "HORAIRES" },
+        "show_if": [
+          [
+            {
+              "source_id": "enable_time_search",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_session_types_search",
+        "label": "Enable sessions types search",
+        "label_translations": { "fr": "Activer la recherche par types de sessions" },
+        "default": true,
+        "show_if": [
+          [
+            {
+              "source_id": "session_type_global_filter",
+              "operator": "==",
+              "value": ""
+            }
+          ]
+        ]
+      },
+      {
+        "type": "text",
+        "id": "session_types_filter_title",
+        "label": "Session types filter title",
+        "label_translations": { "fr": "Titre du filtre par types de session" },
+        "default": "SESSION TYPES",
+        "default_translations": { "fr": "TYPES DE SESSION" },
+        "show_if": [
+          [
+            {
+              "source_id": "enable_session_types_search",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_tracks_search",
+        "label": "Enable tracks search",
+        "label_translations": { "fr": "Activer la recherche par thématiques" },
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "tracks_filter_title",
+        "label": "Tracks filter title",
+        "label_translations": { "fr": "Titre du filtre par thématiques" },
+        "default": "TRACKS",
+        "default_translations": { "fr": "THÉMATIQUES" },
+        "show_if": [
+          [
+            {
+              "source_id": "enable_tracks_search",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_locations_search",
+        "label": "Enable locations search",
+        "label_translations": { "fr": "Activer la recherche par salles" },
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "locations_filter_title",
+        "label": "Locations filter title",
+        "label_translations": { "fr": "Titre du filtre par salles" },
+        "default": "ROOMS",
+        "default_translations": { "fr": "SALLES" },
+        "show_if": [
+          [
+            {
+              "source_id": "enable_locations_search",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
+      },
+      {
+        "type": "text",
+        "id": "no_results_label",
+        "label": "No results label",
+        "label_translations": { "fr": "Libellé si aucun résultat" },
+        "default": "No results",
+        "default_translations": { "fr": "Aucun résultat" }
+      },
+      {
+        "type": "header",
+        "content": "Sessions list",
+        "content_translations": { "fr": "Liste des sessions" }
+      },
+      {
+        "type": "checkbox",
+        "id": "display_speakers",
+        "label": "Display speakers",
+        "label_translations": { "fr": "Afficher les intervenants" },
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "display_exhibitors",
+        "label": "Display exhibitors",
+        "label_translations": { "fr": "Afficher les exposants" },
+        "default": true
+      },
+      {
+        "type": "guest_field_picker",
+        "id": "exhibitor_illustration_field",
+        "label": "Exhibitors illustration",
+        "label_translations": { "fr": "Illustration des exposants" },
+        "default": "avatar",
+        "show_if": [
+          [
+            {
+              "source_id": "display_exhibitors",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
+      },
+      {
+        "type": "checkbox",
+        "id": "colored_thematics",
+        "label": "Colored thematics",
+        "label_translations": { "fr": "Thématiques en couleur" },
+        "default": true
+      },
+      {
+        "type": "select_info_page_picker",
+        "id": "session_info_page_path",
+        "resource_name": "session",
+        "label": "Page for detailed view of sessions",
+        "label_translations": { "fr": "Page pour la vue détaillée des sessions" },
+        "default": ""
+      },
+      {
+        "type": "select_info_page_picker",
+        "id": "session_live_page_path",
+        "resource_name": "session",
+        "resource_live": true,
+        "label": "Page for live sessions",
+        "label_translations": { "fr": "Page pour le live des sessions" },
+        "default": ""
+      },
+      {
+        "type": "header",
+        "content": "Registration",
+        "content_translations": { "fr": "Inscription" }
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_registration",
+        "label": "Enable registration to sessions",
+        "label_translations": { "fr": "Activer l'inscription aux sessions" },
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "register_button_label",
+        "label": "Registration button label",
+        "label_translations": { "fr": "Libellé du bouton d'inscription" },
+        "default": "Register",
+        "default_translations": { "fr": "S'inscrire" },
+        "show_if": [
+          [
+            {
+              "source_id": "enable_registration",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
+      },
+      {
+        "type": "checkbox",
+        "id": "display_remaining_slots",
+        "label": "Display the remaining slots",
+        "label_translations": { "fr": "Afficher les places restantes" },
+        "default": false,
+        "show_if": [
+          [
+            {
+              "source_id": "enable_registration",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_unknown_guest_custom_button",
+        "label": "Display a personalized button for unknown visitor",
+        "label_translations": { "fr": "Afficher un bouton personnalisé aux visiteurs non connectés" },
+        "default": false,
+        "show_if": [
+          [
+            {
+              "source_id": "enable_registration",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
+      },
+      {
+        "type": "product_defined",
+        "value": "button_settings",
+        "show_if": [
+          [
+            {
+              "source_id": "enable_unknown_guest_custom_button",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_unregistration",
+        "label": "Enable unregistration from sessions",
+        "label_translations": { "fr": "Activer la désincription aux sessions" },
+        "default": true,
+        "show_if": [
+          [
+            {
+              "source_id": "enable_registration",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
+      },
+      {
+        "type": "text",
+        "id": "unregister_button_label",
+        "label": "Unregistration button label",
+        "label_translations": { "fr": "Libellé du bouton de désinscription" },
+        "default": "Unregister",
+        "default_translations": { "fr": "Se désinscrire" },
+        "show_if": [
+          [
+            {
+              "source_id": "enable_unregistration",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
+      },
+      {
+        "type": "text",
+        "id": "registered_button_label",
+        "label": "Already registered button label",
+        "label_translations": { "fr": "Libellé du bouton déjà inscrit" },
+        "default": "Already registered",
+        "default_translations": { "fr": "Déjà inscrit" },
+        "show_if": [
+          [
+            {
+              "source_id": "enable_unregistration",
+              "operator": "==",
+              "value": false
+            }
+          ]
+        ]
+      },
+      {
+        "type": "text",
+        "id": "charged_session_button_label",
+        "label": "Charged session button label",
+        "label_translations": { "fr": "Libellé du bouton de session payante" },
+        "default": "Charged session",
+        "default_translations": { "fr": "Session payante" },
+        "show_if": [
+          [
+            {
+              "source_id": "enable_registration",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Schedule",
+        "name_translations": { "fr": "Programme" }
+      }
+    ]
+  }
+{% endschema %}

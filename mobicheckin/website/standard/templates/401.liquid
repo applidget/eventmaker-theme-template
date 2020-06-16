@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{{ t.page_unauthorized }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+
+    <!-- Loads Google Fonts if necessary -->
+    {% if settings.type_base_family contains 'Google' %}
+      {% assign type_base_parts = settings.type_base_family | split: '_' %}
+      {% capture baseGoogleUrl %}{{ type_base_parts[1] }}:400,700{% endcapture %}
+      <link rel="stylesheet" href="{{ '//fonts.googleapis.com/css?family=' | append: baseGoogleUrl }}" />
+    {% endif %}
+    {% if settings.type_header_family contains 'Google' %}
+      {% unless settings.type_header_family contains type_base_parts[1] and settings.type_header_family contains '700' %}
+        {% assign type_header_parts = settings.type_header_family | split: '_' %}
+        {% capture headerGoogleUrl %}{{ type_header_parts[1] }}:{{ type_header_parts[2] }}{% endcapture %}
+        <link rel="stylesheet" href="{{ '//fonts.googleapis.com/css?family=' | append: headerGoogleUrl }}" />
+      {% endunless %}
+    {% endif %}
+
+    {% if settings.type_base_family contains 'Google' %}
+      {% assign type_base_parts = settings.type_base_family | split: '_' %}
+      {% assign type_base_name = type_base_parts[1] %}
+      {% capture base_family %}"{{ type_base_name | split: ':' | first | replace: '+', ' ' }}"{% if type_base_parts.last == 'serif' %}, serif {% else %}, "HelveticaNeue", "Helvetica Neue", sans-serif{% endif %}{% endcapture %}
+    {% else %}
+      {% assign base_family = settings.type_base_family %}
+    {% endif %}
+
+    {% if settings.type_header_family contains 'Google' %}
+      {% assign type_header_parts = settings.type_header_family | split: '_' %}
+      {% assign type_header_name = type_header_parts[1] %}
+      {% capture header_family %}"{{ type_header_name | split: ':' | first | replace: '+', ' ' }}"{% if type_header_parts.last == 'serif' %}, serif {% else %}, "HelveticaNeue", "Helvetica Neue", sans-serif{% endif %}{% endcapture %}
+      {% assign header_weight = type_header_parts[2] | split: ',' %}
+    {% else %}
+      {% assign header_family = settings.type_header_family %}
+      {% assign header_weight = 400 %}
+    {% endif %}
+
+    <style type="text/css">
+      html, body{min-height: 100%;margin:0;}
+      body{background-color:{{ settings.color_body_bg }};font-size:{{ settings.type_base_size }};font-family:{{ base_family }};color:{{ settings.color_body_text }};text-align:center;}
+      .button{display:inline-block;font-weight:400;text-align:center;white-space:nowrap;vertical-align:middle;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;border:1px solid transparent;padding:.375rem .75rem;font-size:1rem;line-height:1.5;border-radius:.25rem;transition:color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;color:{{ settings.color_button_text }};background-color:{{ settings.color_button }};border-color:{{ settings.color_button }};text-transform:none;text-decoration:none;}
+      .absolute-center{overflow:auto;margin:auto;position:absolute;top:0;left:0;bottom:0;right:0;width:80%;display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-webkit-flex-direction:column;-ms-flex-direction:column;flex-direction:column;-webkit-box-pack:center;-webkit-justify-content:center;-ms-flex-pack:center;justify-content:center}
+      h1{ font-size:1.5em}
+    </style>
+  </head>
+  <body>
+    <div style="text-align:center;" class="absolute-center">
+      <div>
+        <svg xmlns="http://www.w3.org/2000/svg" width="144" height="144" viewBox="0 0 144 144">
+          <g transform="translate(-568 -226)">
+            <g transform="translate(441 -27)">
+              <circle cx="72" cy="72" r="72" transform="translate(127 253)" fill="#f6f6f6"/>
+            </g>
+            <path d="M65.216,36.521H61.3V24.782a24.782,24.782,0,1,0-49.564,0V36.521H7.826A7.828,7.828,0,0,0,0,44.347v31.3a7.828,7.828,0,0,0,7.826,7.826h57.39a7.828,7.828,0,0,0,7.826-7.826v-31.3A7.828,7.828,0,0,0,65.216,36.521Zm-16.956,0H24.782V24.782a11.739,11.739,0,1,1,23.478,0Z" transform="translate(603 256.262)"/>
+          </g>
+        </svg>
+        <h1>{{ t.page_unauthorized }}</h1>
+        <p>{{ t.page_unauthorized_message }}</p>
+      </div>
+      <div>
+        <a href="/" class="button">{{ t.back_to_home }}</a>
+      </div>
+    </div>
+  </body>
+</html>

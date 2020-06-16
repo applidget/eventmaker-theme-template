@@ -1,0 +1,779 @@
+[
+  {
+    "name": "Colors",
+    "name_translations": { "fr": "Couleurs" },
+    "id": "colors",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Background",
+        "content_translations": { "fr": "Fond" }
+      },
+      {
+        "type": "color",
+        "id": "color_body_bg",
+        "label": "Primary color",
+        "label_translations": { "fr": "Couleur de fond principale" },
+        "default": "#fff"
+      },
+      {
+        "type": "color",
+        "id": "color_ticketing_bg",
+        "label": "Background color of the ticketing",
+        "label_translations": { "fr": "Couleur de fond de la billetterie" },
+        "default": "#FFFFFF"
+      },
+      {
+        "type": "header",
+        "content": "Text and buttons",
+        "content_translations": { "fr": "Texte et boutons" }
+      },
+      {
+        "type": "color",
+        "id": "color_text",
+        "label": "Titles and links",
+        "label_translations": { "fr": "Titres et liens" },
+        "default": "{{ event.primary_color }}"
+      },
+      {
+        "type": "color",
+        "id": "color_body_text",
+        "label": "Main text",
+        "label_translations": { "fr": "Texte principal" },
+        "default": "{{ event.secondary_color }}"
+      },
+      {
+        "type": "color",
+        "id": "color_borders",
+        "label": "Borders and lines",
+        "label_translations": { "fr": "Bordures et lignes" },
+        "default": "#e8e9eb"
+      },
+      {
+        "type": "color",
+        "id": "color_button",
+        "label": "Buttons",
+        "label_translations": { "fr": "Boutons" },
+        "default": "{{ event.primary_color }}"
+      },
+      {
+        "type": "color",
+        "id": "color_button_text",
+        "label": "Buttons text",
+        "label_translations": { "fr": "Texte des boutons" },
+        "default": "#fff"
+      },
+      {
+        "type": "header",
+        "content": "Notifications",
+        "content_translations": { "fr": "Notifications" }
+      },
+      {
+        "type": "color",
+        "id": "color_notification",
+        "label": "Notifications",
+        "label_translations": { "fr": "Notifications" },
+        "default": "{{ event.primary_color }}"
+      },
+      {
+        "type": "color",
+        "id": "color_notification_text",
+        "label": "Notifications text",
+        "label_translations": { "fr": "Texte des notifications" },
+        "default": "#fff"
+      },
+      {
+        "type": "header",
+        "content": "Images overlay",
+        "content_translations": { "fr": "Overlay des images" }
+      },
+      {
+        "type": "color",
+        "id": "color_image_overlay_text",
+        "label": "Text",
+        "label_translations": { "fr": "Texte" },
+        "default": "#fff"
+      },
+      {
+        "type": "color",
+        "id": "color_image_overlay",
+        "label": "Background color",
+        "label_translations": { "fr": "Couleur de fond" },
+        "default": "{{ event.primary_color }}"
+      },
+      {
+        "type": "range",
+        "id": "image_overlay_opacity",
+        "label": "Opacity",
+        "label_translations": { "fr": "Opacité" },
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "unit": "%",
+        "default": 25
+      }
+    ]
+  },
+  {
+    "name": "Typography",
+    "name_translations": { "fr": "Typographie" },
+    "id": "typo",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Titles and buttons",
+        "content_translations": { "fr": "Titres et boutons" }
+      },
+      {
+        "type": "select",
+        "id": "type_header_family",
+        "label": "Font",
+        "label_translations": { "fr": "Police de caractères" },
+        "default": "Helvetica Neue",
+        "options": [
+          {
+            "value": "'HelveticaNeue', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+            "label": "Helvetica Neue",
+            "group": "Sans-serif"
+          },
+          {
+            "value": "Arial, 'Helvetica Neue', Helvetica, sans-serif",
+            "label": "Arial",
+            "group": "Sans-serif"
+          },
+          {
+            "value": "Geneva, Tahoma, Verdana, sans-serif",
+            "label": "Geneva",
+            "group": "Sans-serif"
+          },
+          {
+            "value": "Google_Droid+Sans_400_sans",
+            "label": "Droid Sans",
+            "group": "Sans-serif | Google Web Fonts"
+          },
+          {
+            "value": "Google_Droid+Sans_700_sans",
+            "label": "Droid Sans Bold",
+            "group": "Sans-serif | Google Web Fonts"
+          },
+          {
+            "value": "Google_IBM+Plex+Sans_400_sans",
+            "label": "IBM Plex Sans",
+            "group": "Sans-serif | Google Web Fonts"
+          },
+          {
+            "value": "Google_IBM+Plex+Sans_700_sans",
+            "label": "IBM Plex Sans Bold",
+            "group": "Sans-serif | Google Web Fonts"
+          },
+          {
+            "value": "Google_Lato_400_sans",
+            "label": "Lato",
+            "group": "Sans-serif | Google Web Fonts"
+          },
+          {
+            "value": "Google_Lato_700_sans",
+            "label": "Lato Bold",
+            "group": "Sans-serif | Google Web Fonts"
+          },
+          {
+            "value": "Google_Montserrat_300_sans",
+            "label": "Montserrat Light",
+            "group": "Sans-serif | Google Web Fonts"
+          },
+          {
+            "value": "Google_Montserrat_400_sans",
+            "label": "Montserrat",
+            "group": "Sans-serif | Google Web Fonts"
+          },
+          {
+            "value": "Google_Montserrat_700_sans",
+            "label": "Montserrat Bold",
+            "group": "Sans-serif | Google Web Fonts"
+          },
+          {
+            "value": "Google_Montserrat_900_sans",
+            "label": "Montserrat Black",
+            "group": "Sans-serif | Google Web Fonts"
+          },
+          {
+            "value": "Google_Roboto_400_sans",
+            "label": "Roboto",
+            "group": "Sans-serif | Google Web Fonts"
+          },
+          {
+            "value": "Google_Roboto_700_sans",
+            "label": "Roboto Bold",
+            "group": "Sans-serif | Google Web Fonts"
+          },
+          {
+            "value": "Google_Ubuntu_400_sans",
+            "label": "Ubuntu",
+            "group": "Sans-serif | Google Web Fonts"
+          },
+          {
+            "value": "Google_Ubuntu_700_sans",
+            "label": "Ubuntu Bold",
+            "group": "Sans-serif | Google Web Fonts"
+          },
+          {
+            "value": "'Calisto MT', 'Bookman Old Style', Bookman, 'Goudy Old Style', Garamond, 'Hoefler Text', 'Bitstream Charter', Georgia, serif",
+            "label": "Calisto MT",
+            "group": "Serif"
+          },
+          {
+            "value": "Garamond, Baskerville, 'Baskerville Old Face', 'Hoefler Text', 'Times New Roman', serif",
+            "label": "Garamond",
+            "group": "Serif"
+          },
+          {
+            "value": "TimesNewRoman, 'Times New Roman', Times, Baskerville, Georgia, serif",
+            "label": "Times New Roman",
+            "group": "Serif"
+          },
+          {
+            "value": "Google_Droid+Serif_400_serif",
+            "label": "Droid Serif",
+            "group": "Serif | Google Web Fonts"
+          },
+          {
+            "value": "Google_Droid+Serif_700_serif",
+            "label": "Droid Serif Bold",
+            "group": "Serif | Google Web Fonts"
+          },
+          {
+            "value": "Google_Playfair+Display_400_serif",
+            "label": "Playfair Display",
+            "group": "Serif | Google Web Fonts"
+          },
+          {
+            "value": "Google_Playfair+Display_700_serif",
+            "label": "Playfair Display Bold",
+            "group": "Serif | Google Web Fonts"
+          },
+          {
+            "value": "Google_Playfair+Display_900_serif",
+            "label": "Playfair Display Black",
+            "group": "Serif | Google Web Fonts"
+          },
+          {
+            "value": "Google_PT+Serif_400_serif",
+            "label": "PT Serif",
+            "group": "Serif | Google Web Fonts"
+          },
+          {
+            "value": "Google_PT+Serif_700_serif",
+            "label": "PT Serif Bold",
+            "group": "Serif | Google Web Fonts"
+          },
+          {
+            "value": "Google_Bree+Serif_400_serif",
+            "label": "Bree Serif",
+            "group": "Serif | Google Web Fonts"
+          },
+          {
+            "value": "custom",
+            "label": "Custom",
+            "group": "Custom"
+          }
+        ]
+      },
+      {
+        "type": "text",
+        "id": "external_type_header_stylesheet",
+        "label": "CSS stylesheet URL",
+        "label_translations": { "fr": "Url de la feuille de style css" },
+        "info": "eg. https://fonts.googleapis.com/css?family=Anton&display=swap",
+        "info_translations": { "fr": "ex. https://fonts.googleapis.com/css?family=Anton&display=swap" },
+        "show_if": [
+          [
+            {
+              "source_id": "type_header_family",
+              "operator": "==",
+              "value": "custom"
+            }
+          ]
+        ]
+      },
+      {
+        "type": "text",
+        "id": "external_type_header_family",
+        "label": "Font family name",
+        "label_translations": { "fr": "Nom de la police" },
+        "info": "eg. 'Anton', sans-serif;",
+        "info_translations": { "fr": "ex. 'Anton', sans-serif;" },
+        "show_if": [
+          [
+            {
+              "source_id": "type_header_family",
+              "operator": "==",
+              "value": "custom"
+            }
+          ]
+        ]
+      },
+      {
+        "type": "select",
+        "id": "type_header_base_size",
+        "label": "Basic size of the titles",
+        "label_translations": { "fr": "Taille de base des titres" },
+        "default": "26px",
+        "options": [
+          {
+            "value": "20px",
+            "label": "20px"
+          },
+          {
+            "value": "22px",
+            "label": "22px"
+          },
+          {
+            "value": "24px",
+            "label": "24px"
+          },
+          {
+            "value": "26px",
+            "label": "26px"
+          },
+          {
+            "value": "28px",
+            "label": "28px"
+          },
+          {
+            "value": "30px",
+            "label": "30px"
+          },
+          {
+            "value": "32px",
+            "label": "32px"
+          },
+          {
+            "value": "34px",
+            "label": "34px"
+          },
+          {
+            "value": "36px",
+            "label": "36px"
+          },
+          {
+            "value": "38px",
+            "label": "38px"
+          },
+          {
+            "value": "40px",
+            "label": "40px"
+          }
+        ]
+      },
+      {
+        "type": "header",
+        "content": "Text",
+        "content_translations": { "fr": "Texte" }
+      },
+      {
+        "type": "select",
+        "id": "type_base_family",
+        "label": "Font",
+        "label_translations": { "fr": "Police de caractères" },
+        "default": "Helvetica Neue",
+        "options": [
+          {
+            "value": "'HelveticaNeue', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+            "label": "Helvetica Neue",
+            "group": "Sans-serif"
+          },
+          {
+            "value": "Arial, 'Helvetica Neue', Helvetica, sans-serif",
+            "label": "Arial",
+            "group": "Sans-serif"
+          },
+          {
+            "value": "Geneva, Tahoma, Verdana, sans-serif",
+            "label": "Geneva",
+            "group": "Sans-serif"
+          },
+          {
+            "value": "Google_Droid+Sans_400_sans",
+            "label": "Droid Sans",
+            "group": "Sans-serif | Google Web Fonts"
+          },
+          {
+            "value": "Google_Droid+Sans_700_sans",
+            "label": "Droid Sans Bold",
+            "group": "Sans-serif | Google Web Fonts"
+          },
+          {
+            "value": "Google_IBM+Plex+Sans_400_sans",
+            "label": "IBM Plex Sans",
+            "group": "Sans-serif | Google Web Fonts"
+          },
+          {
+            "value": "Google_IBM+Plex+Sans_700_sans",
+            "label": "IBM Plex Sans Bold",
+            "group": "Sans-serif | Google Web Fonts"
+          },
+          {
+            "value": "Google_Lato_400_sans",
+            "label": "Lato",
+            "group": "Sans-serif | Google Web Fonts"
+          },
+          {
+            "value": "Google_Lato_700_sans",
+            "label": "Lato Bold",
+            "group": "Sans-serif | Google Web Fonts"
+          },
+          {
+            "value": "Google_Montserrat_300_sans",
+            "label": "Montserrat Light",
+            "group": "Sans-serif | Google Web Fonts"
+          },
+          {
+            "value": "Google_Montserrat_400_sans",
+            "label": "Montserrat",
+            "group": "Sans-serif | Google Web Fonts"
+          },
+          {
+            "value": "Google_Montserrat_700_sans",
+            "label": "Montserrat Bold",
+            "group": "Sans-serif | Google Web Fonts"
+          },
+          {
+            "value": "Google_Montserrat_900_sans",
+            "label": "Montserrat Black",
+            "group": "Sans-serif | Google Web Fonts"
+          },
+          {
+            "value": "Google_Roboto_400_sans",
+            "label": "Roboto",
+            "group": "Sans-serif | Google Web Fonts"
+          },
+          {
+            "value": "Google_Roboto_700_sans",
+            "label": "Roboto Bold",
+            "group": "Sans-serif | Google Web Fonts"
+          },
+          {
+            "value": "Google_Ubuntu_400_sans",
+            "label": "Ubuntu",
+            "group": "Sans-serif | Google Web Fonts"
+          },
+          {
+            "value": "Google_Ubuntu_700_sans",
+            "label": "Ubuntu Bold",
+            "group": "Sans-serif | Google Web Fonts"
+          },
+          {
+            "value": "'Calisto MT', 'Bookman Old Style', Bookman, 'Goudy Old Style', Garamond, 'Hoefler Text', 'Bitstream Charter', Georgia, serif",
+            "label": "Calisto MT",
+            "group": "Serif"
+          },
+          {
+            "value": "Garamond, Baskerville, 'Baskerville Old Face', 'Hoefler Text', 'Times New Roman', serif",
+            "label": "Garamond",
+            "group": "Serif"
+          },
+          {
+            "value": "TimesNewRoman, 'Times New Roman', Times, Baskerville, Georgia, serif",
+            "label": "Times New Roman",
+            "group": "Serif"
+          },
+          {
+            "value": "Google_Droid+Serif_400_serif",
+            "label": "Droid Serif",
+            "group": "Serif | Google Web Fonts"
+          },
+          {
+            "value": "Google_Droid+Serif_700_serif",
+            "label": "Droid Serif Bold",
+            "group": "Serif | Google Web Fonts"
+          },
+          {
+            "value": "Google_Playfair+Display_400_serif",
+            "label": "Playfair Display",
+            "group": "Serif | Google Web Fonts"
+          },
+          {
+            "value": "Google_Playfair+Display_700_serif",
+            "label": "Playfair Display Bold",
+            "group": "Serif | Google Web Fonts"
+          },
+          {
+            "value": "Google_Playfair+Display_900_serif",
+            "label": "Playfair Display Black",
+            "group": "Serif | Google Web Fonts"
+          },
+          {
+            "value": "Google_PT+Serif_400_serif",
+            "label": "PT Serif",
+            "group": "Serif | Google Web Fonts"
+          },
+          {
+            "value": "Google_PT+Serif_700_serif",
+            "label": "PT Serif Bold",
+            "group": "Serif | Google Web Fonts"
+          },
+          {
+            "value": "Google_Bree+Serif_400_serif",
+            "label": "Bree Serif",
+            "group": "Serif | Google Web Fonts"
+          },
+          {
+            "value": "custom",
+            "label": "Custom",
+            "group": "Custom"
+          }
+        ]
+      },
+      {
+        "type": "text",
+        "id": "external_type_base_stylesheet",
+        "label": "CSS stylesheet URL",
+        "label_translations": { "fr": "Url de la feuille de style css" },
+        "info": "eg. https://fonts.googleapis.com/css?family=Anton&display=swap",
+        "info_translations": { "fr": "ex. https://fonts.googleapis.com/css?family=Anton&display=swap" },
+        "show_if": [
+          [
+            {
+              "source_id": "type_base_family",
+              "operator": "==",
+              "value": "custom"
+            }
+          ]
+        ]
+      },
+      {
+        "type": "text",
+        "id": "external_type_base_family",
+        "label": "Font family name",
+        "label_translations": { "fr": "Nom de la police" },
+        "info": "eg. 'Anton', sans-serif;",
+        "info_translations": { "fr": "ex. 'Anton', sans-serif;" },
+        "show_if": [
+          [
+            {
+              "source_id": "type_base_family",
+              "operator": "==",
+              "value": "custom"
+            }
+          ]
+        ]
+      },
+      {
+        "type": "select",
+        "id": "type_base_size",
+        "label": "Basic size",
+        "label_translations": { "fr": "Taille de base" },
+        "default": "13px",
+        "options": [
+          {
+            "value": "12px",
+            "label": "12px"
+          },
+          {
+            "value": "13px",
+            "label": "13px"
+          },
+          {
+            "value": "14px",
+            "label": "14px"
+          },
+          {
+            "value": "15px",
+            "label": "15px"
+          },
+          {
+            "value": "16px",
+            "label": "16px"
+          },
+          {
+            "value": "17px",
+            "label": "17px"
+          },
+          {
+            "value": "18px",
+            "label": "18px"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Social networks",
+    "name_translations": { "fr": "Réseaux sociaux" },
+    "id": "social",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Social sharing",
+        "content_translations": { "fr": "Partage réseaux sociaux" }
+      },
+      {
+        "type": "text",
+        "id": "social_facebook_link",
+        "label": "Facebook",
+        "info": "https://www.facebook.com/Eventmaker.io/"
+      },
+      {
+        "type": "text",
+        "id": "social_twitter_link",
+        "label": "Twitter",
+        "info": "https://twitter.com/Eventmaker.io/"
+      },
+      {
+        "type": "text",
+        "id": "social_google_link",
+        "label": "Google",
+        "info": "https://plus.google.com/Eventmaker.io/"
+      },
+      {
+        "type": "text",
+        "id": "social_pinterest_link",
+        "label": "Pinterest",
+        "info": "https://www.pinterest.fr/Eventmaker.io/"
+      },
+      {
+        "type": "text",
+        "id": "social_instagram_link",
+        "label": "Instagram",
+        "info": "https://www.instagram.com/Eventmaker.io/"
+      },
+      {
+        "type": "text",
+        "id": "social_linkedin_link",
+        "label": "Linkedin",
+        "info": "https://www.linkedin.com/company/Eventmaker.io/"
+      },
+      {
+        "type": "text",
+        "id": "social_viadeo_link",
+        "label": "Viadeo",
+        "info": "https://fr.viadeo.com/fr/company/Eventmaker.io/"
+      },
+      {
+        "type": "text",
+        "id": "social_youtube_link",
+        "label": "Youtube",
+        "info": "https://www.youtube.com/user/Eventmaker/"
+      },
+      {
+        "type": "text",
+        "id": "social_vimeo_link",
+        "label": "Vimeo",
+        "info": "https://vimeo.com/Eventmaker.io/"
+      },
+      {
+        "type": "header",
+        "content": "Social preview",
+        "content_translations": { "fr": "Prévisualisation réseaux sociaux" }
+      },
+      {
+        "type": "image_picker",
+        "id": "social_preview",
+        "label": "Social preview illustration",
+        "label_translations": { "fr": "Image de prévisualisation" },
+        "info": "Recommended dimensions 1200x630 pixels <br> <a href='https://cards-dev.twitter.com/validator' target='_blank'>Test for Twitter</a> <br><a href='https://developers.facebook.com/tools/debug/sharing/' target='_blank'>Test for Facebook</a>",
+        "info_translations": { "fr": "Dimensions conseillées 1200x630 pixels <br> <a href='https://cards-dev.twitter.com/validator' target='_blank'>Tester pour Twitter</a> <br><a href='https://developers.facebook.com/tools/debug/sharing/' target='_blank'>Tester pour Facebook</a>"}
+      }
+    ]
+  },
+  {
+    "name": "Analytics & Tracking",
+    "name_translations": { "fr": "Suivis & Statistiques" },
+    "id": "analytics",
+    "settings": [
+      {
+        "type": "text",
+        "id": "google-tagmanager_analytics_id",
+        "label": "Google Tag Manager ID",
+        "info": "GTM-XXXXXXX"
+      },
+      {
+        "type": "text",
+        "id": "google_analytics_id",
+        "label": "Google Analytics UA",
+        "info": "UA-XXXXXXXXXX or AW-XXXXXXXXXX"
+      },
+      {
+        "type": "text",
+        "id": "facebook_analytics_id",
+        "label": "Facebook Pixel ID",
+        "info": "XXXXXXXXXXXXXXXX"
+      },
+      {
+        "type": "paragraph",
+        "id": "custom_analytics_snippet",
+        "label": "Custom analytics snippet (JS)",
+        "label_translations": { "fr": "Script de suivi personnalisé (JS)" },
+        "info": "&lt;script&gt;....&lt;/script&gt;"
+      },
+      {
+        "type": "select",
+        "id": "custom_analytics_snippet_position",
+        "label": "Custom snippet position",
+        "label_translations": { "fr": "Position du script" },
+        "default": "bottom",
+        "options": [
+          {
+            "value": "bottom",
+            "label": "End of the page (Body)",
+            "label_translations": { "fr": "Fin de page (Body)" }
+          },
+          {
+            "value": "top",
+            "label": "Begining of the page (Head)",
+            "label_translations": { "fr": "Début de page (Head)" }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Favicon",
+    "id": "favicon",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "favicon",
+        "label": "Favicon image",
+        "label_translations": { "fr": "Image favicon" },
+        "info": "Image PNG (32x32 pixels)"
+      }
+    ]
+  },
+  {
+    "name": "Spacing",
+    "name_translations": { "fr": "Espacement" },
+    "id": "spacing",
+    "settings": [
+      {
+        "type": "select",
+        "id": "spacing",
+        "label": "Spacing between sections",
+        "label_translations": { "fr": "Espacement entre les sections" },
+        "default": "padding-lg",
+        "options": [
+          {
+            "value": "padding-lg",
+            "label": "Large",
+            "label_translations": { "fr": "Large" }
+          },
+          {
+            "value": "padding-md",
+            "label": "Medium",
+            "label_translations": { "fr": "Moyen" }
+          },
+          {
+            "value": "padding-sm",
+            "label": "Small",
+            "label_translations": { "fr": "Petit" }
+          },
+          {
+            "value": "padding-xs",
+            "label": "Extra small",
+            "label_translations": { "fr": "Très petit" }
+          }
+        ]
+      }
+    ]
+  }
+]

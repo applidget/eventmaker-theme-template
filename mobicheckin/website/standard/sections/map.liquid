@@ -1,0 +1,151 @@
+{% assign display_map = false %}
+{% assign bg_image = section.settings.background_image %}
+
+{% if section.settings.map_address != blank %}
+  {% assign display_map = true %}
+  {% assign map_address = section.settings.map_address | parse_liquid %}
+{% endif %}
+
+<div class="map-section" data-section-id="{{ section.id }}" data-section-type="map">
+  <div class="map-section-wrapper">
+    <div class="map-section-content-wrapper">
+      <div class="map-section-content">
+        {% if section.settings.heading != blank %}
+          <h4 class="media-heading">{{ section.settings.heading | escape }}</h4>
+        {% endif %}
+
+        {% if section.settings.address.html.size > 6 %}
+          <p>{{ section.settings.address.html | parse_liquid }}</p>
+          {% if map_address != blank and section.settings.button_text != blank %}
+            <a href="https://maps.google.com?daddr={{ map_address | escape }}" class="btn btn-primary" target="_blank">
+              <span><i class="fa fa-map-marker"></i> {{ section.settings.button_text | escape }}</span>
+            </a>
+          {% endif %}
+        {% endif %}
+      </div>
+    </div>
+    <div class="map-section-background-wrapper">
+      {% if bg_image != blank %}
+        <div class="map-section-background" style="background-image: url('{{ bg_image }}'); background-position: {{ section.settings.background_image_position }}">
+        </div>
+      {% endif %}
+
+      {% if display_map %}
+        {% comment %} The key below is only valid on eventmaker.io domain so it's "safe" to be hardcoded {% endcomment %}
+        {% capture api_key %}AIzaSyCaX9PFJHnBlH_GejG9QnXCEkPgf_fbjzU{% endcapture %}
+        {% if section.settings.api_key != blank %}
+          {% capture api_key %}{{ section.settings.api_key }}{% endcapture %}
+        {% endif %}
+        <div class="map-section-container" id="Map-{{ section.id }}" data-map
+             data-address-setting="{{ map_address | escape }}"
+             data-api-key="{{ api_key }}">
+        </div>
+        <div class="map-section-overlay" data-map-overlay></div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+  {
+    "name": "Map",
+    "name_translations": { "fr": "Carte" },
+    "icon": "fa fa-map-marker",
+    "hidden_from_user": false,
+    "group_key": "media",
+    "group_rank": 4000,
+    "settings": [
+      {
+        "type": "header",
+        "content": "Text",
+        "content_translations": { "fr": "Texte" }
+      },
+      {
+        "id": "heading",
+        "type": "text",
+        "label": "Title",
+        "label_translations": { "fr": "Titre" },
+        "default": "Our agency",
+        "default_translations": { "fr": "Notre agence" }
+      },
+      {
+        "id": "address",
+        "type": "rte",
+        "label": "Address, schedule, contacts",
+        "label_translations": { "fr": "Adresse, horaires, contacts" },
+        "default": {
+          "html":"<div>38, rue Laffitte</div>\n<div>75009 PARIS</div>\n<div>Tel: 01.54.66.00.10</div>",
+          "draftjs_content": {}
+        }
+      },
+      {
+        "id": "map_address",
+        "type": "text",
+        "label": "Address for the map",
+        "label_translations": { "fr": "Adresse pour la carte" },
+        "info": "Google Maps will find the exact location",
+        "info_translations": { "fr": "Google Maps trouvera le lieu exact" },
+        "default": "38, rue Laffitte 75009 PARIS"
+      },
+      {
+        "id": "button_text",
+        "type": "text",
+        "label": "Button label to Google Maps",
+        "label_translations": { "fr": "Libellé du bouton vers Google Maps" },
+        "default": "See the directions",
+        "default_translations": { "fr": "Voir les directions" }
+      },
+      {
+        "type": "header",
+        "content": "Background",
+        "content_translations": { "fr": "Fond" }
+      },
+      {
+        "id": "api_key",
+        "type": "text",
+        "label": "API key for Google Maps",
+        "label_translations": { "fr": "Clé d'API pour Google Maps" },
+        "info": "If you use a custom domain, you must activate a key with the <a href='https://console.developers.google.com/apis/library/maps-backend.googleapis.com' target='_blank'>Google Maps Javascript API</a>",
+        "info_translations": { "fr": "Si vous utilisez un nom de domaine personnalisé, vous devez activer une clé d'<a href='https://console.developers.google.com/apis/library/maps-backend.googleapis.com' target='_blank'>API Javascript de Google Maps</a>" }
+      },
+      {
+        "type": "image_picker",
+        "id": "background_image",
+        "label": "Background image",
+        "label_translations": { "fr": "Image de fond" },
+        "info": "Displayed if no map",
+        "info_translations": { "fr": "Affichée si aucune carte Google Maps" }
+      },
+      {
+        "type": "select",
+        "id": "background_image_position",
+        "label": "Image alignment",
+        "label_translations": { "fr": "Positionnement de l'image" },
+        "default": "center center",
+        "options": [
+          {
+            "label": "Top",
+            "label_translations": { "fr": "Haut" },
+            "value": "top center"
+          },
+          {
+            "label": "Center",
+            "label_translations": { "fr": "Milieu" },
+            "value": "center center"
+          },
+          {
+            "label": "Bottom",
+            "label_translations": { "fr": "Bas" },
+            "value": "bottom center"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Map",
+        "name_translations": { "fr": "Carte" }
+      }
+    ]
+  }
+{% endschema %}

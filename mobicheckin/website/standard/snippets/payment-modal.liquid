@@ -1,0 +1,18 @@
+<div class="modal fade" id="paymentChoice" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">{{ t.payment_choice }}</h4>
+      </div>
+      <div class="modal-body">
+        {% guest_checkout_form %}
+          {% include 'cart-checkout-payment-merchant-type', guest_category: guest.guest_category %}
+          <div class="modal-footer">
+            <input type="button" class="btn btn-default" data-dismiss="modal" value="{{ t.cancel }}" />
+            <input type="submit" class="btn btn-primary" value="{{ t.pay }}" />
+          </div>
+        {% endguest_checkout_form %}
+      </div>
+    </div>
+  </div>
+</div>

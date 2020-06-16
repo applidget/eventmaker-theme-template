@@ -1,0 +1,25 @@
+{% assign scrollto = "" %}
+{% if id_scrollto != blank %}
+  {% assign scrollto = id_scrollto | prepend : "#"  %}
+{% endif %}
+{% if paginate.total_pages > 1 %}
+  <ul class="pagination">
+    {% if pagination_type == "numbered" %}
+      {% for part in paginate.parts %}
+        <li {% if part.is_link == false and part.current == true %}class="active"{% endif %}>
+          <a {% if part.is_link == true %}href="{{ part.url }}{{ scrollto }}"{% endif %}>{{ part.title }}</a>
+        </li>
+      {% endfor %}
+    {% else if pagination_type == "non_numbered" %}
+      {% for part in paginate.parts %}
+        {% if part.page == paginate.previous_page %}
+          <li><a href="{{ part.url }}{{ scrollto }}"><i class="fa fa-chevron-circle-left fa-2x" aria-hidden="true"></i></a></li>
+        {% endif %}
+
+        {% if part.page == paginate.next_page %}
+          <li><a href="{{ part.url }}{{ scrollto }}"><i class="fa fa-chevron-circle-right fa-2x" aria-hidden="true"></i></a></li>
+        {% endif %}
+      {% endfor %}
+    {% endif %}
+  </ul>
+{% endif %}

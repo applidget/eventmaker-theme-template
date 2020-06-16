@@ -1,0 +1,35 @@
+{% if url contains "youtube.com" or url contains "youtu.be" %}
+  {% assign base_url_video = "https://www.youtube.com/embed/" %}
+  {% if url contains "youtube.com" %}
+    {% assign code_video = url | remove: "https://www.youtube.com/watch?v=" %}
+  {% elsif url contains "youtu.be" %}
+    {% assign code_video = url | remove: "https://youtu.be/" %}
+    {% if code_video contains "?" %}
+      {% assign code_video = code_video | split: "?" %}
+      {% assign time = code_video[1] | replace: "t", "start" %}
+      {% assign code_video = code_video[0] | append: "?" | append: time %}
+    {% endif %}
+  {% endif %}
+  {% assign url_video = base_url_video | append: code_video %}
+  <div class="embed-responsive embed-responsive-16by9">
+    <iframe class="embed-responsive-item" src="{{ url_video }}" style="border: none; overflow: auto;" allowfullscreen="" id="iFrameResizer0" scrolling="yes"></iframe>
+  </div>
+{% elsif url contains "dailymotion.com" %}
+  {% assign base_url_video = "https://www.dailymotion.com/embed/video/" %}
+  {% if url contains "dailymotion.com" %}
+    {% assign code_video = url | remove: "https://www.dailymotion.com/video/" %}
+  {% elsif url contains "dai.ly" %}
+    {% assign code_video = url | remove: "https://dai.ly/" %}
+  {% endif %}
+  {% assign url_video = base_url_video | append: code_video %}
+  <div class="embed-responsive embed-responsive-16by9">
+    <iframe frameborder="0" class="embed-responsive-item" src="{{ url_video }}" allowfullscreen=""></iframe>
+  </div>
+{% elsif url contains "vimeo.com" %}
+  {% assign base_url_video = "https://player.vimeo.com/video/" %}
+  {% assign code_video = url | remove: "https://vimeo.com/" %}
+  {% assign url_video = base_url_video | append: code_video %}
+  <div class="embed-responsive embed-responsive-16by9">
+    <iframe src="{{ url_video }}" class="embed-responsive-item" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+  </div>
+{% endif %}

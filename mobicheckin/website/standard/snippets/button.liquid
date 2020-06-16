@@ -1,0 +1,34 @@
+{% assign custom_css = nil %}
+{% if params.enable_custom_css == true %}
+  {% assign custom_css = "background-color:" | append: params.button_color | append: ";" %}
+  {% assign custom_css = custom_css | append: "color:" | append: params.button_text_color | append: ";" %}
+{% endif %}
+
+{% assign button_align = "center" %}
+{% if params.button_align != nil %}
+  {% assign button_align = params.button_align %}
+{% endif %}
+
+{% assign button_extra_classes = "" %}
+{% if button_settings.same_size_button == true %}
+  {% assign button_extra_classes = button_extra_classes | append: "btn-block " %}
+{% endif %}
+{% if params_section.clickable_area %}
+  {% assign button_extra_classes = button_extra_classes | append: "clickable-area " %}
+{% endif %}
+
+{% button_settings options: params %}
+  {% if button.displayable? %}
+    {% if params.button_type == "add_to_my_calendar" %}
+      <div class="text-{{button_align}}" data-section-type="add-to-calendar">
+        {% include 'add-to-calendar', enable_icon: params.enable_icon, label: button.label %}
+      </div>
+    {% else %}
+      <div class="text-{{button_align}}">
+        <a href="{{ button.url }}" class="btn btn-primary {{ button_extra_classes }}" style="{% if button.disabled? %}pointer-events: none; opacity: 0.4;{% endif %} {{ custom_css }}" {% if button.open_in_new_tab? %}target="_blank"{% endif %}>
+          {{ button.label | escape }}
+        </a>
+      </div>
+    {% endif %}
+  {% endif %}
+{% endbutton_settings %}

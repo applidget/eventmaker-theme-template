@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{{ t.offline_page_title }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <style type="text/css">
+      html, body{min-height: 100%;margin:0;}
+      body{background-color:{{ settings.color_body_bg }};font-size:{{ settings.type_base_size }};font-family:{{ base_family }};color:{{ settings.color_body_text }};text-align:center;font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";}
+      button{display:inline-block;font-weight:400;text-align:center;white-space:nowrap;vertical-align:middle;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;border:1px solid transparent;padding:.375rem .75rem;font-size:1rem;line-height:1.5;border-radius:.25rem;transition:color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;color:{{ settings.color_button_text }};background-color:{{ settings.color_button }};border-color:{{ settings.color_button }};text-transform:none}
+      .absolute-center{overflow:auto;margin:auto;position:absolute;top:0;left:0;bottom:0;right:0;width:80%;display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-webkit-flex-direction:column;-ms-flex-direction:column;flex-direction:column;-webkit-box-pack:center;-webkit-justify-content:center;-ms-flex-pack:center;justify-content:center}
+      h1{ font-size:1.5em}
+    </style>
+  </head>
+  <body>
+    <div style="text-align:center;" class="absolute-center">
+      <div>
+        <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 144 144">
+          <g id="Groupe_1" data-name="Groupe 1" transform="translate(-127 -253)">
+            <circle id="Ellipse_1" data-name="Ellipse 1" cx="72" cy="72" r="72" transform="translate(127 253)" fill="#f6f6f6"/>
+            <path id="nowifi" d="M5.286.516a2.351,2.351,0,0,0-3.3.366L.512,2.717a2.349,2.349,0,0,0,.366,3.3L88.737,74.708a2.352,2.352,0,0,0,3.3-.366l1.469-1.835a2.349,2.349,0,0,0-.366-3.3ZM73.924,45.225a1.621,1.621,0,0,0,.742-.336l2.418-2.552A1.768,1.768,0,0,0,77,39.817a44.36,44.36,0,0,0-24.323-11.2ZM88.629,27.747a1.778,1.778,0,0,0,2.47-.079l2.439-2.526a1.732,1.732,0,0,0-.084-2.49A68.992,68.992,0,0,0,26.239,7.945L33.1,13.311A61.8,61.8,0,0,1,88.629,27.747ZM.568,22.652a1.732,1.732,0,0,0-.084,2.49l2.439,2.526a1.777,1.777,0,0,0,2.47.079,61.178,61.178,0,0,1,5.862-4.663L5.482,18.571C3.8,19.848,2.153,21.2.568,22.652ZM17.023,39.817a1.768,1.768,0,0,0-.085,2.52l2.418,2.552a1.744,1.744,0,0,0,2.442.088,37.559,37.559,0,0,1,9.482-6.238l-6.1-4.768A44.64,44.64,0,0,0,17.023,39.817ZM35.257,58.768a11.723,11.723,0,0,0,23.371,1.353L42.872,47.8A11.726,11.726,0,0,0,35.257,58.768Zm11.754-4.7a4.7,4.7,0,1,1-4.7,4.7A4.708,4.708,0,0,1,47.011,54.067Z" transform="translate(152.004 289.387)"/>
+          </g>
+        </svg>
+        <h1>{{ t.no_network }}</h1>
+        <p>{{ t.check_network_and_try_again }}</p>
+      </div>
+      <div>
+        <button id="refresh-button">{{ t.refresh }}</button>
+      </div>
+    </div>
+    <script>
+      document.getElementById("refresh-button").addEventListener("click", () => {
+        document.location.reload(true);
+      });
+    </script>
+  </body>
+</html>

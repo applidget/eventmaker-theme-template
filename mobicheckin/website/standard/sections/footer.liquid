@@ -1,0 +1,147 @@
+{% assign social_icons = false %}
+
+{% if settings.social_twitter_link != blank or settings.social_facebook_link != blank or settings.social_pinterest_link != blank or settings.social_linkedin_link != blank or settings.social_google_link != blank or settings.social_instagram_link != blank %}
+  {% assign social_icons = true %}
+{% endif %}
+
+<footer data-section-id="{{ section.id }}" data-section-type="footer">
+  <div class="container-fluid" style="background-color: {{ section.settings.color_bg_footer_1 }}; color: {{ section.settings.color_text_footer_1 }}">
+    <ul class="contact nav navbar-left">
+      {% if section.settings.contact_email != blank %}
+        <li><i class="fa fa-envelope-o"></i> {{ section.settings.contact_email }}</li>
+      {% endif %}
+      {% if section.settings.contact_phone != blank %}
+        <li><i class="fa fa-mobile fa-lg"></i> {{ section.settings.contact_phone }}</li>
+      {% endif %}
+      {% if section.settings.address != blank %}
+        <li><i class="fa fa-map-marker fa-fw"></i> {{ section.settings.address }}</li>
+      {% endif %}
+    </ul>
+
+    {% if social_icons %}
+      <ul class="social nav navbar-right">
+        {% if settings.social_facebook_link != blank %}
+          <li><a href="{{ settings.social_facebook_link | escape }}" target="_blank"><i class="fa fa-facebook"></i></a></li>
+        {% endif %}
+
+        {% if settings.social_google_link != blank %}
+          <li><a href="{{ settings.social_google_link | escape }}" target="_blank"><i class="fa fa-google-plus"></i></a></li>
+        {% endif %}
+
+        {% if settings.social_twitter_link != blank %}
+          <li><a href="{{ settings.social_twitter_link | escape }}" target="_blank"><i class="fa fa-twitter"></i></a></li>
+        {% endif %}
+
+        {% if settings.social_pinterest_link != blank %}
+          <li><a href="{{ settings.social_pinterest_link | escape }}" target="_blank"><i class="fa fa-pinterest-p"></i></a></li>
+        {% endif %}
+
+        {% if settings.social_instagram_link != blank %}
+          <li><a href="{{ settings.social_instagram_link | escape }}" target="_blank"><i class="fa fa-instagram"></i></a></li>
+        {% endif %}
+        
+        {% if settings.social_linkedin_link != blank %}
+          <li><a href="{{ settings.social_linkedin_link | escape }}" target="_blank"><i class="fa fa-linkedin"></i></a></li>
+        {% endif %}
+        
+        {% if settings.social_viadeo_link != blank %}
+          <li><a href="{{ settings.social_viadeo_link | escape }}" target="_blank"><i class="fa fa-viadeo"></i></a></li>
+        {% endif %}
+        
+        {% if settings.social_youtube_link != blank %}
+          <li><a href="{{ settings.social_youtube_link | escape }}" target="_blank"><i class="fa fa-youtube"></i></a></li>
+        {% endif %}
+        
+        {% if settings.social_vimeo_link != blank %}
+          <li><a href="{{ settings.social_vimeo_link | escape }}" target="_blank"><i class="fa fa-vimeo"></i></a></li>
+        {% endif %}
+      </ul>
+    {% endif %}
+  </div>
+
+  <div class="container-fluid bg-main-color" style="background-color: {{ section.settings.color_bg_footer_2 }}; color: {{ section.settings.color_text_footer_2 }}">
+    {% if event.grey_label_enabled %}
+      <div class="grey-label pull-right">{{ event.grey_label_website }}</div>
+    {% endif %}
+    <ul class="copyright nav navbar-left">
+      {% if section.settings.copyright != blank %}
+        <li><small>{{ section.settings.copyright }}</small></li>
+      {% endif %}
+    </ul>
+  </div>
+</footer>
+
+{% schema %}
+  {
+    "name": "Footer",
+    "name_translations": { "fr": "Bas de page" },
+    "icon": "fa fa-arrow-down",
+    "hidden_from_user": false,
+    "group_key": "basic",
+    "group_rank": 8000,
+    "settings": [
+      {
+        "type": "header",
+        "content": "Upper bar of the footer",
+        "content_translations": { "fr": "Barre supérieure du footer" }
+      },
+      {
+        "type": "text",
+        "id": "contact_email",
+        "label": "Contact email",
+        "label_translations": { "fr": "Email de contact" }
+      },
+      {
+        "type": "text",
+        "id": "contact_phone",
+        "label": "Phone number",
+        "label_translations": { "fr": "Numéro de téléphone" }
+      },
+      {
+        "type": "text",
+        "id": "address",
+        "label": "Address",
+        "label_translations": { "fr": "Adresse" }
+      },
+      {
+        "type": "color",
+        "id": "color_bg_footer_1",
+        "label": "Color of the bar",
+        "label_translations": { "fr": "Couleur de la barre" },
+        "default": "#f8f8f8"
+      },
+      {
+        "type": "color",
+        "id": "color_text_footer_1",
+        "label": "Text color",
+        "label_translations": { "fr": "Couleur du texte" },
+        "default": "#333333"
+      },
+      {
+        "type": "header",
+        "content": "Footer lower bar",
+        "content_translations": { "fr": "Barre inférieure du footer" }
+      },
+      {
+        "type": "text",
+        "id": "copyright",
+        "label": "Copyright",
+        "label_translations": { "fr": "Copyright" }
+      },
+      {
+        "type": "color",
+        "id": "color_bg_footer_2",
+        "label": "Color of the bar",
+        "label_translations": { "fr": "Couleur de la barre" },
+        "default": "#7796a8"
+      },
+      {
+        "type": "color",
+        "id": "color_text_footer_2",
+        "label": "Text color",
+        "label_translations": { "fr": "Couleur du texte" },
+        "default": "#fff"
+      }
+    ]
+  }
+{% endschema %}

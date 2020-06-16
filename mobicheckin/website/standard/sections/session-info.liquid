@@ -1,0 +1,666 @@
+<div class="container {{ settings.spacing }}" data-section-id="{{ section.id }}" data-section-type="session-info">
+  <div>
+    {% for access_privilege in guest.access_privileges %}
+      {% if access_privilege.type == "session" and access_privilege.accesspoint_id != current_resource.id %}
+        {% assign start_time = access_privilege.accesspoint.start_hour | times: 60 | plus: access_privilege.accesspoint.start_minute %}
+        {% assign end_time = access_privilege.accesspoint.end_hour | times: 60 | plus: access_privilege.accesspoint.end_minute %}
+        <div data-datetime-overlapse="true" data-date="{{ access_privilege.accesspoint.start_day }}" data-start-time="{{ start_time }}" data-end-time="{{ end_time }}">
+          <span class="accesspoint-unregister"></span>
+        </div>
+      {% endif %}
+    {% endfor %}
+  </div>
+
+  {% if section.settings.enable_back_button == true and section.settings.back_button_url != blank %}
+    <div class="row down-s">
+      <div class="col-xs-12">
+        <a href="/{{ section.settings.back_button_url }}"><i class="fa fa-angle-left"></i> {{ section.settings.back_button_label }}</a>
+      </div>
+    </div>
+  {% endif %}
+
+  <div class="row session-info-header down-s">
+    {% if section.settings.enable_illustration == true %}
+      {% assign illustration_url = current_resource.illustration_url %}
+    {% endif %}
+
+    {% if illustration_url != blank and section.settings.illustration_alignment == "left" %}
+      <div class="col-md-3 col-sm-4 col-xs-12 image-container">
+        <img data-src="{{ illustration_url }}" alt="{{ current_resource.localized_name }}" />
+      </div>
+    {% endif %}
+
+    <div class="{% if illustration_url != blank %}col-md-9 col-sm-8 col-xs-12{% else %}col-xs-12{% endif %}" data-accesspoint="true">
+      <h2 class="title">{{ current_resource.localized_name }}</h2>
+      <p class="session-type-and-thematics">
+        <span class="label label-default session-type">{{ current_resource.localized_session_type_label }}</span>
+
+        <span class="session-thematics">
+          {% for thematic in current_resource.thematics %}
+            <span class="label label-default" style="{% if section.settings.colored_thematics %}background-color: {{ thematic.color }};{% endif %}">{{ thematic.localized_name }}</span>
+          {% endfor %}
+        </span>
+      </p>
+      <p class="session-details">
+        <span><i class="fa fa-calendar-o"></i> {{ current_resource.formatted_start_day }}</span>
+        <span class="vertical-separator">|</span>
+        <span><i class="fa fa-clock-o"></i> {{ current_resource.start_time }} - {{ current_resource.end_time }}</span>
+        <span class="vertical-separator">|</span>
+        <span><i class="fa fa-map-marker"></i> {{ current_resource.localized_location }}</span>
+        {% if guest and section.settings.session_live_page_path != blank %}
+          <div class="{% unless guest.may_access_live_session_ids[current_resource.id] %}hidden{% endunless %}" data-live-access-session-id={{ current_resource.id }}>
+            {% capture livePagePath %}/{{ section.settings.session_live_page_path | replace: "__id__", current_resource.id }}{% endcapture %}
+            {% if current_resource.live? %}
+              <a href="{{livePagePath}}" class="btn btn-danger btn-sm"><i class="fa fa-youtube-play" aria-hidden="true"></i>&nbsp;&nbsp;{{t.accesspoint_live_streaming}}</a>
+            {% elsif current_resource.live_over? and current_resource.streaming_archives != blank %}
+              <a href="{{livePagePath}}" class="btn btn-primary btn-sm"><i class="fa fa-youtube-play" aria-hidden="true"></i>&nbsp;&nbsp;{{t.accesspoint_live_replay}}</a>
+            {% endif %}
+          </div>
+        {% endif %}
+      </p>
+
+      {% if section.settings.enable_registration %}
+        <div class="row session-capacity">
+          <div class="col-xs-8">
+            {% if current_resource.remaining_slots > -1 and section.settings.display_remaining_slots %}
+              {% capture remaining_slots %}{{ current_resource.remaining_slots }}{% endcapture %}
+              <p class="text text-danger" data-capacity-reached="true" {% unless current_resource.capacity_reached? %}style="display: none;"{% endunless %}><i class="fa fa-times"></i> {{ t.capacity_reached }}</p>
+              <p class="text text-warning" data-capacity-remaining="true" {% if current_resource.capacity_reached? %}style="display: none;"{% endif %}><i class="fa fa-warning"></i> {{ t.capacity_remaining }}</p>
+            {% endif %}
+          </div>
+
+          <div class="col-xs-4">
+            {% assign start_time = current_resource.start_hour | times: 60 | plus: current_resource.start_minute %}
+            {% assign end_time = current_resource.end_hour | times: 60 | plus: current_resource.end_minute %}
+            <div data-datetime-overlapse="true" data-date="{{ current_resource.start_day }}" data-start-time="{{ start_time }}" data-end-time="{{ end_time }}">
+              {% if guest %}
+                {% checkin_point_register_button section.settings.register_button_label, accesspoint_id: current_resource.id, class: "btn btn-primary btn-sm pull-right btn-datetime-overlapse", unregister_label: section.settings.unregister_button_label, registered_label: section.settings.registered_button_label, unregisterable: section.settings.enable_unregistration, paid_session_label: t.paid, charged_session_label: section.settings.charged_session_button_label %}
+              {% elsif section.settings.enable_unknown_guest_custom_button %}
+                {% include "button", params: section.settings %}
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="col-xs-12">
+            <div class="text text-danger accesspoint-error-message up-s" style="display: none;"></div>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+
+    {% if illustration_url != blank and section.settings.illustration_alignment == "right" %}
+      <div class="col-md-3 col-sm-4 col-xs-12 image-container">
+        <img data-src="{{ illustration_url }}" alt="{{ current_resource.localized_name }}" />
+      </div>
+    {% endif %}
+  </div>
+
+  {% unless section.settings.inversed_bg == true %}
+    <hr style="background: #eee; margin: 10px 0; height: 1px;" />
+  {% endunless %}
+
+  {% if current_resource.localized_description.size > 6 %}
+    <div class="row {% if section.settings.inversed_bg == true %}down-s{% endif %}">
+      <div class="col-xs-12">
+        <div class="session-info-details {% if section.settings.inversed_bg == true %}bg-inverse{% endif %}">
+          {% if section.settings.information_title != blank %}
+            <h3>{{ section.settings.information_title }}</h3>
+          {% endif %}
+          <div class="session-description">{{ current_resource.localized_description | newline_to_br }}</div>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+
+  {% if current_resource.registered_speakers.size > 0 %}
+    <div class="row down-s">
+      <div class="col-xs-12">
+        <div class="session-info-details">
+          <h3>{{ t.speakers }}</h3>
+
+          {% if section.settings.speakers_display_mode == "list" %}
+            <ul class="guests-list">
+              {% for speaker in current_resource.registered_speakers %}
+                {% assign image_url = speaker[section.settings.speaker_illustration_field] %}
+                <li>
+                  <span class="guest-item-illustration" style="">
+                    {% unless image_url == blank %}
+                      <img data-src="{{ image_url }}" alt="{{ speaker.identity }}" />
+                    {% endunless %}
+                  </span>
+                  <span>
+                    <span class="guest-item-identity">
+                      {% if section.settings.speaker_info_page_path != blank %}
+                        <a href="/{{ section.settings.speaker_info_page_path | replace: "__id__", speaker.id }}">{{ speaker.identity }}</a>
+                      {% else %}
+                        {{ speaker.identity }}
+                      {% endif %}
+                    </span><br />
+                    {% if speaker.company_name != blank %}<span class="guest-item-company">{{ speaker.company_name }}</span>{% endif %}
+                    {% if speaker.position != blank %}<span class="guest-item-position">{{ speaker.position }}</span>{% endif %}
+                  </span>
+                </li>
+              {% endfor %}
+            </ul>
+          {% elsif section.settings.speakers_display_mode == "grid" %}
+            {% assign speakers_per_line = section.settings.speakers_per_line | times: 1 | at_least: 2 %}
+            {% assign grid_item_width = 'col-md-3 col-sm-6' %}
+
+            {% case speakers_per_line %}
+              {% when 2 %}
+                {% assign grid_item_width = 'col-sm-6' %}
+              {% when 3 %}
+                {% assign grid_item_width = 'col-md-4 col-sm-6' %}
+              {% when 6 %}
+                {% assign grid_item_width = 'col-lg-2 col-sm-4' %}
+            {% endcase %}
+
+            {% for speaker in current_resource.registered_speakers %}
+              {% assign remainer = forloop.index | modulo: speakers_per_line %}
+              {% if forloop.first or remainer == 1 %}
+                <div class="row">
+              {% endif %}
+
+                {% assign image_url = speaker[section.settings.speaker_illustration_field] %}
+
+                <div class="{{ grid_item_width }} guest-item guest-item-per-line-{{ speakers_per_line }}">
+                  {% if section.settings.speaker_info_page_path != blank %}
+                    <a href="/{{ section.settings.speaker_info_page_path | replace: "__id__", speaker.id }}" class="thumbnail">
+                  {% else %}
+                    <div class="thumbnail">
+                  {% endif %}
+                    <div class="image-container">
+                      {% unless image_url == blank %}
+                        <img data-src="{{ image_url }}" alt="{{ speaker.identity }}" />
+                      {% endunless %}
+                    </div>
+                    <div class="caption">
+                      <h3><strong>{{ speaker.identity }}</strong></h3>
+                      <p>{{ speaker.company_name }}</p>
+                    </div>
+                  {% if section.settings.speaker_info_page_path != blank %}
+                    </a>
+                  {% else %}
+                    </div>
+                  {% endif %}
+                </div>
+
+              {% if remainer == 0 or forloop.last %}
+                </div>
+              {% endif %}
+            {% endfor %}
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  {% endif %}
+
+  {% if current_resource.exhibitors.size > 0 %}
+    <div class="row down-s">
+      <div class="col-xs-12">
+        <div class="session-info-details">
+          <h3>{{ t.exhibitors }}</h3>
+
+          {% assign exhibitors_per_line = section.settings.exhibitors_per_line | times: 1 | at_least: 2 %}
+          {% assign grid_item_width = 'col-md-3 col-sm-6' %}
+          {% case exhibitors_per_line %}
+            {% when 2 %}
+              {% assign grid_item_width = 'col-sm-6' %}
+            {% when 3 %}
+              {% assign grid_item_width = 'col-md-4 col-sm-6' %}
+            {% when 6 %}
+              {% assign grid_item_width = 'col-lg-2 col-sm-4' %}
+          {% endcase %}
+
+          {% for exhibitor in current_resource.exhibitors %}
+            {% assign remainer = forloop.index | modulo: exhibitors_per_line %}
+            {% if forloop.first == true or remainer == 1 %}
+              <div class="row">
+            {% endif %}
+
+            {% assign image_url = exhibitor[section.settings.exhibitor_illustration_field] %}
+
+            <div class="{{ grid_item_width }} guest-item guest-item-per-line-{{ exhibitors_per_line }}">
+              {% if section.settings.exhibitor_info_page_path != blank %}
+                <a href="/{{ section.settings.exhibitor_info_page_path | replace: "__id__", exhibitor.id }}" class="thumbnail">
+              {% else %}
+                <div class="thumbnail">
+              {% endif %}
+                <div class="image-container">
+                  {% if image_url != blank %}
+                    <img data-src="{{ image_url }}" alt="{{ exhibitor.company_name }}" />
+                  {% elsif section.settings.illustration_only == true %}
+                    {{ exhibitor.company_name }}
+                  {% endif %}
+                </div>
+                {% if section.settings.illustration_only == false %}
+                  <div class="caption">
+                    <h3><strong>{{ exhibitor.company_name }}</strong></h3>
+                  </div>
+                {% endif %}
+              {% if section.settings.exhibitor_info_page_path != blank %}
+                </a>
+              {% else %}
+                </div>
+              {% endif %}
+            </div>
+
+            {% if remainer == 0 or forloop.last == true %}
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  {% endif %}
+</div>
+
+{% schema %}
+  {
+    "name": "Session information",
+    "name_translations": { "fr": "Informations session" },
+    "icon": "fa fa-calendar-check-o",
+    "hidden_from_user": false,
+    "group_key": "programme",
+    "group_rank": 2000,
+    "settings": [
+      {
+        "type": "header",
+        "content": "General settings",
+        "content_translations": { "fr": "Paramètres généraux" }
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_illustration",
+        "label": "Display an illustration",
+        "label_translations": { "fr": "Afficher une illustration" },
+        "default": false
+      },
+      {
+        "type": "select",
+        "id": "illustration_alignment",
+        "label": "Illustration's alignment",
+        "label_translations": { "fr": "Alignement de l'illustration" },
+        "default": "left",
+        "options": [
+          {
+            "value": "left",
+            "label": "On the left of the title",
+            "label_translations": { "fr": "À gauche du titre" }
+          },
+          {
+            "value": "right",
+            "label": "On the right of the title",
+            "label_translations": { "fr": "À droite du titre" }
+          }
+        ],
+        "show_if": [
+          [
+            {
+              "source_id": "enable_illustration",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
+      },
+      {
+        "type": "checkbox",
+        "id": "colored_thematics",
+        "label": "Colored thematics",
+        "label_translations": { "fr": "Thématiques en couleur" },
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "information_title",
+        "label": "Title of information section",
+        "label_translations": { "fr": "Titre de la section d'informations" },
+        "default": "Information",
+        "default_translations": { "fr": "Informations" }
+      },
+      {
+        "type": "checkbox",
+        "id": "inversed_bg",
+        "label": "Inversed background",
+        "label_translations": { "fr": "Fond inversé" },
+        "default": false,
+        "info": "Background and text colors will be the same as buttons",
+        "info_translations": { "fr": "Les couleurs de fond et du texte seront telles que définies pour les boutons" }
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_back_button",
+        "label": "Display a back button",
+        "label_translations": { "fr": "Afficher un bouton retour" },
+        "default": false
+      },
+      {
+        "type": "website_page_picker",
+        "id": "back_button_url",
+        "label": "Back button URL",
+        "label_translations": { "fr": "URL du bouton de retour" },
+        "show_if": [
+          [
+            {
+              "source_id": "enable_back_button",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
+      },
+      {
+        "type": "text",
+        "id": "back_button_label",
+        "label": "Back button label",
+        "label_translations": { "fr": "Libellé du bouton de retour" },
+        "default": "Back",
+        "default_translations": { "fr": "Retour" },
+        "show_if": [
+          [
+            {
+              "source_id": "enable_back_button",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
+      },
+      {
+        "type": "select_info_page_picker",
+        "id": "session_live_page_path",
+        "resource_name": "session",
+        "resource_live": true,
+        "allow_page_creation": false,
+        "label": "Page for live sessions",
+        "label_translations": { "fr": "Page pour le live des sessions" },
+        "default": ""
+      },
+      {
+        "type": "header",
+        "content": "Registration",
+        "content_translations": { "fr": "Inscription" }
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_registration",
+        "label": "Enable registration to sessions",
+        "label_translations": { "fr": "Activer l'inscription aux sessions" },
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "register_button_label",
+        "label": "Registration button label",
+        "label_translations": { "fr": "Libellé du bouton d'inscription" },
+        "default": "Register",
+        "default_translations": { "fr": "S'inscrire" },
+        "show_if": [
+          [
+            {
+              "source_id": "enable_registration",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
+      },
+      {
+        "type": "checkbox",
+        "id": "display_remaining_slots",
+        "label": "Display the remaining slots",
+        "label_translations": { "fr": "Afficher les places restantes" },
+        "default": false,
+        "show_if": [
+          [
+            {
+              "source_id": "enable_registration",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_unknown_guest_custom_button",
+        "label": "Display a personalized button for unknown visitor",
+        "label_translations": { "fr": "Afficher un bouton personnalisé aux visiteurs non connectés" },
+        "default": false,
+        "show_if": [
+          [
+            {
+              "source_id": "enable_registration",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
+      },
+      {
+        "type": "product_defined",
+        "value": "button_settings",
+        "show_if": [
+          [
+            {
+              "source_id": "enable_unknown_guest_custom_button",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_unregistration",
+        "label": "Enable unregistration from sessions",
+        "label_translations": { "fr": "Activer la désincription aux sessions" },
+        "default": true,
+        "show_if": [
+          [
+            {
+              "source_id": "enable_registration",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
+      },
+      {
+        "type": "text",
+        "id": "unregister_button_label",
+        "label": "Unregistration button label",
+        "label_translations": { "fr": "Libellé du bouton de désinscription" },
+        "default": "Unregister",
+        "default_translations": { "fr": "Se désinscrire" },
+        "show_if": [
+          [
+            {
+              "source_id": "enable_unregistration",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
+      },
+      {
+        "type": "text",
+        "id": "registered_button_label",
+        "label": "Already registered button label",
+        "label_translations": { "fr": "Libellé du bouton déjà inscrit" },
+        "default": "Already registered",
+        "default_translations": { "fr": "Déjà inscrit" },
+        "show_if": [
+          [
+            {
+              "source_id": "enable_unregistration",
+              "operator": "==",
+              "value": false
+            }
+          ]
+        ]
+      },
+      {
+        "type": "text",
+        "id": "charged_session_button_label",
+        "label": "Charged session button label",
+        "label_translations": { "fr": "Libellé du bouton de session payante" },
+        "default": "Charged session",
+        "default_translations": { "fr": "Session payante" },
+        "info": "Charged sessions payment is not possible from schedule",
+        "info_translations": { "fr": "Le paiement des sessions payantes ne peut pas se faire depuis le programme" },
+        "show_if": [
+          [
+            {
+              "source_id": "enable_registration",
+              "operator": "==",
+              "value": true
+            }
+          ]
+        ]
+      },
+      {
+        "type": "header",
+        "content": "Speakers",
+        "content_translations": { "fr": "Conférenciers" }
+      },
+      {
+        "type": "select",
+        "id": "speakers_display_mode",
+        "label": "Display mode",
+        "label_translations": { "fr": "Mode d'affichage" },
+        "default": "grid",
+        "options": [
+          {
+            "value": "list",
+            "label": "List",
+            "label_translations": { "fr": "Liste" }
+          },
+          {
+            "value": "grid",
+            "label": "Grid",
+            "label_translations": { "fr": "Grille" }
+          }
+        ]
+      },
+      {
+        "type": "guest_field_picker",
+        "id": "speaker_illustration_field",
+        "label": "Illustration",
+        "label_translations": { "fr": "Illustration" },
+        "default": "avatar"
+      },
+      {
+        "type": "select",
+        "id": "speakers_per_line",
+        "label": "Number of speakers per line",
+        "label_translations": { "fr": "Nombre de conférenciers par ligne" },
+        "default": "4",
+        "options": [
+          {
+            "value": 2,
+            "label": "2",
+            "label_translations": { "fr": "2" }
+          },
+          {
+            "value": 3,
+            "label": "3",
+            "label_translations": { "fr": "3" }
+          },
+          {
+            "value": 4,
+            "label": "4",
+            "label_translations": { "fr": "4" }
+          },
+          {
+            "value": 6,
+            "label": "6",
+            "label_translations": { "fr": "6" }
+          }
+        ],
+        "show_if": [
+          [
+            {
+              "source_id": "speakers_display_mode",
+              "operator": "==",
+              "value": "grid"
+            }
+          ]
+        ]
+      },
+      {
+        "type": "select_info_page_picker",
+        "id": "speaker_info_page_path",
+        "resource_name": "guest",
+        "allow_page_creation": false,
+        "label": "Page for detailed view of speakers",
+        "label_translations": { "fr": "Page pour la vue détaillée des conférenciers" },
+        "default": ""
+      },
+      {
+        "type": "header",
+        "content": "Exhibitors",
+        "content_translations": { "fr": "Exposants" }
+      },
+      {
+        "type": "guest_field_picker",
+        "id": "exhibitor_illustration_field",
+        "label": "Illustration",
+        "label_translations": { "fr": "Illustration" },
+        "default": "avatar"
+      },
+      {
+        "type": "checkbox",
+        "id": "illustration_only",
+        "label": "Only display illustration",
+        "label_translations": { "fr": "Afficher uniquement l'illustration" },
+        "default": false
+      },
+      {
+        "type": "select",
+        "id": "exhibitors_per_line",
+        "label": "Number of exhibitors per line",
+        "label_translations": { "fr": "Nombre d'exposants par ligne" },
+        "default": "4",
+        "options": [
+          {
+            "value": 2,
+            "label": "2",
+            "label_translations": { "fr": "2" }
+          },
+          {
+            "value": 3,
+            "label": "3",
+            "label_translations": { "fr": "3" }
+          },
+          {
+            "value": 4,
+            "label": "4",
+            "label_translations": { "fr": "4" }
+          },
+          {
+            "value": 6,
+            "label": "6",
+            "label_translations": { "fr": "6" }
+          }
+        ]
+      },
+      {
+        "type": "select_info_page_picker",
+        "id": "exhibitor_info_page_path",
+        "resource_name": "guest",
+        "allow_page_creation": false,
+        "label": "Page for detailed view of exhibitors",
+        "label_translations": { "fr": "Page pour la vue détaillée des exposants" },
+        "default": ""
+      }
+    ],
+    "presets": [
+      {
+        "name": "Session information",
+        "name_translations": { "fr": "Informations session" }
+      }
+    ]
+  }
+{% endschema %}
