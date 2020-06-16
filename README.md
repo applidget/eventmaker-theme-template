@@ -152,7 +152,9 @@ Comment se presentent les `settings` ?
 
 Certains types de setting on besoin de plus qu'un label, un id et un type pour fonctionné.
 
-- `select` : les settings de type _select_ on besoin d'options pour focntionné. L'option vide est générer automatiquement.
+- `select` : les settings de type _select_ on besoin d'options pour fonctionné. L'option vide est générer automatiquement.
+
+Exemple:
 
     {
       "type": "select",
