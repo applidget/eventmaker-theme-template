@@ -36,6 +36,8 @@ This is a starting point for an Eventmaker Website theme.
 
 Le language utilisé est le "Liquid" développé par Shopify, une doc est disponible [ici](https://shopify.github.io/liquid).
 
+Vous avez accès aux paramètres de l'URL avec la variable liquid `url_params` (ex: avec https://www.monsite.eventmaker.io/index?superParams=true pour connaitre la valeur de `superParams` on fera `url_params.superParams` qui renverra une String `true`).
+
 # Config
 
 ## 01-standard.yml
@@ -319,3 +321,105 @@ Contrairement aux sections, les snippets n'ont pas de schéma.
 # Templates
 
 Le dossier `templates` contient des gabaries de pages pour différents cas (fonctionnement normal, erreur 401, erreur 404, Offline, etc...).
+
+# Variables Liquid
+
+Vous avez accès à différentes variables Liquid:
+
+## Évènement
+    {{ event }}
+    {
+      "title" => "My Event Name",
+      "organizer" => "Eventmaker Developers",
+      "description" => "This event has not begun yet",
+      "timezone" => "Paris",
+      "id" => "5408886b4f6905cb83000001",
+      "address" => "38 Rue Laffitte, 75009 Paris",
+      "grey_label_enabled" => true,
+      "primary_color" => nil,
+      "secondary_color" => nil,
+      "cover" => nil,
+      "background_url" => nil
+      "photo" => nil,
+      "photo_original" => nil,
+      "start_date" => Wed, 31 Dec 2014 22:00:00 CET +01:00,
+      "end_date" => Thu, 01 Jan 2015 07:00:00 CET +01:00,
+      "guest_categories" => "5408886b4f6905cb83000001, 0.0, 0.0, 0.0"
+    }
+
+## Catégories de participants
+
+    {{ guest_category }}
+    {
+      "name" => "Catégorie 1",
+      "id" => "5408886b4f6905cb83000002"
+      "badge_enabled" => true,
+      "traits" => {},
+      "price" => 0.0,
+      "vat" => 0.0,
+      "price_without_vat" => 0.0,
+      "price_with_vat" => 0.0,
+      "vat_amount" => 0.0
+    }
+
+## Participants
+    {{ guest }}
+    {
+      "uid" => "12345654324",
+      "status" => "registered",
+      "email" => "john.smith@gmail.com",
+      "avatar" => nil,
+      "first_name" => "John",
+      "last_name" => "Smith",
+      "position" => "Director",
+      "company_name" => "Eventmaker",
+      "phone_number" => "1234567890",
+      "address" => "38 Rue Laffitte, 75009 Paris",
+      "country_name" => "France",
+      "country" => "FRA",
+      "payment_promo_code" => "MY_PROMO_CODE",
+      "utm_source" => "",
+      "utm_medium" => "",
+      "utm_campaign" => "",
+      "event_id"  => "540f0cf24f6905a277000005",
+      "guest_category_id" => "540992164f690552c7000004",
+      "has_access_privileges" => true,
+      "send_email_on_guest_category_change" => true,
+      "confirmation_email_sent" => true,
+      "discount_code_label" => "My discount code label",
+      "price_incl_vat" => 120.00,
+      "price_excl_vat" => 100.00,
+      "total_vat" => 20.00,
+      "guest_category" => "The associated guest category",
+      "event" => "The associated event",
+      "person_parent" => {},
+      "guest_metadata" => {}
+    }
+
+# Liste de participants
+
+Vous pouvez voir un exemple poussé de liste de participants dans le section `guest-list.liquid`.
+
+Pour affiché la liste des guests de l'évènement il faut utiliser le tag `guests_paginate`:
+
+    {% guests_paginate segment_id: section.settings.segment_id.first.segment_id, per_page: section.settings.per_page %}
+      {% if paginate.total_entries > 0 %}
+        {% for guest in guests %}
+          <p>Hello, my name is {{ guest.first_name }} {{ guest.last_name }}.</p>
+        {% endfor %}
+      {% endif %}
+    {% endguests_paginate %}
+
+Le tag `guests_paginate` prend plusieurs arguments:
+
+| Argument        | Description |
+| --------------- | ----------- |
+| segment\_id      | Prend l'ID de segment contenant les participants que l'on souhaite afficher. Provient d'un setting de type `segments_picker` prenant `.first.segment_id` pour obtenir l'ID. |
+| per\_page        | Prend un chiffre entre 1 et 100 (si au delà de 100, seul les 100 premiers seront affichés). Par défaut à 20. |
+
+Dans ce tag vous avez aussi accès à plusieurs variables liquid:
+
+| Variable | Description |
+| -------- | ----------- |
+| paginate | Une hash renvoyant `current_page`, `previous_page`, `next_page`, `total_entries`, `total_pages`, `per_page`, `parts`. |
+| guests   | Un tableau des participants sur lequel on peut boucler pour les afficher. |
