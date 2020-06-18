@@ -344,7 +344,7 @@ Vous avez accès à différentes variables Liquid:
       "photo_original" => nil,
       "start_date" => Wed, 31 Dec 2014 22:00:00 CET +01:00,
       "end_date" => Thu, 01 Jan 2015 07:00:00 CET +01:00,
-      "guest_categories" => "5408886b4f6905cb83000001, 0.0, 0.0, 0.0"
+      "guest_categories" => {}
     }
 
 ## Catégories de participants
