@@ -423,3 +423,33 @@ Dans ce tag vous avez aussi accès à plusieurs variables liquid:
 | -------- | ----------- |
 | paginate | Une hash renvoyant `current_page`, `previous_page`, `next_page`, `total_entries`, `total_pages`, `per_page`, `parts`. |
 | guests   | Un tableau des participants sur lequel on peut boucler pour les afficher. |
+
+# Liste des sessions du programme
+
+Vous pouvez voir un exemple poussé de liste des session du programme dans le section `sessions-list.liquid`.
+
+Pour affiché la liste des guests de l'évènement il faut utiliser le tag `sessions_list`:
+
+    {% sessions_list session_type: section.settings.session_type_global_filter, display_speakers: section.settings.display_speakers, display_exhibitors: section.settings.display_exhibitors %}
+      {% for session in sessions %}
+        {{ session.name }}
+      {% endfor %}
+    {% endsessions_list %}
+
+Le tag `sessions_list` prend plusieurs arguments:
+
+| Argument            | Description |
+| ------------------- | ----------- |
+| session\_type       | Proviens d'un setting de type `accesspoint_session_type_picker`. Par défaut, affiche tous les types de session confondus. |
+| display\_speakers   | Si `true`, cela renvoit `speaker_roles`, donc une hash qui renvoit la liste des ids de participants étant conférenciers pour une session. |
+| display\_exhibitors | Si `true`, cela renvoit `exhibitor_roles`, donc une hash qui renvoit la liste des ids de participants étant exposants pour une session. |
+
+Dans ce tag vous avez aussi accès à plusieurs variables liquid:
+
+| Variable          | Description |
+| ----------------- | ----------- |
+| sessions          | Un tableau des sessions sur lequel on peut boucler pour les afficher. |
+| speaker\_roles    | Si l'argument `display_speakers` de `sessions_list` est à `true`, cela retourne une hash qui renvoit la liste des ids de participants étant conférenciers pour une session. Sinon un tableau vide. |
+| exhibitor\_roles  | Si l'argument `display_exhibitors` de `sessions_list` est à `true`, cela retourne une hash qui renvoit la liste des ids de participants étant exposants pour une session. Sinon un tableau vide. |
+| guests            | Un tableau des participants sur lequel on peut boucler pour les afficher. |
+| thematics\_by\_id | Une hash des ids de thématiques renvoyant les thématiques. |
