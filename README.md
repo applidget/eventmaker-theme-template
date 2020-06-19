@@ -326,6 +326,40 @@ Le dossier `templates` contient des gabaries de pages pour différents cas (fonc
 
 Vous avez accès à différentes variables Liquid:
 
+## Variables globales
+
+Voici la liste des variables Liquid disponiblent sur le website.
+
+    {
+      "page" => {
+        "name" => "Page name",
+        "path_name" => "information",
+        "registration_form_page?" => false,
+        "registration_confirmation_page?" => false
+      },
+      "settings" => {},
+      "pages" => {},
+      "checkin_points" => [], // Tableau des accréditations de type checkin_points
+      "products" => [], // Tableau des accréditations de type products
+      "accommodations" => [], // Tableau des accréditations de type accommodations
+      "accesspoints_by_id" => {},
+      "event" => {},
+      "menus" => {
+        "name" => "Navigation",
+        "key" => "navigation",
+        "menu_items" => {
+          "name" => "Let's go on Google",
+          "type" => "external_link",
+          "localized_name" => "Allons sur Google",
+          "url" => "https://www.google.com/",
+          "displayable?" => true
+        },
+      },
+      "t" => {},
+      "locale" => "en",
+      "current_resource" => {} 
+    }
+
 ## Évènement
     {{ event }}
     {
@@ -396,9 +430,40 @@ Vous avez accès à différentes variables Liquid:
       "guest_metadata" => {}
     }
 
+## Sessions
+
+    {{ session }}
+    {
+      "id" => "5e74f62a6864431d56271212",
+      "name" => "Session title",
+      "uid" => "SESSIONUID",
+      "type" => "session",
+      "session_type" => "conference",
+      "session_type_label" => "Conférence",
+      "description" => "<div><p>Ceci est la description de la session.</p></div>",
+      "start_date" => "Wed, 31 Dec 2014 22:00:00 CET +01:00",
+      "end_date" => "Wed, 31 Dec 2014 23:00:00 CET +01:00",
+      "price" => "10.0",
+      "vat" => "5.0",
+      "location" => "Grande salle",
+      "capacity_reached?" => false,
+      "remaining_slots" => 249,
+      "price_excluding_vat" => "9.5",
+      "price_excluding_taxes" => "9.5",
+      "traits" => {},
+      "illustration_url" => nil,
+      "formatted_start_day" => "31/12/2014",
+      "speakers" => [],
+      "exhibitors" => "[],
+      "thematic_ids" => {},
+      "thematics" => [],
+      "speaker_roles" => [],
+      "exhibitor_roles" => []
+    }
+
 # Liste de participants
 
-Vous pouvez voir un exemple poussé de liste de participants dans le section `guest-list.liquid`.
+Vous pouvez voir un exemple poussé de liste de participants dans le section `guests-list.liquid`.
 
 Pour affiché la liste des guests de l'évènement il faut utiliser le tag `guests_paginate`:
 
