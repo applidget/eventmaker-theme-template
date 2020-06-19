@@ -260,7 +260,7 @@ Si `checkbox_1` == true OU `checkbox_2` == true
 
 ### Les blocs
 
-Les blocs sont des éléments que l'utilisateur de l'interface de personalisation peuvent ajouter dans la limite disponible (si `max_blocks` est définit).
+Les blocs sont des éléments que l'utilisateur de l'interface de personnalisation peuvent ajouter dans la limite disponible (si `max_blocks` est définit). Cela permet de créer des éléments de même nature plusieurs fois (ex: dans la section `feature-colums.liquid` les blocs sont utilisé pour créer les différentes colones. Nous pouvons en faire 1, 2, 4, ou plus et gérer leur affichage sans faire plusieurs sections).
 
 `"type": "text_block"` permet de faire des presets pour qu'un certain nombre de blocs soient créés au moment de l'ajout de la section à une page.
 
