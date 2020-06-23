@@ -1,32 +1,3 @@
-{% assign custom_filters = nil %}
-{% assign filter_setting_keys = "custom_filter_1,custom_filter_2,custom_filter_3" | split: "," %}
-
-{% for filter_setting_key in filter_setting_keys %}
-  {% assign enable_filter_setting_key = "enable_" | append: filter_setting_key %}
-  {% assign enable_filter_setting = section.settings[enable_filter_setting_key] %}
-  
-  {% if enable_filter_setting %}
-    {% assign filter_key = section.settings[filter_setting_key] %}
-    {% assign filter = event.guest_fields_by_key[filter_key] %}
-
-    {% if filter != blank %}
-      {% if custom_filters != nil %}
-        {% assign custom_filters = custom_filters | append: "," | append: filter_key %}
-      {% else %}
-        {% assign custom_filters = filter_key %}
-      {% endif %}
-    {% else %}
-      {% break %}
-    {% endif %}
-  {% else %}
-    {% break %}
-  {% endif %}
-{% endfor %}
-
-{% if custom_filters %}
-  {% assign custom_filters = custom_filters | split: "," %}
-{% endif %}
-
 <div class="container {{ settings.spacing }}" data-section-id="{{ section.id }}" data-section-type="guests-list" id="{{ section.id }}">
   {% if section.settings.title != blank %}
     <div class="section-header text-center down-s">
@@ -34,12 +5,7 @@
     </div>
   {% endif %}
 
-  {% guests_paginate segment_id: section.settings.segment_id.first.segment_id, per_page: section.settings.per_page, recommendations: url_params.recommendations %}
-
-    {% assign recommendations_enabled = false %}
-    {% if guest and section.settings.enable_recommendations %}
-      {% assign recommendations_enabled = true %}
-    {% endif %}
+  {% guests_paginate segment_id: section.settings.segment_id.first.segment_id, per_page: section.settings.per_page %}
 
     <div class="pagination-container up-s row">
       {% if section.settings.display_nb_entries %}
@@ -56,74 +22,6 @@
     </div>
 
     <div class="row">
-      <div class="col-sm-12">
-        {% if section.settings.search_bar or recommendations_enabled or custom_filters.size > 0 or section.settings.enable_thematics_search and event.thematics.size > 1 %}
-          {% search_form class: 'search-form guests-search-form br-5' %}
-            <div class="row-flex">
-              {% if section.settings.search_bar %}
-                <div class="col-xs-12 search-filter">
-                  <div class="input-group">
-                    <input type="text" name="q" placeholder="{{ section.settings.search_bar_placeholder }}" class="form-control" value="{{ q }}" />
-                    <span class="input-group-btn">
-                      <button class="btn btn-primary btn-search" type="submit"><i class="fa fa-search"></i></button>
-                    </span>
-                  </div>
-                </div>
-              {% endif %}
-
-              {% if recommendations_enabled %}
-                <div class="col-xs-12 search-filter">
-                  <div class="form-group">
-                    <div class="checkbox" style="margin-top: 6px;">
-                      <label><input type="checkbox" name="recommendations" value="true" onchange="$(this).closest('.search-form').submit();" {% if url_params.recommendations == "true" %}checked{% endif %} /> <span>{{ section.settings.recommendations_label }}</span></label>
-                    </div>
-                  </div>
-                </div>
-              {% endif %}
-
-              {% if section.settings.enable_thematics_search and event.thematics.size > 1 %}
-                <div class="col-xs-12 search-filter">
-                  <label>{{ section.settings.thematics_filter_title }}</label>
-                  <div class="search-thematics">
-                    {% for thematic in event.thematics %}
-                      <label class="checkbox">
-                        <input type="checkbox" value="{{ thematic.id }}" name="search_options[thematic_ids][]" {% if url_params.search_options.thematic_ids contains thematic.id %}checked{% endif %} />
-                        <span class="label label-default" style="background-color: {{ thematic.color }}; border-radius: 50%; font-size: 50%; vertical-align: 40%;">&nbsp;&nbsp;</span> {{ thematic.localized_name }}
-                      </label>
-                    {% endfor %}
-                  </div>
-                </div>
-              {% endif %}
-
-              {% if custom_filters.size > 0 %}
-                {% for custom_filter in custom_filters %}
-                  {% assign filter = event.guest_fields_by_key[custom_filter] %}
-                  {% if filter != blank %}
-                    <div class="col-xs-12 col-md-{{ 12 | divided_by: custom_filters.size }} search-filter">
-                      <label>{{ filter.localized_label }}</label>
-                      <select class="form-control custom-filter-{{ forloop.index }}" name="search_options[{{ filter.key }}]">
-                        {% assign selected_value = filter.options['default_value'] %}
-                        {% if url_params.search_options[filter.key] != blank %}
-                          {% assign selected_value = url_params.search_options[filter.key] %}
-                        {% endif %}
-                        {% assign options_groups = filter.options['options_groups'] %}
-                        {% guest_select_options filter.key "", selected: selected_value, groups: options_groups, options_order: filter.options.options_order %}
-                      </select>
-                    </div>
-                  {% endif %}
-                {% endfor %}
-              {% endif %}
-
-              {% if custom_filters.size > 0 or section.settings.enable_thematics_search and event.thematics.size > 1 %}
-                <div class="col-md-12 mt-20">
-                  <button class="btn btn-primary btn-search" type="submit"><i class="fa fa-search"></i> {{ t.search_placeholder }}</button>
-                </div>
-              {% endif %}
-            </div>
-          {% endsearch_form %}
-        {% endif %}
-      </div>
-
       {% if paginate.total_entries > 0 %}
         <div class="guests-list col-md-12">
           {% if section.settings.display_mode == "table" %}
@@ -574,7 +472,7 @@
               "value": true
             }
           ]
-        ]]
+        ]
       },
       {
         "type": "select",
@@ -603,170 +501,6 @@
           [
             {
               "source_id": "enable_see_more_btn",
-              "operator": "==",
-              "value": true
-            }
-          ]
-        ]
-      },
-      {
-        "type": "header",
-        "content": "Search settings",
-        "content_translations": { "fr": "Paramètres de la recherche" }
-      },
-      {
-        "type": "checkbox",
-        "id": "search_bar",
-        "label": "Enable search bar",
-        "label_translations": { "fr": "Activer la barre de recherche" },
-        "default": false
-      },
-      {
-        "type": "text",
-        "id": "search_bar_placeholder",
-        "label": "Search bar placeholder",
-        "label_translations": { "fr": "Texte par défaut dans la recherche" },
-        "default": "Search",
-        "default_translations": { "fr": "Recherchez" },
-        "show_if": [
-          [
-            {
-              "source_id": "search_bar",
-              "operator": "==",
-              "value": true
-            }
-          ]
-        ]
-      },
-      {
-        "type": "checkbox",
-        "id": "enable_recommendations",
-        "label": "Enable recommendations",
-        "label_translations": { "fr": "Activer les recommandations" },
-        "default": false
-      },
-      {
-        "type": "text",
-        "id": "recommendations_label",
-        "label": "recommendations label",
-        "label_translations": { "fr": "Libellé pour les recommandations" },
-        "default": "My recommendations",
-        "default_translations": { "fr": "Mes recommandations" },
-        "show_if": [
-          [
-            {
-              "source_id": "enable_recommendations",
-              "operator": "==",
-              "value": true
-            }
-          ]
-        ]
-      },
-      {
-        "type": "checkbox",
-        "id": "enable_thematics_search",
-        "label": "Enable thematics search",
-        "label_translations": { "fr": "Activer la recherche par thématiques" },
-        "default": true
-      },
-      {
-        "type": "text",
-        "id": "thematics_filter_title",
-        "label": "Thematics filter title",
-        "label_translations": { "fr": "Titre du filtre par thématiques" },
-        "default": "Thematics",
-        "default_translations": { "fr": "Thématiques" },
-        "show_if": [
-          [
-            {
-              "source_id": "enable_thematics_search",
-              "operator": "==",
-              "value": true
-            }
-          ]
-        ]
-      },
-      {
-        "type": "checkbox",
-        "id": "enable_custom_filter_1",
-        "label": "Enable custom filters",
-        "label_translations": { "fr": "Activer des filtres personnalisés" },
-        "default": false
-      },
-      {
-        "type": "guest_field_picker",
-        "id": "custom_filter_1",
-        "guest_field_type": "value_list",
-        "label": "Filter 1",
-        "label_translations": { "fr": "Filtre 1" },
-        "show_if": [
-          [
-            {
-              "source_id": "enable_custom_filter_1",
-              "operator": "==",
-              "value": true
-            }
-          ]
-        ]
-      },
-      {
-        "type": "checkbox",
-        "id": "enable_custom_filter_2",
-        "label": "Enable a second custom filters",
-        "label_translations": { "fr": "Activer un second filtre personnalisé" },
-        "default": false,
-        "show_if": [
-          [
-            {
-              "source_id": "enable_custom_filter_1",
-              "operator": "==",
-              "value": true
-            }
-          ]
-        ]
-      },
-      {
-        "type": "guest_field_picker",
-        "id": "custom_filter_2",
-        "guest_field_type": "value_list",
-        "label": "Filter 2",
-        "label_translations": { "fr": "Filtre 2" },
-        "show_if": [
-          [
-            {
-              "source_id": "enable_custom_filter_2",
-              "operator": "==",
-              "value": true
-            }
-          ]
-        ]
-      },
-      {
-        "type": "checkbox",
-        "id": "enable_custom_filter_3",
-        "label": "Enable a third custom filters",
-        "label_translations": { "fr": "Activer un troisième filtre personnalisé" },
-        "default": false,
-        "show_if": [
-          [
-            {
-              "source_id": "enable_custom_filter_2",
-              "operator": "==",
-              "value": true
-            }
-          ]
-        ]
-      },
-      {
-        "type": "guest_field_picker",
-        "id": "custom_filter_3",
-        "guest_field_type": "value_list",
-        "label": "Filter 3",
-        "label_translations": { "fr": "Filtre 3" },
-        "show_if": [
-          [
-            {
-              "source_id": "enable_custom_filter_3",
               "operator": "==",
               "value": true
             }
